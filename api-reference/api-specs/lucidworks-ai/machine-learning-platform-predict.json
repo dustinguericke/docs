@@ -1,0 +1,1773 @@
+{
+  "openapi": "3.0.1",
+  "info": {
+    "title": "Lucidworks AI Prediction API",
+    "version": "v0",
+    "description": "The Lucidworks AI Prediction API is used to send synchronous API calls that run predictions from pre-trained models or custom models.\n\nLucidworks created and deployed the `mistral-7b-instruct` and `llama-3-8b-instruct` models. The Use Case API returns a list of all supported models.\n\nThe `prediction` endpoints require an authentication token with scope `machinelearning.predict`.",
+    "contact": {
+      "name": "Lucidworks",
+      "url": "https://lucidworks.com/",
+      "email": "support@lucidworks.com"
+    },
+    "termsOfService": "https://lucidworks.com/legal/developer-license-agreement/",
+    "license": {
+      "name": "Lucidworks",
+      "url": "https://lucidworks.com/legal/developer-license-agreement/"
+    }
+  },
+  "servers": [
+    {
+      "url": "https://APPLICATION_ID.applications.lucidworks.com",
+      "description": "Production"
+    }
+  ],
+  "paths": {
+    "/ai/prediction/{USE_CASE}/{MODEL_ID}": {
+      "post": {
+        "summary": "Model predictions by use case",
+        "description": "This is a basic example of a model that returns predictions from pre-trained models or custom models for the specified use case. \n\nIMPORTANT: The available use cases are detailed in their own section in this specification.",
+        "operationId": "post-ai-prediction-usecase-modelId",
+        "parameters": [
+          {
+            "name": "USE_CASE",
+            "in": "path",
+            "description": "The name of the use case for the model.",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "MODEL_ID",
+            "in": "path",
+            "description": "The unique identifier of the model.",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "schema": {
+              "type": "string"
+            },
+            "in": "header",
+            "name": "Authorization: Bearer ACCESS_TOKEN",
+            "description": "The authentication and authorization access token."
+          },
+          {
+            "schema": {
+              "type": "string"
+            },
+            "in": "header",
+            "name": "Content-Type",
+            "description": "application/json"
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/BasicGenericRequest"
+              },
+              "examples": {}
+            }
+          },
+          "required": true,
+          "description": "Request information varies based on the use case in the request. See the specific use case for valid information for that use case."
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BasicGenericResponse"
+                },
+                "examples": {}
+              }
+            }
+          },
+          "201": {
+            "description": "Created"
+          }
+        },
+        "x-stoplight": {
+          "id": "xd0hbcgmpoh07"
+        }
+      },
+      "parameters": [
+        {
+          "schema": {
+            "type": "string"
+          },
+          "name": "USE_CASE",
+          "in": "path",
+          "required": true,
+          "description": "The name of the use case for the model."
+        },
+        {
+          "schema": {
+            "type": "string"
+          },
+          "name": "MODEL_ID",
+          "in": "path",
+          "required": true,
+          "description": "The unique identifier of the model."
+        }
+      ]
+    },
+    "/ai/prediction/embedding/text-encoder": {
+      "post": {
+        "summary": "English language model text encoder",
+        "operationId": "post-ai-prediction-embedding-text-encoder",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/EmbeddingEncodersResponse"
+                },
+                "examples": {}
+              }
+            }
+          }
+        },
+        "x-stoplight": {
+          "id": "9sr7wid5brb19"
+        },
+        "description": "The English language encoder is an embedding use that takes in plain English text and returns a 768-dimensional vector encoding of that text. This model powers this semantic search.\n\nThe API truncates incoming text to approximately 256 words before the model encodes it and returns a vector. An example usage pattern is to encode all the texts and descriptions in a website and then use this encoder on query text, supporting natural language queries such as \"1990s children’s fiction\".\n\nEach API request includes one batch containing up to 32 text strings.",
+        "parameters": [
+          {
+            "schema": {
+              "type": "string"
+            },
+            "in": "header",
+            "name": "Authorization: Bearer ACCESS_TOKEN",
+            "description": "The authentication and authorization access token."
+          },
+          {
+            "schema": {
+              "type": "string",
+              "example": "application/json"
+            },
+            "in": "header",
+            "name": "Content-Type",
+            "description": "application/json"
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/BatchEmbeddingEncoders"
+              }
+            }
+          }
+        }
+      },
+      "parameters": []
+    },
+    "/ai/prediction/embedding/multilingual{MODEL_ID}": {
+      "post": {
+        "summary": "Multilingual language model text encoder",
+        "operationId": "post-ai-prediction-embedding-multilingual-modelId",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/EmbeddingEncodersResponse"
+                },
+                "examples": {}
+              }
+            }
+          }
+        },
+        "description": "The multilingual encoder is an embedding use case takes in plain text and returns a 384-dimensional vector encoding of that text. The API truncates incoming text to approximately 256 words before the model encodes it and returns a vector.\n\nEach API request includes one batch containing up to 32 text strings.\n\nThe text strings in a batch do not have to be in the same language. You can also use words from multiple languages with each text value. Because long text strings are truncated to approximately 256 words, the order and length of the value affects the return results.",
+        "parameters": [
+          {
+            "schema": {
+              "type": "string"
+            },
+            "in": "header",
+            "name": "Authorization: Bearer ACCESS_TOKEN",
+            "description": "The authentication and authorization access token."
+          },
+          {
+            "schema": {
+              "type": "string",
+              "example": "application/json"
+            },
+            "in": "header",
+            "name": "Content-Type",
+            "description": "application/json"
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/BatchEmbeddingEncoders"
+              }
+            }
+          }
+        },
+        "x-stoplight": {
+          "id": "3ny4cfy7nxxgz"
+        }
+      },
+      "parameters": [
+        {
+          "schema": {
+            "type": "string"
+          },
+          "name": "MODEL_ID",
+          "in": "path",
+          "required": true,
+          "description": "The unique identifier of the model."
+        }
+      ]
+    },
+    "/ai/prediction/embedding/{MODEL_ID}": {
+      "parameters": [
+        {
+          "schema": {
+            "type": "string"
+          },
+          "name": "MODEL_ID",
+          "in": "path",
+          "required": true
+        }
+      ],
+      "post": {
+        "summary": "Custom model prediction",
+        "operationId": "post-ai-prediction-embedding-modelId",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/EmbeddingEncodersResponse"
+                },
+                "examples": {}
+              }
+            }
+          }
+        },
+        "description": "The custom model prediction is an embedding use case. If a custom model is trained and deployed using the Lucidworks AI Models API, the 'DEPLOYMENT_ID' in the Models API is the same value as the MODEL_ID you enter in the custom model to return a prediction.",
+        "parameters": [
+          {
+            "schema": {
+              "type": "string"
+            },
+            "in": "header",
+            "name": "Authorization: Bearer ACCESS_TOKEN",
+            "description": "The authentication and authorization access token."
+          },
+          {
+            "schema": {
+              "type": "string",
+              "example": "application/json"
+            },
+            "in": "header",
+            "name": "Content-Type",
+            "description": "application/json"
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/BatchEmbeddingEncoders"
+              }
+            }
+          }
+        },
+        "x-stoplight": {
+          "id": "lko2kjbypvd44"
+        }
+      }
+    },
+    "/ai/prediction/classification/{MODEL_ID}": {
+      "post": {
+        "summary": "Classification use case",
+        "operationId": "post-ai-prediction-classification-modelId",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ClassificationResponse"
+                },
+                "examples": {}
+              }
+            }
+          }
+        },
+        "description": "The classification use case lets you use embedding models to compute similarity scores between the incoming text and the labels. It returns the labels ranked in order of most similar to least similar. \n\nThe classification use case is compatible with all Lucidworks hosted pre-trained and custom embedding models. The default behavior of embedding models is to always have a score returned.\n \n The `topK` and `similarityCutoff` parameters can be used to achieve behaviors where only the following are returned:\n\n * The single most applicable label\n\n * Labels with similarities that exceed a threshold\n \n * A set number of items\n\n * A set number if it exceeds the threshold\n\n\n",
+        "parameters": [
+          {
+            "schema": {
+              "type": "string"
+            },
+            "in": "header",
+            "name": "Authorization: Bearer ACCESS_TOKEN",
+            "description": "The authentication and authorization access token."
+          },
+          {
+            "schema": {
+              "type": "string",
+              "example": "application/json"
+            },
+            "in": "header",
+            "name": "Content-Type",
+            "description": "application/json"
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ClassificationRequest"
+              },
+              "examples": {}
+            }
+          }
+        },
+        "x-stoplight": {
+          "id": "sj36a4e8d1g4s"
+        }
+      },
+      "parameters": [
+        {
+          "schema": {
+            "type": "string",
+            "example": "6a092bd4-5098-466c-94aa-40bf6829430\""
+          },
+          "name": "MODEL_ID",
+          "in": "path",
+          "required": true,
+          "description": "Unique identifier for the model."
+        }
+      ]
+    },
+    "/ai/prediction/passthrough/{MODEL_ID}": {
+      "post": {
+        "summary": "Passthrough use case",
+        "operationId": "post-ai-prediction-passthrough-modelId",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PassthroughResponse"
+                },
+                "examples": {}
+              }
+            }
+          }
+        },
+        "description": "The passthrough use case lets you use the service as a proxy to the large language model (LLM). The service sends text (no additional prompts or other information) to the LLM and returns a response.",
+        "parameters": [
+          {
+            "schema": {
+              "type": "string"
+            },
+            "in": "header",
+            "name": "Authorization: Bearer ACCESS_TOKEN",
+            "description": "The authentication and authorization access token."
+          },
+          {
+            "schema": {
+              "type": "string",
+              "example": "application/json"
+            },
+            "in": "header",
+            "name": "Content-Type",
+            "description": "application/json"
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PassthroughRequest"
+              },
+              "examples": {}
+            }
+          }
+        },
+        "x-stoplight": {
+          "id": "mn4ru2bkvon8v"
+        }
+      },
+      "parameters": [
+        {
+          "schema": {
+            "type": "string",
+            "example": "6a092bd4-5098-466c-94aa-40bf6829430\""
+          },
+          "name": "MODEL_ID",
+          "in": "path",
+          "required": true,
+          "description": "Unique identifier for the model."
+        }
+      ]
+    },
+    "/ai/prediction/rag/{MODEL_ID}": {
+      "post": {
+        "summary": "RAG use case",
+        "operationId": "post-ai-prediction-rag-modelId-external-documents",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RagExtDocResponse"
+                },
+                "examples": {}
+              }
+            }
+          }
+        },
+        "description": "The rag use case uses candidate documents that are inserted into a LLM’s context to ground the generated response to those documents instead of generating an answer from details stored in the LLM’s trained weights. This type of search adds guardrails so the LLM can search private data collections.\n\nThe RAG search can perform queries against external documents passed in as part of the request.",
+        "parameters": [
+          {
+            "schema": {
+              "type": "string"
+            },
+            "in": "header",
+            "name": "Authorization: Bearer ACCESS_TOKEN",
+            "description": "The authentication and authorization access token."
+          },
+          {
+            "schema": {
+              "type": "string",
+              "example": "application/json"
+            },
+            "in": "header",
+            "name": "Content-Type",
+            "description": "application/json"
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RagExtDocRequest"
+              },
+              "examples": {}
+            }
+          }
+        },
+        "x-stoplight": {
+          "id": "02emjxuwuk3k6"
+        }
+      },
+      "parameters": [
+        {
+          "schema": {
+            "type": "string",
+            "example": "6a092bd4-5098-466c-94aa-40bf6829430\""
+          },
+          "name": "MODEL_ID",
+          "in": "path",
+          "required": true,
+          "description": "Unique identifier for the model."
+        }
+      ]
+    },
+    "/ai/prediction/standalone_query_rewriter/{MODEL_ID}": {
+      "post": {
+        "summary": "Standalone query rewriter",
+        "operationId": "post-ai-prediction-standalone-query-rewriter-modelId",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/StandaloneResponse"
+                },
+                "examples": {}
+              }
+            }
+          }
+        },
+        "description": "The standalone query rewriter use case rewrites the text in reference to the context based on the memoryUuid.",
+        "parameters": [
+          {
+            "schema": {
+              "type": "string"
+            },
+            "in": "header",
+            "name": "Authorization: Bearer ACCESS_TOKEN",
+            "description": "The authentication and authorization access token."
+          },
+          {
+            "schema": {
+              "type": "string",
+              "example": "application/json"
+            },
+            "in": "header",
+            "name": "Content-Type",
+            "description": "application/json"
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/StandaloneQueryRewriterRequest"
+              },
+              "examples": {}
+            }
+          }
+        },
+        "x-stoplight": {
+          "id": "hd2f7h2nlef1n"
+        }
+      },
+      "parameters": [
+        {
+          "schema": {
+            "type": "string",
+            "example": "6a092bd4-5098-466c-94aa-40bf6829430\""
+          },
+          "name": "MODEL_ID",
+          "in": "path",
+          "required": true,
+          "description": "Unique identifier for the model."
+        }
+      ]
+    },
+    "/ai/prediction/summarization/{MODEL_ID}": {
+      "post": {
+        "summary": "Summarization use case",
+        "operationId": "post-ai-prediction-summarization-modelId",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SummarizationResponse"
+                },
+                "examples": {}
+              }
+            }
+          }
+        },
+        "description": "In the summarization use case, the LLM ingests text and returns a summary of the text as a response.\n\nThe context length is 2048 tokens. No options can be configured.",
+        "parameters": [
+          {
+            "schema": {
+              "type": "string"
+            },
+            "in": "header",
+            "name": "Authorization: Bearer ACCESS_TOKEN",
+            "description": "The authentication and authorization access token."
+          },
+          {
+            "schema": {
+              "type": "string",
+              "example": "application/json"
+            },
+            "in": "header",
+            "name": "Content-Type",
+            "description": "application/json"
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SummarizationRequest"
+              },
+              "examples": {}
+            }
+          }
+        },
+        "x-stoplight": {
+          "id": "p9vwepw0ut3ob"
+        }
+      },
+      "parameters": [
+        {
+          "schema": {
+            "type": "string",
+            "example": "6a092bd4-5098-466c-94aa-40bf6829430\""
+          },
+          "name": "MODEL_ID",
+          "in": "path",
+          "required": true,
+          "description": "Unique identifier for the model."
+        }
+      ]
+    },
+    "/ai/prediction/keyword_extraction/{MODEL_ID}": {
+      "post": {
+        "summary": "Keyword extraction use case",
+        "operationId": "post-ai-prediction-keyword-extraction-modelId",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/KeywordExtractionResponse"
+                },
+                "examples": {}
+              }
+            }
+          }
+        },
+        "description": "In the keyword_extraction use case, the LLM ingests text and returns a JSON response that contains a list of keywords extracted from the text. No options can be configured.",
+        "parameters": [
+          {
+            "schema": {
+              "type": "string"
+            },
+            "in": "header",
+            "name": "Authorization: Bearer ACCESS_TOKEN",
+            "description": "The authentication and authorization access token."
+          },
+          {
+            "schema": {
+              "type": "string",
+              "example": "application/json"
+            },
+            "in": "header",
+            "name": "Content-Type",
+            "description": "application/json"
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/KeywordExtractionRequest"
+              },
+              "examples": {}
+            }
+          }
+        },
+        "x-stoplight": {
+          "id": "wtsklr2fluhzb"
+        }
+      },
+      "parameters": [
+        {
+          "schema": {
+            "type": "string",
+            "example": "6a092bd4-5098-466c-94aa-40bf6829430\""
+          },
+          "name": "MODEL_ID",
+          "in": "path",
+          "required": true,
+          "description": "Unique identifier for the model."
+        }
+      ]
+    },
+    "/ai/prediction/ner/{MODEL_ID}": {
+      "post": {
+        "summary": "Named Entity Recognition (NER) use case",
+        "operationId": "post-ai-prediction-ner-modelId",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/NerResponse"
+                }
+              }
+            }
+          }
+        },
+        "description": "In the Named Entity Recognition (NER) use case, the LLM ingests text and entities to extract and return a JSON response that contains a list of entities extracted from the text. No options can be configured.\n\nThis use case can be used to extract nouns and proper nouns such as Brand, Date, Company, Places, and Category in order to guide and refine searches.",
+        "parameters": [
+          {
+            "schema": {
+              "type": "string"
+            },
+            "in": "header",
+            "name": "Authorization: Bearer ACCESS_TOKEN",
+            "description": "The authentication and authorization access token."
+          },
+          {
+            "schema": {
+              "type": "string",
+              "example": "application/json"
+            },
+            "in": "header",
+            "name": "Content-Type",
+            "description": "application/json"
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/NerRequest"
+              }
+            }
+          }
+        },
+        "x-stoplight": {
+          "id": "f278tt0zwpjmt"
+        }
+      },
+      "parameters": [
+        {
+          "schema": {
+            "type": "string",
+            "example": "6a092bd4-5098-466c-94aa-40bf6829430\""
+          },
+          "name": "MODEL_ID",
+          "in": "path",
+          "required": true,
+          "description": "Unique identifier for the model."
+        }
+      ]
+    }
+  },
+  "components": {
+    "schemas": {
+      "BasicGenericRequest": {
+        "title": "BasicGenericRequest",
+        "x-stoplight": {
+          "id": "0gjkp36pbgx97"
+        },
+        "type": "object",
+        "description": "",
+        "x-examples": {},
+        "properties": {
+          "batch": {
+            "type": "array",
+            "description": "The batch of key:value pairs used as inputs in the prediction. Up to 32 inputs per request are allowed.",
+            "maxItems": 32,
+            "items": {
+              "type": "object",
+              "properties": {
+                "text": {
+                  "type": "string",
+                  "description": "The content the model analyzes.",
+                  "example": "The content the model analyzes."
+                }
+              }
+            }
+          },
+          "modelConfig": {
+            "$ref": "#/components/schemas/ModelConfig"
+          }
+        }
+      },
+      "BasicGenericResponse": {
+        "type": "object",
+        "x-stoplight": {
+          "id": "zo1upzh16onzp"
+        },
+        "x-examples": {},
+        "description": "IMPORTANT: This contains some of the information in a response to this use case. However, the response varies based on the use case and other information in the request. See the specific use case for valid information for that use case.",
+        "properties": {
+          "predictions": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/BasicGenericResponseTokens"
+            }
+          }
+        }
+      },
+      "BasicGenericResponseTokens": {
+        "type": "object",
+        "x-stoplight": {
+          "id": "h5npw5476i5mj"
+        },
+        "properties": {
+          "response": {
+            "type": "string",
+            "description": "The results returned from the request.",
+            "example": "The response varies based on the use case of the request. For valid information, see the individual use case documentation. "
+          }
+        }
+      },
+      "BatchEmbeddingEncoders": {
+        "title": "BatchEmbeddingEncoders",
+        "x-stoplight": {
+          "id": "14d7lt5z9rn24"
+        },
+        "type": "object",
+        "x-examples": {},
+        "properties": {
+          "batch": {
+            "x-stoplight": {
+              "id": "yh1il0d81f5se"
+            },
+            "type": "array",
+            "description": "The batch of key:value pairs used as inputs in the prediction. Up to 32 inputs per request are allowed.",
+            "maxItems": 32,
+            "items": {
+              "x-stoplight": {
+                "id": "uyznzxhqdfqbh"
+              },
+              "type": "object",
+              "properties": {
+                "text": {
+                  "type": "string",
+                  "x-stoplight": {
+                    "id": "r9joksr0pu8j8"
+                  },
+                  "description": "The content the model analyzes."
+                }
+              }
+            }
+          },
+          "useCaseConfig": {
+            "$ref": "#/components/schemas/UseCaseConfigEmbedding"
+          }
+        }
+      },
+      "BatchClassification": {
+        "title": "BatchClassification",
+        "x-stoplight": {
+          "id": "8ozav63il6vtg"
+        },
+        "type": "object",
+        "x-examples": {},
+        "properties": {
+          "batch": {
+            "type": "array",
+            "description": "The batch of key:value pairs used as inputs in the prediction. Up to 32 inputs per request are allowed.",
+            "maxItems": 32,
+            "items": {
+              "type": "object",
+              "properties": {
+                "text": {
+                  "type": "string",
+                  "description": "The content the model analyzes."
+                }
+              }
+            }
+          },
+          "useCaseConfig": {
+            "$ref": "#/components/schemas/UseCaseConfigClassification"
+          }
+        }
+      },
+      "BatchRag": {
+        "title": "BatchRag",
+        "x-stoplight": {
+          "id": "1847784cc36d0"
+        },
+        "type": "array",
+        "x-examples": {},
+        "items": {
+          "x-stoplight": {
+            "id": "6ij3h4t6sz1ks"
+          },
+          "type": "object",
+          "properties": {
+            "text": {
+              "type": "string",
+              "x-stoplight": {
+                "id": "8bzt3m6hmlo1d"
+              },
+              "description": "Content for the model to analyze. Multiple instances of text can be sent in the request.",
+              "example": "What is RAG?"
+            },
+            "documents": {
+              "type": "array",
+              "items": {
+                "$ref": "#/components/schemas/Document"
+              }
+            }
+          }
+        }
+      },
+      "Document": {
+        "title": "Document",
+        "type": "object",
+        "description": "The document information the model analyzes.",
+        "properties": {
+          "body": {
+            "type": "string",
+            "x-stoplight": {
+              "id": "pb4pg1j4sdyg5"
+            },
+            "description": "The contents of the document.",
+            "example": "Retrieval Augmented Generation, known as RAG, a framework promising to optimize generative AI."
+          },
+          "source": {
+            "type": "string",
+            "x-stoplight": {
+              "id": "twnscc6lc2z3z"
+            },
+            "description": "The URL that identifies the source of the document.",
+            "example": "http://rag.com/22"
+          },
+          "title": {
+            "type": "string",
+            "x-stoplight": {
+              "id": "7i8qpmfd3t49d"
+            },
+            "description": "The title of the document.",
+            "example": "What are the benefits of RAG?"
+          },
+          "date": {
+            "type": "string",
+            "x-stoplight": {
+              "id": "qbbwd5m0zq1vp"
+            },
+            "format": "date-time",
+            "example": "2022-01-31T19:31:34Z",
+            "description": "The date and time the document was created, displayed in the required ISO-8601 format of `yyyy-mm-ddThh:mm:ssZ`."
+          }
+        }
+      },
+      "EmbeddingEncodersResponse": {
+        "type": "object",
+        "x-stoplight": {
+          "id": "tvi7d1e1ye58v"
+        },
+        "x-examples": {},
+        "properties": {
+          "predictions": {
+            "type": "array",
+            "x-stoplight": {
+              "id": "q2t9of73sdqec"
+            },
+            "items": {
+              "x-stoplight": {
+                "id": "bhc6bmrsmhisq"
+              },
+              "type": "object",
+              "properties": {
+                "vector": {
+                  "$ref": "#/components/schemas/JsonNode"
+                }
+              }
+            }
+          }
+        }
+      },
+      "JsonNode": {
+        "type": "array",
+        "description": "The list of model predictions for the input batch.",
+        "example": [
+          -0.0011799398344010115,
+          0.07051781564950943,
+          -0.06832550466060638,
+          0.020428132265806198,
+          0.11977626383304596
+        ],
+        "items": {}
+      },
+      "KeywordExtractionRequest": {
+        "title": "KeywordExtractionRequest",
+        "x-stoplight": {
+          "id": "6vt2wbize9zuf"
+        },
+        "type": "object",
+        "x-examples": {},
+        "properties": {
+          "batch": {
+            "type": "array",
+            "description": "The batch of key:value pairs used as inputs in the prediction. Up to 32 inputs per request are allowed.",
+            "maxItems": 32,
+            "items": {
+              "type": "object",
+              "properties": {
+                "text": {
+                  "type": "string",
+                  "description": "The content the model analyzes.",
+                  "example": "Joseph Robinette Biden Jr.is an American politician who is the 46th and current president of the United States. Ideologically a moderate member of the Democratic Party, he previously served as the 47th vice president from 2009 to 2017 under President Barack Obama and represented Delaware in the United States Senate from 1973 to 2009.Born in Scranton, Pennsylvania, Biden moved with his family to Delaware in 1953. He studied at the University of Delaware before earning his law degree from Syracuse University. He was elected to the New Castle County Council in 1970 and to the U.S. Senate in 1972. As a senator, Biden drafted and led the effort to pass the Violent Crime Control and Law Enforcement Act and the Violence Against Women Act. He also oversaw six U.S. Supreme Court confirmation hearings, including the contentious hearings for Robert Bork and Clarence Thomas. Biden ran unsuccessfully for the Democratic presidential nomination in 1988 and 2008. In 2008, Obama chose Biden as his running mate, and Biden was a close counselor to Obama during his two terms as vice president. In the 2020 presidential election, Biden and his running mate, Kamala Harris, defeated incumbents Donald Trump and Mike Pence. Biden is the second Catholic president in U.S. history (after John F. Kennedy), and his politics have been widely described as profoundly influenced by Catholic social teaching."
+                }
+              }
+            }
+          },
+          "useCaseConfig": {
+            "$ref": "#/components/schemas/UseCaseConfigKeywordExtraction"
+          },
+          "modelConfig": {
+            "$ref": "#/components/schemas/ModelConfig"
+          }
+        }
+      },
+      "KeywordExtractionResponse": {
+        "type": "object",
+        "x-stoplight": {
+          "id": "w7auajr75f7ir"
+        },
+        "x-examples": {},
+        "properties": {
+          "predictions": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/KeywordExtractionResponseTokens"
+            }
+          }
+        }
+      },
+      "KeywordExtractionResponseTokens": {
+        "type": "object",
+        "x-stoplight": {
+          "id": "l8itgvbgn07m8"
+        },
+        "x-examples": {},
+        "properties": {
+          "response": {
+            "type": "string",
+            "description": "The results returned from the request.",
+            "example": "Joseph Robinette Biden Jr., 46th president of the United States, Democratic Party, Vice President, Barack Obama, Delaware, University of Delaware, Syracuse University, Violent Crime Control and Law Enforcement Act, Violence Against Women Act."
+          },
+          "tokensUsed": {
+            "$ref": "#/components/schemas/Token"
+          },
+          "keywords": {
+            "type": "array",
+            "description": "Keywords derived from the response. The number of keywords is limited to the `maxKeywords` field in the request. \n```json\n\"keywords\": [\n        \"Joseph Robinette Biden Jr.\",\n        \"46th president of the United States\",\n        \"Democratic Party\",\n        \"Vice President\",\n        \"Barack Obama\",\n        \"Delaware\",\n        \"University of Delaware\",\n        \"Syracuse University\",\n        \"Violent Crime Control and Law Enforcement Act\",\n        \"Violence Against Women Act\"\n      ]\n```",
+            "items": {
+              "type": "string",
+              "example": "Joseph Robinette Biden Jr."
+            }
+          }
+        }
+      },
+      "NerRequest": {
+        "title": "NerRequest",
+        "x-stoplight": {
+          "id": "ulw8ar1ekp5zs"
+        },
+        "type": "object",
+        "x-examples": {},
+        "properties": {
+          "batch": {
+            "type": "array",
+            "description": "The batch of key:value pairs used as inputs in the prediction. Up to 32 inputs per request are allowed.",
+            "maxItems": 32,
+            "items": {
+              "type": "object",
+              "properties": {
+                "text": {
+                  "type": "string",
+                  "description": "The content the model analyzes.",
+                  "example": "Mahatma Gandhi, born on October 2, 1869, in Porbandar, India, led a life that profoundly shaped the course of history. Inspired by his principles of non-violence, truth, and civil disobedience, Gandhi became a pivotal figure in India'\\''s struggle for independence from British rule. His journey began as a lawyer in South Africa, where he experienced racial discrimination and injustice, sparking his commitment to social justice. Returning to India, he became the face of the nonviolent resistance movement, employing methods like peaceful protests, fasting, and marches. The iconic Salt March of 1930 exemplified his philosophy as thousands followed him in the defiance of salt taxes imposed by the British. Gandhi'\\''s ascetic lifestyle, clad in simple attire and practicing self-sufficiency, endeared him to the masses. Despite facing imprisonment multiple times, he remained steadfast in his pursuit of India'\\''s freedom. Tragically, Gandhi was assassinated on January 30, 1948, but his legacy endures globally as a symbol of peace, tolerance, and the transformative power of nonviolent resistance."
+                }
+              }
+            }
+          },
+          "useCaseConfig": {
+            "$ref": "#/components/schemas/UseCaseConfigNer"
+          },
+          "modelConfig": {
+            "$ref": "#/components/schemas/ModelConfig"
+          }
+        }
+      },
+      "NerResponse": {
+        "type": "object",
+        "x-stoplight": {
+          "id": "whwtrr40rlvjx"
+        },
+        "x-examples": {},
+        "properties": {
+          "predictions": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/NerResponseTokens"
+            }
+          }
+        }
+      },
+      "NerResponseTokens": {
+        "type": "object",
+        "x-stoplight": {
+          "id": "j5pfrj4wemkqj"
+        },
+        "x-examples": {},
+        "properties": {
+          "tokensUsed": {
+            "$ref": "#/components/schemas/Token"
+          },
+          "entities": {
+            "type": "object",
+            "x-stoplight": {
+              "id": "h06t4l9r3qp5e"
+            },
+            "properties": {
+              "entity": {
+                "type": "array",
+                "x-stoplight": {
+                  "id": "kppy5f6besh1h"
+                },
+                "description": "The result of the requested entity type that was a key with a list of example values to search.\nFor example:\n\n{\n\t\t\t\t\"Location\": [\n\t\t\t\t\t\"Porbandar\",\n\t\t\t\t\t\"India\",\n\t\t\t\t\t\"South Africa\"\n\t\t\t\t]\n\t\t\t}",
+                "items": {
+                  "x-stoplight": {
+                    "id": "4n4922wbsof2f"
+                  },
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "response": {
+            "type": "string",
+            "description": "The results returned from the request.",
+            "example": "{\\n\\\"Location\\\": [\\n\\\"Porbandar\\\",\\n\\\"India\\\"\\n]\\n}"
+          }
+        }
+      },
+      "ModelConfig": {
+        "title": "ModelConfig",
+        "x-stoplight": {
+          "id": "qcyl3jdn5njdn"
+        },
+        "type": "object",
+        "description": "Provides fields and values that specify ranges for tokens. Fields used for specific use cases and models are specified. The default values are used if other values are not specified.",
+        "properties": {
+          "temperature": {
+            "type": "number",
+            "format": "float",
+            "example": 0.8,
+            "minimum": 0,
+            "maximum": 2,
+            "description": "A floating point number, sampling temperature between 0 and 2. A higher sampling temperature such as 0.8, results in more random output. A lower value such as 0.2 results in more focused output."
+          },
+          "topP": {
+            "type": "number",
+            "format": "float",
+            "example": 1,
+            "minimum": 1,
+            "maximum": 1,
+            "description": "A floating-point number that controls the cumulative probability of the top tokens to consider. Required range is [0, 1]. Set topP to 1 to consider all tokens."
+          },
+          "presencePenalty": {
+            "type": "number",
+            "format": "float",
+            "minimum": -2,
+            "maximum": 2,
+            "description": "A floating-point number that penalizes new tokens based on whether they have already appeared in the text. Required range is [-2, 2]. A value greater than zero (0) encourages the model to use new tokens. A value less than zero (0) encourages the model to repeat existing tokens.",
+            "example": 2
+          },
+          "frequencyPenalty": {
+            "type": "number",
+            "format": "float",
+            "minimum": -2,
+            "maximum": 2,
+            "example": 1,
+            "description": "A floating-point number that penalizes new tokens based on their frequency in the generated text. Required range is [-2, 2]. A value greater than zero (0) encourages the model to use new tokens. A value less than zero (0) encourages the model to repeat existing tokens."
+          },
+          "maxTokens": {
+            "type": "integer",
+            "format": "int32",
+            "example": 1,
+            "description": "The maximum number of tokens to generate per output sequence."
+          },
+          "apiKey": {
+            "type": "string",
+            "description": "This parameter is optional, and is only required when the specified model is used for prediction:\n\nThe syntax is:\n\n`\"apiKey\": \"[OPENAI_API_KEY]\"` for OpenAI models.\n\n`\"apiKey\": \"[KEY1] or [KEY2]\"` for the deployed Azure OpenAI model you want to use. Either key is a valid value in the request.\n\n`\"apiKey\": \"[BASE64_ENCODED_GOOGLE_SERVICE_ACCOUNT_KEY]\"` for Google VertexAI models.",
+            "example": "API key specific to use case and model"
+          },
+          "azureDeployment": {
+            "type": "string",
+            "x-stoplight": {
+              "id": "dmh603kvfecze"
+            },
+            "example": "DEPLOYMENT_NAME",
+            "description": "This optional parameter is the name of the deployed Azure OpenAI model and is only required when a deployed Azure OpenAI model is used for prediction."
+          },
+          "azureEndpoint": {
+            "type": "string",
+            "x-stoplight": {
+              "id": "j27rm7p97tksy"
+            },
+            "description": "\t\nThis optional parameter is the URL endpoint of the deployed Azure OpenAI model and is only required when a deployed Azure OpenAI model is used for prediction.",
+            "example": "https://azure.endpoint.com"
+          },
+          "googleProjectId": {
+            "type": "string",
+            "x-stoplight": {
+              "id": "xwfd8sdgfquek"
+            },
+            "example": "[GOOGLE_PROJECT_ID]",
+            "description": "This parameter is optional, and is only required when a Google VertexAI model is used for prediction.  "
+          },
+          "googleRegion": {
+            "type": "string",
+            "x-stoplight": {
+              "id": "ev3hgv72zg8v1"
+            },
+            "description": "This parameter is optional, and is only required when a Google VertexAI model is used for prediction.  The possible region values are:\n\n* us-central1\n* us-west4\n* northamerica-northeast1\n* us-east4\n* us-west1\n* asia-northeast3\n* asia-southeast1\n* asia-northeast",
+            "example": "[GOOGLE_PROJECT_REGION_OF_MODEL_ACCESS]"
+          }
+        }
+      },
+      "PassthroughRequest": {
+        "title": "PassthroughRequest",
+        "x-stoplight": {
+          "id": "c1e0yborohvoz"
+        },
+        "type": "object",
+        "x-examples": {},
+        "properties": {
+          "batch": {
+            "type": "array",
+            "description": "The batch of key:value pairs used as inputs in the prediction. Up to 32 inputs per request are allowed.",
+            "maxItems": 32,
+            "items": {
+              "type": "object",
+              "properties": {
+                "text": {
+                  "type": "string",
+                  "x-stoplight": {
+                    "id": "t59at9anv3pt7"
+                  },
+                  "description": "The content the model analyzes.",
+                  "example": "Who was the first President of the United States?"
+                }
+              }
+            }
+          },
+          "useCaseConfig": {
+            "$ref": "#/components/schemas/UseCaseConfigPassthrough"
+          },
+          "modelConfig": {
+            "$ref": "#/components/schemas/ModelConfig"
+          }
+        }
+      },
+      "ClassificationRequest": {
+        "title": "ClassificationRequest",
+        "x-stoplight": {
+          "id": "dewn4agy31qds"
+        },
+        "type": "object",
+        "x-examples": {},
+        "properties": {
+          "batch": {
+            "type": "array",
+            "description": "The batch of key:value pairs used as inputs in the prediction. Up to 32 inputs per request are allowed.",
+            "maxItems": 32,
+            "items": {
+              "type": "object",
+              "properties": {
+                "text": {
+                  "type": "string",
+                  "description": "The content the model analyzes.",
+                  "example": "Not all those who wander are lost."
+                }
+              }
+            }
+          },
+          "useCaseConfig": {
+            "$ref": "#/components/schemas/UseCaseConfigClassification"
+          }
+        }
+      },
+      "PassthroughResponse": {
+        "type": "object",
+        "x-stoplight": {
+          "id": "warbkfk5hga3b"
+        },
+        "properties": {
+          "predictions": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/PassthroughResponseTokens"
+            }
+          }
+        },
+        "x-examples": {}
+      },
+      "ClassificationResponse": {
+        "type": "array",
+        "x-stoplight": {
+          "id": "ueef27y8mdhym"
+        },
+        "x-examples": {},
+        "items": {
+          "x-stoplight": {
+            "id": "a8p34s8cgapkt"
+          },
+          "type": "object",
+          "properties": {
+            "predictions": {
+              "type": "array",
+              "x-stoplight": {
+                "id": "7317xl3q6wgdh"
+              },
+              "items": {
+                "x-stoplight": {
+                  "id": "rnw6r9p1ne4nj"
+                },
+                "type": "object",
+                "properties": {
+                  "tokensUsed": {
+                    "type": "object",
+                    "x-stoplight": {
+                      "id": "xiir66iyg7l09"
+                    },
+                    "properties": {
+                      "inputTokens": {
+                        "type": "integer",
+                        "x-stoplight": {
+                          "id": "q6lrg5j7hh3ow"
+                        },
+                        "example": 11,
+                        "description": "The number of tokens created from the text input into the model."
+                      },
+                      "labelTokens": {
+                        "type": "integer",
+                        "x-stoplight": {
+                          "id": "dw8x8ghlap7nj"
+                        },
+                        "description": "The number of tokens created from the labels entered in the request.",
+                        "example": 14
+                      }
+                    }
+                  },
+                  "labels": {
+                    "type": "string",
+                    "x-stoplight": {
+                      "id": "44cglrruuhpz9"
+                    },
+                    "description": "This is a list of strings that classify information.\n\nFor example:\n\n \"labels\": {\n       \"Lord of the Rings\": 0.7287280559539795,\n        \"Harry Potter\": 0.7193666100502014\n    }\n"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "PassthroughResponseTokens": {
+        "type": "object",
+        "x-stoplight": {
+          "id": "kiptne5qcr0gh"
+        },
+        "properties": {
+          "response": {
+            "type": "string",
+            "x-stoplight": {
+              "id": "9ddycxisvubki"
+            },
+            "description": "The results returned from the request.",
+            "example": "The first President of the United States was George Washington."
+          },
+          "tokensUsed": {
+            "$ref": "#/components/schemas/Token"
+          }
+        }
+      },
+      "RagExtDocRequest": {
+        "title": "RagExtDocRequest",
+        "x-stoplight": {
+          "id": "e4ifegrrje461"
+        },
+        "type": "object",
+        "properties": {
+          "batch": {
+            "$ref": "#/components/schemas/BatchRag"
+          },
+          "useCaseConfig": {
+            "$ref": "#/components/schemas/UseCaseConfigRagExtDoc"
+          },
+          "modelConfig": {
+            "$ref": "#/components/schemas/ModelConfig"
+          }
+        }
+      },
+      "RagExtDocResponse": {
+        "type": "object",
+        "x-stoplight": {
+          "id": "5elkmnmg7h372"
+        },
+        "x-examples": {},
+        "properties": {
+          "predictions": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/RagExtDocResponseTokens"
+            }
+          }
+        }
+      },
+      "RagExtDocResponseTokens": {
+        "type": "object",
+        "x-stoplight": {
+          "id": "zjaxpnvo6m4w7"
+        },
+        "properties": {
+          "response": {
+            "type": "string",
+            "description": "The unparsed response returned from the request.",
+            "example": "ANSWER: \\\"Retrieval Augmented Generation, known as RAG, a framework promising to optimize generative AI.\"\\nSOURCES: [\\\"http://example.com/112\\\"]"
+          },
+          "tokensUsed": {
+            "$ref": "#/components/schemas/Token"
+          },
+          "answer": {
+            "type": "string",
+            "x-stoplight": {
+              "id": "6829enopo79zh"
+            },
+            "description": "The parsed response text from the document. ",
+            "example": "Retrieval Augmented Generation, known as RAG, a framework promising to optimize generative AI."
+          },
+          "sources": {
+            "type": "string",
+            "x-stoplight": {
+              "id": "mu3bpvfzhqqwc"
+            },
+            "description": "The URL that identifies the source of the document returned in the response. Multiple results may be returned.",
+            "example": "http://example.com/112"
+          },
+          "memoryUuid": {
+            "type": "string",
+            "x-stoplight": {
+              "id": "m7m4pmps744ea"
+            },
+            "description": "The universal unique identifier (UUID) stored in the trained set of data in the model that is used in the model request.\n\nThis parameter is optional, and is used when previous chat history reference information is available.",
+            "example": "27a887fe-3d7c-4ef0-9597-e2dfc054c20e"
+          }
+        }
+      },
+      "StandaloneQueryRewriterRequest": {
+        "title": "StandaloneQueryRewriterRequest",
+        "x-stoplight": {
+          "id": "6vxp8u47dr4kz"
+        },
+        "type": "object",
+        "x-examples": {},
+        "properties": {
+          "batch": {
+            "type": "array",
+            "description": "The batch of key:value pairs used as inputs in the prediction. Up to 32 inputs per request are allowed.",
+            "maxItems": 32,
+            "items": {
+              "type": "object",
+              "properties": {
+                "text": {
+                  "type": "string",
+                  "description": "The content the model analyzes.",
+                  "example": "Is it a framework?"
+                }
+              }
+            }
+          },
+          "useCaseConfig": {
+            "$ref": "#/components/schemas/UseCaseConfigStandalone"
+          },
+          "modelConfig": {
+            "$ref": "#/components/schemas/ModelConfig"
+          }
+        }
+      },
+      "StandaloneResponse": {
+        "type": "object",
+        "x-stoplight": {
+          "id": "t4kkdox6cudhr"
+        },
+        "x-examples": {},
+        "properties": {
+          "predictions": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/StandaloneResponseTokens"
+            }
+          }
+        }
+      },
+      "StandaloneResponseTokens": {
+        "type": "object",
+        "x-stoplight": {
+          "id": "sya4c4o5z2lf8"
+        },
+        "properties": {
+          "response": {
+            "type": "string",
+            "description": "The results returned from the request.",
+            "example": "Is RAG a framework?"
+          },
+          "tokensUsed": {
+            "$ref": "#/components/schemas/Token"
+          }
+        }
+      },
+      "SummarizationRequest": {
+        "title": "SummarizationRequest",
+        "x-stoplight": {
+          "id": "bfyzfea48mfwr"
+        },
+        "type": "object",
+        "x-examples": {},
+        "properties": {
+          "batch": {
+            "type": "array",
+            "description": "The batch of key:value pairs used as inputs in the prediction. Up to 32 inputs per request are allowed.",
+            "maxItems": 32,
+            "items": {
+              "type": "object",
+              "properties": {
+                "text": {
+                  "type": "string",
+                  "description": "The content the model analyzes.",
+                  "example": "Nearly ten years had passed since the Dursleys had woken up to find their nephew on the front step, but Privet Drive had hardly changed at all. The sun rose on the same tidy front gardens and lit up the brass number four on the Dursleys''' front door; it crept into their living room, which was almost exactly the same as it had been on the night when Mr. Dursley had seen that fateful news report about the owls. Only the photographs on the mantelpiece really showed how much time had passed. Ten years ago, there had been lots of pictures of what looked like a large pink beach ball wearing different-colored bonnets - but Dudley Dursley was no longer a baby, and now the photographs showed a large blond boy riding his first bicycle, on a carousel at the fair, playing a computer game with his father, being hugged and kissed by his mother. The room held no sign at all that another boy lived in the house, too."
+                }
+              }
+            }
+          },
+          "useCaseConfig": {
+            "$ref": "#/components/schemas/UseCaseConfigSummarization"
+          },
+          "modelConfig": {
+            "$ref": "#/components/schemas/ModelConfig"
+          }
+        }
+      },
+      "SummarizationResponse": {
+        "type": "object",
+        "x-stoplight": {
+          "id": "vhs16mthiqxrq"
+        },
+        "x-examples": {},
+        "properties": {
+          "predictions": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/SummarizationResponseTokens"
+            }
+          }
+        }
+      },
+      "SummarizationResponseTokens": {
+        "type": "object",
+        "x-stoplight": {
+          "id": "0b1cwn60o37yo"
+        },
+        "properties": {
+          "tokensUsed": {
+            "$ref": "#/components/schemas/Token"
+          },
+          "response": {
+            "type": "string",
+            "description": "The results returned from the request.",
+            "example": "A decade after the Dursleys found their nephew on their doorstep, Privet Drive remains largely unchanged. The only noticeable difference is in the family photographs, which now depict Dudley Dursley as a large blond boy engaged in various activities, replacing his baby pictures. There is no indication of another boy living in the house."
+          }
+        },
+        "x-examples": {}
+      },
+      "Token": {
+        "type": "object",
+        "properties": {
+          "promptTokens": {
+            "type": "integer",
+            "format": "int32",
+            "description": "The number of tokens generated to prompt the model to continue generating results.",
+            "example": 148
+          },
+          "completionTokens": {
+            "type": "integer",
+            "format": "int32",
+            "description": "The number of tokens used until the model completes.",
+            "example": 27
+          },
+          "totalTokens": {
+            "type": "integer",
+            "format": "int32",
+            "description": "The sum of the prompt and completion tokens used in the model.",
+            "example": 175
+          }
+        }
+      },
+      "UseCaseConfigKeywordExtraction": {
+        "title": "UseCaseConfigKeywordExtraction",
+        "x-stoplight": {
+          "id": "k0sxw4jgsd8ch"
+        },
+        "type": "object",
+        "properties": {
+          "maxKeywords": {
+            "type": "integer",
+            "example": 100,
+            "description": "This parameter specifies the maximum number of keywords that can be extracted.",
+            "x-stoplight": {
+              "id": "is5eeomo2utbw"
+            }
+          }
+        }
+      },
+      "UseCaseConfigEmbedding": {
+        "title": "UseCaseConfigKeywordEmbedding",
+        "x-stoplight": {
+          "id": "d7welx5e8vctk"
+        },
+        "type": "object",
+        "properties": {
+          "dataType": {
+            "type": "string",
+            "description": "This optional parameter enables model-specific handling in the Prediction API to help improve model accuracy. Use the most applicable fields based on available dataTypes and the dataType value that best aligns with the text sent to the Prediction API.\n\nThe two string values to use for embedding models are:\n\n* `\"dataType\": \"query\"` for the query. For query-to-query pairing, best practice is to use `dataType=query` on both API calls.\n\n* `\"dataType\": \"passage\"` for fields searched at query time.\n\nFor example, if questions and answers from a FAQ are indexed, the value for questions is `\"dataType\": \"query\"` and the value for the answers is `\"dataType\": \"passage\"`. ",
+            "default": "query",
+            "example": "query or passage"
+          }
+        }
+      },
+      "UseCaseConfigNer": {
+        "title": "UseCaseConfigNer",
+        "x-stoplight": {
+          "id": "8r0w6mdyojens"
+        },
+        "type": "object",
+        "properties": {
+          "entityTypeMap": {
+            "type": "object",
+            "x-stoplight": {
+              "id": "si2smqfu723we"
+            },
+            "properties": {
+              "entity": {
+                "type": "array",
+                "x-stoplight": {
+                  "id": "bn9xvied3h7zz"
+                },
+                "description": "\"entity\": [exampleA, exampleB], \"entity1\": [exampleC, exampleD]\n\nFor example:\n\n\"Location\": [\"India\", \"South Africa\"]\n\nThis parameter provides a map with entity type as a key with a list of example values to search. The entity type is required, but example values are optional and can be empty. Multiple entities with examples can be entered in the request.\n\nIn the Fusion Call Lucidworks AI Index stage] and the Fusion Call Lucidworks AI Query stage, the `useCaseConfig entityTypeMap` parameter only supports a string. Therefore, the string entered in Fusion is converted to a JSON string, which is required in the Lucidworks AI `entityTypeMap` variable. ",
+                "items": {
+                  "x-stoplight": {
+                    "id": "fxa5v72vba7e1"
+                  },
+                  "type": "string",
+                  "example": "example1, example2"
+                }
+              }
+            }
+          }
+        }
+      },
+      "UseCaseConfigPassthrough": {
+        "title": "UseCaseConfigPassthrough",
+        "x-stoplight": {
+          "id": "ulzwvg0d33hck"
+        },
+        "type": "object",
+        "properties": {
+          "useSystemPrompt": {
+            "type": "boolean",
+            "description": "This optional parameter contains a default value of true. If set to false, the `batch.text` value serves as the prompt for the model. The prompt must be in a specific format the model can comprehend."
+          },
+          "dataType": {
+            "type": "string",
+            "x-stoplight": {
+              "id": "p93jwon9l44nf"
+            },
+            "description": "This optional parameter enables model-specific handling in the Prediction API to help improve model accuracy. Use the most applicable fields based on available dataTypes and the dataType value that best aligns with the text sent to the Prediction API.\n\nThe values for `dataType` in the Passthrough use case are:\n\n* `\"dataType\": \"text\"` - This value is equivalent to `\"useSystemPrompt\": true` and is a pre-defined, generic prompt.\n\n* `\"dataType\": \"raw_prompt\"` - This value is equivalent to `\"useSystemPrompt\": false` and is passed directly to the model or third-party API.\n\n* `\"dataType\": \"json_prompt\"` - This value follows the generics that allow three roles:\n    - `system`\n\n    - `user` \n        - Only the last user message is truncated.\n        - If the API does not support system prompts, the user role is substituted for the system role.\n\n    - `assistant`\n        - If the last message role is `assistant`, it is used as a pre-fill for generation and is the first generated token the model uses. The pre-fill is prepended to the model output, which makes models less verbose and helps enforce specific outputs such as YAML.\n        - The Google VertexAI does not support generation pre-fills, so an exception error is generated.\n\n    - This follows the HuggingFace template contraints at https://huggingface.co/docs/transformers/main/en/chat_templating.\n\n    - Additional `json_prompt` information:\n\n        - Consecutive messages for the same role are merged.\n        - You can paste the information for a hosted model into the `json_prompt` value and change the model name in the stage. ",
+            "example": "json_prompt"
+          }
+        },
+        "description": "NOTE: If both `useSystemPrompt` and `dataType` are present, the value in `dataType` is used."
+      },
+      "UseCaseConfigRagExtDoc": {
+        "title": "UseCaseConfigRagChat",
+        "x-stoplight": {
+          "id": "7yf2yx2erom4n"
+        },
+        "type": "object",
+        "properties": {
+          "memoryUuid": {
+            "type": "string",
+            "description": "The universal unique identifier (UUID) stored in the trained set of data in the model that is used in the model request.\n\nThis parameter is optional, and is used when previous chat history reference information is available.",
+            "example": "27a887fe-3d7c-4ef0-9597-e2dfc054c20e"
+          },
+          "extractRelevantContent": {
+            "type": "boolean",
+            "description": "This determines if relevant content can be extracted in the request.",
+            "default": false
+          }
+        }
+      },
+      "UseCaseConfigSummarization": {
+        "title": "UseCaseConfigSummarization",
+        "x-stoplight": {
+          "id": "j5hp1d8qrjsgq"
+        },
+        "type": "object",
+        "properties": {
+          "maxWords": {
+            "type": "integer",
+            "example": 100,
+            "description": "This parameter specifies the maximum number of words returned in the summary when generated by the model."
+          }
+        }
+      },
+      "UseCaseConfigStandalone": {
+        "title": "UseCaseConfigStandalone",
+        "x-stoplight": {
+          "id": "l3u3dnrmujdka"
+        },
+        "type": "object",
+        "properties": {
+          "memoryUuid": {
+            "type": "string",
+            "description": "The universal unique identifier (UUID) stored in the trained set of data in the model that is used in the model request.\n\nThis parameter is optional, and is used when previous chat history reference information is available.",
+            "example": "27a887fe-3d7c-4ef0-9597-e2dfc054c20e"
+          }
+        }
+      },
+      "UseCaseConfigClassification": {
+        "title": "UseCaseConfigClassification",
+        "x-stoplight": {
+          "id": "rifkbhgx6w93i"
+        },
+        "type": "object",
+        "required": [
+          "labels"
+        ],
+        "properties": {
+          "labels": {
+            "type": "array",
+            "x-stoplight": {
+              "id": "joxq5vtj5o4iv"
+            },
+            "description": "This is a list of strings that classify information. \n\nFor example, \n\n\"labels\": [\"Harry Potter\", \"Lord of the Rings\"]",
+            "items": {
+              "x-stoplight": {
+                "id": "8vwj55810hhxb"
+              },
+              "type": "string"
+            }
+          },
+          "topK": {
+            "type": "integer",
+            "x-stoplight": {
+              "id": "1v8l257hyc70p"
+            },
+            "description": "The data structure that identifies the most frequent items in a set of data.\n\nThis is the number of top-scored labels to return.",
+            "example": 10
+          },
+          "similarityCutoff": {
+            "x-stoplight": {
+              "id": "yoq65m59sgkbr"
+            },
+            "type": "number",
+            "example": 1,
+            "description": "This decimal field is the similarity score cutoff to filter out less similar fields.",
+            "format": "float"
+          }
+        }
+      }
+    },
+    "securitySchemes": {
+      "apiKey_1": {
+        "name": "apiKey",
+        "type": "apiKey",
+        "in": "query"
+      }
+    },
+    "responses": {}
+  }
+}

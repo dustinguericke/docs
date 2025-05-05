@@ -1,0 +1,121 @@
+{
+  "openapi": "3.0.1",
+  "x-stoplight": {
+    "id": "kov76d9ja1kwr"
+  },
+  "info": {
+    "title": "Lucidworks AI Use Case API",
+    "version": "v0",
+    "description": "The Lucidworks AI Use Case API returns a list of use cases and their associated models.\n\nThe `usecase` endpoint requires an authentication token with scope `machinelearning.predict`, which is the same scope used in the Prediction API.",
+    "contact": {
+      "name": "Lucidworks",
+      "url": "https://lucidworks.com/",
+      "email": "support@lucidworks.com"
+    },
+    "termsOfService": "https://lucidworks.com/legal/developer-license-agreement/",
+    "license": {
+      "name": "Lucidworks",
+      "url": "https://lucidworks.com/legal/developer-license-agreement/"
+    }
+  },
+  "servers": [
+    {
+      "url": "https://APPLICATION_ID.applications.lucidworks.com",
+      "description": "Production"
+    }
+  ],
+  "paths": {
+    "/ai/usecase": {
+      "get": {
+        "operationId": "getUseCases",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/UseCaseResponse"
+                  }
+                },
+                "examples": {}
+              }
+            }
+          }
+        },
+        "summary": "Use case",
+        "description": "Returns a list of use cases with related models.",
+        "x-stoplight": {
+          "id": "wjgva7t0x0rb0"
+        },
+        "parameters": [
+          {
+            "schema": {
+              "type": "string"
+            },
+            "in": "query",
+            "name": "Authorization: Bearer ACCESS_TOKEN",
+            "description": "The authentication and authorization access token"
+          }
+        ]
+      },
+      "parameters": []
+    }
+  },
+  "components": {
+    "schemas": {
+      "Model": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "The identifier of the model. For:\n\n* Pre-trained models, the value is pre-defined and cannot be edited.\n\n* Custom models, the value is the universally unique identified (UUID) that is the primary key for the model."
+          },
+          "name": {
+            "type": "string",
+            "description": "The name of the type of model. For:\n\n* Pre-trained models, the value is shared. \n\n* Custom models, the value is the name of the model."
+          },
+          "modelType": {
+            "type": "string",
+            "description": "The name of the type of model. For:\n\n* Pre-trained models, the value is the same as the `id` value. \n\n* Custom models, the value is the name of the model."
+          },
+          "vectorSize": {
+            "type": "integer",
+            "format": "int32",
+            "description": "Dimensionality of the embedding vectors used in the model."
+          }
+        },
+        "x-stoplight": {
+          "id": "3fradxfsag0si"
+        }
+      },
+      "UseCaseResponse": {
+        "type": "object",
+        "x-stoplight": {
+          "id": "axdn1cmbt3u7h"
+        },
+        "properties": {
+          "useCase": {
+            "type": "string",
+            "description": "The name of the use case to perform an action or function."
+          },
+          "models": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Model"
+            }
+          }
+        }
+      }
+    },
+    "securitySchemes": {
+      "apiKey_1": {
+        "name": "apiKey",
+        "type": "apiKey",
+        "in": "query"
+      }
+    },
+    "responses": {}
+  }
+}

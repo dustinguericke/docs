@@ -1,0 +1,1101 @@
+{
+  "openapi": "3.0.1",
+  "info": {
+    "title": "Fusion Apps Manager API",
+    "description": "API for the Apps Manager service for Lucidworks Fusion.",
+    "contact": {
+      "name": "Lucidworks",
+      "url": "www.lucidworks.com",
+      "email": "support@lucidworks.com"
+    },
+    "license": {
+      "name": "License of API",
+      "url": "https://lucidworks.com/legal/developer-license-agreement/"
+    },
+    "version": "5.12.0"
+  },
+  "externalDocs": {
+    "description": "Lucidworks Documentation",
+    "url": "https://doc.lucidworks.com/"
+  },
+  "servers": [
+    {
+      "url": "FUSION_HOST/apps-manager"
+    }
+  ],
+  "tags": [
+    {
+      "name": "Entitlements consumption API",
+      "description": "Endpoints to get entitlements-related information."
+    },
+    {
+      "name": "Entitlements consumption records API",
+      "description": "Endpoints for calculating the records consumption."
+    },
+    {
+      "name": "Entitlements consumption report API",
+      "description": "Endpoints to generate consumption reports."
+    },
+    {
+      "name": "Entitlements consumption requests API",
+      "description": "Endpoints for calculating the requests consumption."
+    },
+    {
+      "name": "Fusion license API",
+      "description": "Endpoints to retrieve and replace Fusion licenses."
+    }
+  ],
+  "paths": {
+    "/license": {
+      "get": {
+        "tags": [
+          "Fusion license API"
+        ],
+        "summary": "Get the Fusion license",
+        "description": "Fetch the current Fusion License.",
+        "operationId": "exportLicense_1",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                },
+                "example": {
+                  "isValid": true,
+                  "expirationDate": 2942949600010,
+                  "licensedCapabilities": {
+                      "entitlements": "H4sIAAAAAABAAGXMMQ6AIAyF4bt3ZigUCnoV42CEVQ26GOLd1QhRQrf+yfu6A9ZtiBu2kq10xBqfExAmfzeLRFblFpf9boj5DeMc/QqtecspPqwcJox002j3x1SNZb/QimXSmA1hoUmuNJew/gKlJAsg6QAAAA==",
+                      "fusion.server": "*",
+                      "fusion.ai": "*",
+                      "organisation": "My Organization",
+                      "fusion.ai.pm": "*",
+                      "fusion": "*",
+                      "solr_host": "*",
+                      "environment": "non-production",
+                      "fusion.connectors": "*",
+                      "fusion.ai.eo": "*",
+                      "solr": "*",
+                      "user": "admin@myorganization.com",
+                      "fusion_host": "*",
+                      "fusion.ai.qa": "*"
+                  },
+                  "validationErrors": [],
+                  "isInstalled": true,
+                  "expirationWarning": ""
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "Fusion license API"
+        ],
+        "summary": "Replace the Fusion license",
+        "description": "Replace the current Fusion license.",
+        "operationId": "replaceLicense_1",
+        "requestBody": {
+          "content": {
+            "application/octet-stream": {
+              "schema": {
+                "type": "string",
+                "format": "binary"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "204": {
+            "description": "No Content"
+          }
+        }
+      }
+    },
+    "/license/expiration": {
+      "get": {
+        "tags": [
+          "Fusion license API"
+        ],
+        "summary": "Get the license expiration",
+        "description": "Get the expiration date for the current Fusion license.",
+        "operationId": "getExpirationDate",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "type": "string"
+                },
+                "example": "2025-12-23T23:16:23.195Z"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/license/check": {
+      "get": {
+        "tags": [
+          "Fusion license API"
+        ],
+        "summary": "Validate the Fusion license",
+        "description": "Check whether the installed license is valid.",
+        "operationId": "checkLicense",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "type": "boolean"
+                },
+                "example": true
+              }
+            }
+          }
+        }
+      }
+    },
+    "/license/capability/{capability}": {
+      "get": {
+        "tags": [
+          "Fusion license API"
+        ],
+        "summary": "Get capability details",
+        "description": "Fetch details about a specific licensed capability.",
+        "operationId": "getCapability",
+        "parameters": [
+          {
+            "name": "capability",
+            "description": "The capability to check.  Use the `/license` endpoint to get a list of capabilities, formatted as `property_fusion.{capability}`, as in `property_fusion.ai.qa`.  When specifying a capability with this endpoint, reformat the property name as `fusion.{capability}`, as in `fusion.ai.qa`.",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "example": "fusion.ai.qa"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": {
+                    "type": "string"
+                  }
+                },
+                "example": {
+                  "capability": "fusion.ai.qa",
+                  "scope": "*"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/entitlements/current": {
+      "get": {
+        "tags": [
+          "Entitlements consumption API"
+        ],
+        "summary": "Get the year's consumption",
+        "description": "Automatically determines the current contract year and returns the consumption information so far.",
+        "operationId": "getConsumptionInformation",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ResponseEntitlementsConsumptionSummary"
+                },
+                "example": {
+                  "contractDuration": {
+                      "years": 3,
+                      "months": 0,
+                      "days": 0
+                  },
+                  "info": {
+                      "start": "2023-12-23",
+                      "end": "2024-12-23",
+                      "requests": 20000000,
+                      "records": 10000000
+                  },
+                  "usage": {
+                      "requests": 6246,
+                      "requestsPercentage": 0,
+                      "records": 2425108,
+                      "recordsPercentage": 24
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/entitlements/documents/summary": {
+      "get": {
+        "tags": [
+          "Entitlements consumption records API"
+        ],
+        "summary": "Get the records consumption",
+        "description": "Returns the records consumption for the given parameters.  This endpoint accepts the following combinations of parameters:\n\n* If no parameters provided, the current contract period is calculated, then data is returned based on that period.\n\n* If `startDate` and `endDate` are provided, then the data is returned based on that date range.\n\n* If `licenseId` and `periodIndex` are provided, then the data is returned based on that specific period data.\n\n* Other combination of parameters result in an error.",
+        "operationId": "getDocumentsSummary",
+        "parameters": [
+          {
+            "name": "startDate",
+            "description": "The results start date, formatted as `yyyy-MM-dd`.",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "default": ""
+            },
+            "example": "2024-03-25"
+          },
+          {
+            "name": "endDate",
+            "description": "The results end date, formatted as `yyyy-MM-dd`.",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "default": ""
+            },
+            "example": "2024-03-26"
+          },
+          {
+            "name": "licenseId",
+            "description": "The entitlements license ID.  Use `/apps-manager/entitlements/periods` to get license IDs.",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "default": ""
+            },
+            "example": "1698256262000"
+          },
+          {
+            "name": "periodIndex",
+            "description": "The entitlement period index in the license.  Use `/apps-manager/entitlements/periods` to get period indices.",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "default": ""
+            },
+            "example": "1"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Summary"
+                  }
+                },
+                "example": [
+                  {
+                      "date": "2024-03-25",
+                      "count": 1149994
+                  },
+                  {
+                      "date": "2024-03-26",
+                      "count": 1149994
+                  }
+                ]
+              }
+            }
+          }
+        }
+      }
+    },
+    "/entitlements/documents/detailed": {
+      "get": {
+        "tags": [
+          "Entitlements consumption records API"
+        ],
+        "summary": "Get the detailed records consumption",
+        "description": "Returns the detailed records consumption (breakdown by collection) for the given parameters.  This endpoint accepts the following combinations of parameters:\n\n* If no parameters provided, the current contract period is calculated, then data is returned based on that period.\n\n* If `startDate` and `endDate` are provided, then the data is returned based on that date range.\n\n* If `licenseId` and `periodIndex` are provided, then the data is returned based on that specific period data.\n\n* Other combination of parameters result in an error.",
+        "operationId": "getDocumentsDetailed",
+        "parameters": [
+          {
+            "name": "startDate",
+            "description": "The results start date, formatted as `yyyy-MM-dd`.",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "default": ""
+            },
+            "example": "2024-03-25"
+          },
+          {
+            "name": "endDate",
+            "description": "The results end date, formatted as `yyyy-MM-dd`.",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "default": ""
+            },
+            "example": "2024-03-26"
+          },
+          {
+            "name": "licenseId",
+            "description": "The entitlements license ID.  Use `/apps-manager/entitlements/periods` to get license IDs.",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "default": ""
+            },
+            "example": "1698256262000"
+          },
+          {
+            "name": "periodIndex",
+            "description": "The entitlement period index in the license.  Use `/apps-manager/entitlements/periods` to get period indices.",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "default": ""
+            },
+            "example": "1"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ResponseDailyCollectionMetrics"
+                  },
+                  "example": [
+                    {
+                        "date": "2024-03-25",
+                        "points": [
+                            {
+                                "collection": "Ratings",
+                                "count": 0
+                            },
+                            {
+                                "collection": "Trending_Searches",
+                                "count": 6
+                            },
+                            {
+                                "collection": "Feedback",
+                                "count": 0
+                            },
+                            {
+                                "collection": "EnterpriseSearch",
+                                "count": 755
+                            },
+                            {
+                                "collection": "Trending_Docs",
+                                "count": 14
+                            },
+                            {
+                                "collection": "default_collection",
+                                "count": 929119
+                            },
+                            {
+                                "collection": "FAQ",
+                                "count": 0
+                            }
+                        ]
+                    },
+                    {
+                        "date": "2024-03-26",
+                        "points": [
+                            {
+                                "collection": "Ratings",
+                                "count": 0
+                            },
+                            {
+                                "collection": "Trending_Searches",
+                                "count": 6
+                            },
+                            {
+                                "collection": "Feedback",
+                                "count": 0
+                            },
+                            {
+                                "collection": "EnterpriseSearch",
+                                "count": 755
+                            },
+                            {
+                                "collection": "Trending_Docs",
+                                "count": 14
+                            },
+                            {
+                                "collection": "default_collection",
+                                "count": 929119
+                            },
+                            {
+                                "collection": "FAQ",
+                                "count": 0
+                            }
+                        ]
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/entitlements/periods": {
+      "get": {
+        "tags": [
+          "Entitlements consumption API"
+        ],
+        "summary": "List all entitlement periods",
+        "description": "Fetch the list of all the entitlement periods from all uploaded entitlements licenses.",
+        "operationId": "listEntitlementPeriods",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ResponseEntitlementPeriodInfo"
+                  },
+                  "example": [
+                    {
+                        "licenseId": "1698256262000",
+                        "periodIndex": 0,
+                        "startDate": "2022-12-23",
+                        "endDate": "2023-12-23",
+                        "licenseUploadTime": 1698256262000,
+                        "currentContractYear": false
+                    },
+                    {
+                        "licenseId": "1698256262000",
+                        "periodIndex": 1,
+                        "startDate": "2023-12-23",
+                        "endDate": "2024-12-23",
+                        "licenseUploadTime": 1698256262000,
+                        "currentContractYear": true
+                    },
+                    {
+                        "licenseId": "1698256262000",
+                        "periodIndex": 2,
+                        "startDate": "2024-12-23",
+                        "endDate": "2025-12-23",
+                        "licenseUploadTime": 1698256262000,
+                        "currentContractYear": false
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/entitlements/report": {
+      "get": {
+        "tags": [
+          "Entitlements consumption report API"
+        ],
+        "summary": "Get an entitlements consumption report",
+        "description": "Returns a consumption report for the given parameters, as a ZIP file containing the following files:\n\n* A CSV file with the requests report per day\n* A file with a signature for the requests report per day\n* A CSV file with the max records per day\n* A file with a signature for the max records report per day\n* A CSV file with the events occurred for requests\n* A file with a signature for the events occurred for requests\n* A CSV file with the events occurred for records\n* A file with a signature for the events occurred for records\n\nThis endpoint accepts the following combinations of parameters:\n\n* If no parameters provided, the current contract period is calculated, then data is returned based on that period.\n\n* If `startDate` and `endDate` are provided, then the data is returned based on that date range.\n\n* If `licenseId` and `periodIndex` are provided, then the data is returned based on that specific period data.\n\n* Other combination of parameters result in an error.",
+        "operationId": "getReport",
+        "parameters": [
+          {
+            "name": "startDate",
+            "description": "The results start date, formatted as `yyyy-MM-dd`.",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "default": ""
+            },
+            "example": "2024-03-25"
+          },
+          {
+            "name": "endDate",
+            "description": "The results end date, formatted as `yyyy-MM-dd`.",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "default": ""
+            },
+            "example": "2024-03-26"
+          },
+          {
+            "name": "licenseId",
+            "description": "The entitlements license ID.  Use `/apps-manager/entitlements/periods` to get license IDs.",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "default": ""
+            },
+            "example": "1698256262000"
+          },
+          {
+            "name": "periodIndex",
+            "description": "The entitlement period index in the license.  Use `/apps-manager/entitlements/periods` to get period indices.",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "default": ""
+            },
+            "example": "1"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/octet-stream": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/DataBuffer"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/entitlements/requests/summary": {
+      "get": {
+        "tags": [
+          "Entitlements consumption requests API"
+        ],
+        "summary": "Get requests consumption summary",
+        "description": "Get the requests consumption across all query pipelines, for the given parameters. This endpoint accepts the following combinations of parameters:\n\n* If no parameters are provided, the current contract period is calculated, then data is returned based on that period.\n\n* If `startDate` and `endDate` are provided, then the data is returned based on that date range.\n\n* If `licenseId` and `periodIndex` are provided, then the data is returned based on that specific period.\n\nOther combination of parameters result in an error.",
+        "operationId": "getRequestsSummary",
+        "parameters": [
+          {
+            "name": "startDate",
+            "description": "The results start date, formatted as `yyyy-MM-dd`.",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "default": ""
+            },
+            "example": "2024-03-25"
+          },
+          {
+            "name": "endDate",
+            "description": "The results end date, formatted as `yyyy-MM-dd`.",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "default": ""
+            },
+            "example": "2024-03-26"
+          },
+          {
+            "name": "licenseId",
+            "description": "The entitlements license ID.  Use `/apps-manager/entitlements/periods` to get license IDs.",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "default": ""
+            },
+            "example": "1698256262000"
+          },
+          {
+            "name": "periodIndex",
+            "description": "The entitlement period index in the license.  Use `/apps-manager/entitlements/periods` to get period indices.",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "default": ""
+            },
+            "example": "1"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Summary"
+                  },
+                  "example": [
+                    {
+                        "date": "2024-03-25",
+                        "count": 91
+                    },
+                    {
+                        "date": "2024-03-26",
+                        "count": 0
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/entitlements/requests/detailed": {
+      "get": {
+        "tags": [
+          "Entitlements consumption requests API"
+        ],
+        "summary": "Get requests consumption details",
+        "description": "Returns the requests consumption, grouped by query-pipeline, for the given parameters.  This endpoint accepts the following combinations of parameters:\n\n* If no parameters provided, the current contract period is calculated, then data is returned based on that period.\n\n* If `startDate` and `endDate` are provided, then the data is returned based on that date range.\n\n* If `licenseId` and `periodIndex` are provided, then the data is returned based on that specific period data.\n\n* Other combination of parameters result in an error.",
+        "operationId": "getRequestsDetailed",
+        "parameters": [
+          {
+            "name": "startDate",
+            "description": "The results start date, formatted as `yyyy-MM-dd`.",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "default": ""
+            },
+            "example": "2024-03-25"
+          },
+          {
+            "name": "endDate",
+            "description": "The results end date, formatted as `yyyy-MM-dd`.",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "default": ""
+            },
+            "example": "2024-03-26"
+          },
+          {
+            "name": "licenseId",
+            "description": "The entitlements license ID.  Use `/apps-manager/entitlements/periods` to get license IDs.",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "default": ""
+            },
+            "example": "1698256262000"
+          },
+          {
+            "name": "periodIndex",
+            "description": "The entitlement period index in the license.  Use `/apps-manager/entitlements/periods` to get period indices.",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "default": ""
+            },
+            "example": "1"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ResponseDailyQueryPipelineMetrics"
+                  },
+                  "example": [
+                    {
+                        "date": "2024-06-01",
+                        "points": [
+                            {
+                                "pipeline": "FAQ",
+                                "count": 0
+                            },
+                            {
+                                "pipeline": "Documentation",
+                                "count": 0
+                            }
+                        ]
+                    },
+                    {
+                        "date": "2024-06-02",
+                        "points": []
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/entitlements/requests/accumulated": {
+      "get": {
+        "tags": [
+          "Entitlements consumption requests API"
+        ],
+        "summary": "Get accumulated requests consumption",
+        "description": "Returns the accumulated requests consumption for the given parameters.  This endpoint accepts the following combinations of parameters:\n\n* If no parameters provided, the current contract period is calculated, then data is returned based on that period.\n\n* If `startDate` and `endDate` are provided, then the data is returned based on that date range.\n\n* If `licenseId` and `periodIndex` are provided, then the data is returned based on that specific period data.\n\n* Other combination of parameters result in an error.",
+        "operationId": "getRequestsAccumulated",
+        "parameters": [
+          {
+            "name": "startDate",
+            "description": "The results start date, formatted as `yyyy-MM-dd`.",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "default": ""
+            },
+            "example": "2024-03-25"
+          },
+          {
+            "name": "endDate",
+            "description": "The results end date, formatted as `yyyy-MM-dd`.",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "default": ""
+            },
+            "example": "2024-03-26"
+          },
+          {
+            "name": "licenseId",
+            "description": "The entitlements license ID.  Use `/apps-manager/entitlements/periods` to get license IDs.",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "default": ""
+            },
+            "example": "1698256262000"
+          },
+          {
+            "name": "periodIndex",
+            "description": "The entitlement period index in the license.  Use `/apps-manager/entitlements/periods` to get period indices.",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "default": ""
+            },
+            "example": "1"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Summary"
+                  },
+                  "example": [
+                    {
+                        "date": "2024-03-25",
+                        "count": 91
+                    },
+                    {
+                        "date": "2024-03-26",
+                        "count": 91
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/entitlements/requests/accumulated/detailed": {
+      "get": {
+        "tags": [
+          "Entitlements consumption requests API"
+        ],
+        "summary": "Get accumulated requests consumption details",
+        "description": "Returns the accumulated requests consumption for the given parameters.  This endpoint accepts the following combinations of parameters:\n\n* If no parameters provided, the current contract period is calculated, then data is returned based on that period.\n\n* If `startDate` and `endDate` are provided, then the data is returned based on that date range.\n\n* If `licenseId` and `periodIndex` are provided, then the data is returned based on that specific period data.\n\n* Other combination of parameters result in an error.",
+        "operationId": "getRequestsAccumulatedDetailed",
+        "parameters": [
+          {
+            "name": "startDate",
+            "description": "The results start date, formatted as `yyyy-MM-dd`.",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "default": ""
+            }
+          },
+          {
+            "name": "endDate",
+            "description": "The results end date, formatted as `yyyy-MM-dd`.",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "default": ""
+            }
+          },
+          {
+            "name": "licenseId",
+            "description": "The entitlements license ID.  Use `/apps-manager/entitlements/periods` to get license IDs.",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "default": ""
+            },
+            "example": "1698256262000"
+          },
+          {
+            "name": "periodIndex",
+            "description": "The entitlement period index in the license.  Use `/apps-manager/entitlements/periods` to get period indices.",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "default": ""
+            },
+            "example": "1"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ResponseDailyQueryPipelineMetrics"
+                  },
+                  "example": [
+                    {
+                        "date": "2024-03-25",
+                        "points": [
+                            {
+                                "pipeline": "Feedback",
+                                "count": 73
+                            }
+                        ]
+                    },
+                    {
+                        "date": "2024-03-26",
+                        "points": [
+                            {
+                                "pipeline": "FAQ",
+                                "count": 91
+                            }
+                        ]
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "Summary": {
+        "type": "object",
+        "properties": {
+          "date": {
+            "type": "string"
+          },
+          "count": {
+            "type": "integer",
+            "format": "int64"
+          }
+        }
+      },
+      "QueryPipelineMetrics": {
+        "type": "object",
+        "properties": {
+          "pipeline": {
+            "type": "string"
+          },
+          "count": {
+            "type": "integer",
+            "format": "int64"
+          }
+        }
+      },
+      "ResponseDailyQueryPipelineMetrics": {
+        "type": "object",
+        "properties": {
+          "date": {
+            "type": "string"
+          },
+          "points": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/QueryPipelineMetrics"
+            }
+          }
+        }
+      },
+      "DataBuffer": {
+        "type": "object"
+      },
+      "ResponseEntitlementPeriodInfo": {
+        "type": "object",
+        "properties": {
+          "licenseId": {
+            "type": "string"
+          },
+          "periodIndex": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "startDate": {
+            "type": "string"
+          },
+          "endDate": {
+            "type": "string"
+          },
+          "licenseUploadTime": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "isCurrentContractYear": {
+            "type": "boolean",
+            "writeOnly": true
+          },
+          "currentContractYear": {
+            "type": "boolean"
+          }
+        }
+      },
+      "CollectionMetrics": {
+        "type": "object",
+        "properties": {
+          "collection": {
+            "type": "string"
+          },
+          "count": {
+            "type": "integer",
+            "format": "int64"
+          }
+        }
+      },
+      "ResponseDailyCollectionMetrics": {
+        "type": "object",
+        "properties": {
+          "date": {
+            "type": "string"
+          },
+          "points": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/CollectionMetrics"
+            }
+          }
+        }
+      },
+      "ConsumptionSummary": {
+        "type": "object",
+        "properties": {
+          "requests": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "requestsPercentage": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "records": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "recordsPercentage": {
+            "type": "integer",
+            "format": "int32"
+          }
+        }
+      },
+      "EntitlementsContractDuration": {
+        "type": "object",
+        "properties": {
+          "years": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "months": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "days": {
+            "type": "integer",
+            "format": "int32"
+          }
+        }
+      },
+      "ResponseEntitlementsConsumptionSummary": {
+        "type": "object",
+        "properties": {
+          "contractDuration": {
+            "$ref": "#/components/schemas/EntitlementsContractDuration"
+          },
+          "info": {
+            "$ref": "#/components/schemas/ResponseEntitlementsPeriod"
+          },
+          "usage": {
+            "$ref": "#/components/schemas/ConsumptionSummary"
+          }
+        }
+      },
+      "ResponseEntitlementsPeriod": {
+        "type": "object",
+        "properties": {
+          "start": {
+            "type": "string"
+          },
+          "end": {
+            "type": "string"
+          },
+          "requests": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "records": {
+            "type": "integer",
+            "format": "int64"
+          }
+        }
+      }
+    }
+  }
+}

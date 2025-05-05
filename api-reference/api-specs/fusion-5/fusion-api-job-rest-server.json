@@ -1,0 +1,1207 @@
+{
+  "openapi": "3.0.1",
+  "info": {
+    "title": "Job REST Server API",
+    "description": "This group of APIs allows you to manage jobs, recommendations, and signals.",
+    "contact": {
+      "name": "Lucidworks",
+      "url": "www.lucidworks.com",
+      "email": "support@lucidworks.com"
+    },
+    "license": {
+      "name": "License of the API",
+      "url": "https://lucidworks.com/legal/developer-license-agreement/"
+    },
+    "version": "5.1.0"
+  },
+  "externalDocs": {
+    "description": "Lucidworks Documentation",
+    "url": "https://doc.lucidworks.com/"
+  },
+  "servers": [
+    {
+      "url": "https://{FUSION HOST}/api",
+      "description": "Fusion",
+      "variables": {
+        "FUSION HOST": {
+          "default": "FUSION_HOST",
+          "description": "Your environment host."
+        }
+      }
+    },
+    {
+      "url": "https://{FUSION HOST}/api/apps/{APP_NAME}",
+      "description": "Fusion app",
+      "variables": {
+        "FUSION HOST": {
+          "default": "FUSION_HOST",
+          "description": "Your environment host."
+        },
+        "APP_NAME": {
+          "default": "APP_NAME",
+          "description": "The name of your Fusion application."
+        }
+      }
+    }
+  ],
+  "tags": [
+    {
+      "name": "Recommendation Controller API",
+      "description": "Endpoints for the recommendation controller."
+    },
+    {
+      "name": "Signals Controller API",
+      "description": "Endpoints for the signals controller."
+    },
+    {
+      "name": "Spark Job Config Controller API",
+      "description": "Use these endpoints to manage Spark job configurations."
+    },
+    {
+      "name": "Spark Job Controller API",
+      "description": "Use these endpoints to start, stop, and check the status of Spark jobs."
+    }
+  ],
+  "paths": {
+    "/spark/jobs": {
+      "get": {
+        "summary": "List all job runs",
+        "description": "Get the list of recent job runs.",
+        "tags": [
+          "Spark Job Controller API"
+        ],
+        "operationId": "findJobs",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/SparkJobStatus"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/spark/jobs/{id}/all": {
+      "get": {
+        "summary": "List all job runs",
+        "description": "Get the list of all runs for a job configuration.",
+        "tags": [
+          "Spark Job Controller API"
+        ],
+        "operationId": "findJobs_1",
+        "parameters": [
+          {
+            "name": "id",
+            "description": "The name of the job configuration for which to find job runs.",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/SparkJobStatus"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/spark/jobs/{id}": {
+      "get": {
+        "summary": "Retrieve a job's last run",
+        "description": "Get the details of a job configuration's most recent run.",
+        "tags": [
+          "Spark Job Controller API"
+        ],
+        "operationId": "getJobStatus",
+        "parameters": [
+          {
+            "name": "id",
+            "description": "The name of the job configuration for which to find job runs.",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/SparkJobStatus"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "summary": "Start a job run",
+        "description": "Start a new run of a job configuration.",
+        "tags": [
+          "Spark Job Controller API"
+        ],
+        "operationId": "startJob",
+        "parameters": [
+          {
+            "name": "id",
+            "description": "The name of the job configuration for which to start a new run.",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/SparkJobStatus"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "summary": "Stop a job",
+        "description": "Cancel a running job. Use `/spark/jobs/{id}` to check that the job is no longer running.",
+        "tags": [
+          "Spark Job Controller API"
+        ],
+        "operationId": "stopJob",
+        "parameters": [
+          {
+            "name": "id",
+            "description": "The name of the job configuration for which to find job runs.",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/spark/configurations": {
+      "get": {
+        "summary": "List all jobs",
+        "description": "Get the list of all existing job configurations.",
+        "tags": [
+          "Spark Job Config Controller API"
+        ],
+        "operationId": "findJobConfigs",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "summary": "Create a new job",
+        "description": "Create a new job configuration.",
+        "tags": [
+          "Spark Job Config Controller API"
+        ],
+        "operationId": "createJobConfig",
+        "parameters": [
+          {
+            "name": "context",
+            "description": "The app to which this job belongs.",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SparkJobConfig"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/SparkJobConfig"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/spark/configurations/{id}": {
+      "get": {
+        "summary": "Retrieve a job",
+        "description": "Get a job configuration's details.",
+        "tags": [
+          "Spark Job Config Controller API"
+        ],
+        "operationId": "getJobConfig",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/SparkJobConfig"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "summary": "Update a job",
+        "description": "Modify a job's configuration.",
+        "tags": [
+          "Spark Job Config Controller API"
+        ],
+        "operationId": "updateJobConfig",
+        "parameters": [
+          {
+            "name": "id",
+            "description": "The name of the job configuration to modify.",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "context",
+            "description": "The app to which this job belongs.",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SparkJobConfig"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/SparkJobConfig"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "summary": "Delete a job",
+        "description": "Delete a job configuration from the system.",
+        "tags": [
+          "Spark Job Config Controller API"
+        ],
+        "operationId": "deleteJobConfig",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "context",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/spark/configurations/experiment": {
+      "post": {
+        "summary": "Create an experiment job configuration",
+        "description": "Create a new job configuration for an experiment.",
+        "tags": [
+          "Spark Job Config Controller API"
+        ],
+        "operationId": "createJobConfigurationsByExperiment",
+        "parameters": [
+          {
+            "name": "fusionResource",
+            "description": "",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Experiment"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/spark/configurations/app/{appId}": {
+      "post": {
+        "summary": "Create a job configuration",
+        "description": "Create a new Spark job configuration for a Fusion app.",
+        "tags": [
+          "Spark Job Config Controller API"
+        ],
+        "operationId": "createJobConfigurations",
+        "parameters": [
+          {
+            "name": "appId",
+            "description": "The name of the Fusion app to which this job belongs.",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/spark/schema": {
+      "get": {
+        "summary": "Retrieve the jobs schema",
+        "description": "Get the configuration schemas for all job types.",
+        "tags": [
+          "Spark Job Config Controller API"
+        ],
+        "operationId": "getConfigurationTypes",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ObjectType"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/spark/driver/log/{id}": {
+      "get": {
+        "summary": "Retrieve Spark pod logs",
+        "description": "Retrieve the initial logs that contain information about the Spark pod spin-up for a job.",
+        "tags": [
+          "Spark Job Config Controller API"
+        ],
+        "operationId": "getLogsFromDefaultDriver",
+        "parameters": [
+          {
+            "name": "rows",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "format": "int32",
+              "default": 100
+            }
+          },
+          {
+            "name": "id",
+            "description": "The name of the job configuration for which to retrieve logs.",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "Authorization",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "string",
+                  "format": "binary"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/signals/create/{collection}": {
+      "post": {
+        "summary": "Create a signals collection",
+        "description": "Create a new signals collection.",
+        "tags": [
+          "Signals Controller API"
+        ],
+        "operationId": "createSignalsCollections",
+        "parameters": [
+          {
+            "name": "collection",
+            "description": "The primary collection for which to create a new signals collection.",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "additionalProperties": {
+                  "type": "object"
+                }
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/CollectionNames"
+                }
+              }
+            }
+          }
+        },
+        "x-internal": true
+      }
+    },
+    "/signals/{collection}/i": {
+      "get": {
+        "summary": "",
+        "description": "",
+        "tags": [
+          "Signals Controller API"
+        ],
+        "operationId": "processIncomingRequest",
+        "parameters": [
+          {
+            "name": "collection",
+            "description": "The name of the signals collection.",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "params",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/MultiValueMapStringString"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "image/png": {
+                "schema": {
+                  "type": "string",
+                  "format": "byte"
+                }
+              }
+            }
+          }
+        },
+        "deprecated": true,
+        "x-internal": true
+      }
+    },
+    "/signals/_changed": {
+      "post": {
+        "summary": "",
+        "description": "",
+        "tags": [
+          "Signals Controller API"
+        ],
+        "operationId": "changeCallback",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Feature"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        },
+        "x-internal": true
+      }
+    },
+    "/recommend/_changed": {
+      "post": {
+        "summary": "",
+        "description": "",
+        "tags": [
+          "Recommendation Controller API"
+        ],
+        "operationId": "changeCallback_1",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Feature"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        },
+        "x-internal": true
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "KeyValue": {
+        "type": "object",
+        "properties": {
+          "key": {
+            "type": "string"
+          },
+          "value": {
+            "type": "string"
+          }
+        }
+      },
+      "SparkJobConfig": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "description": "The name of the job configuration.",
+            "type": "string"
+          },
+          "sparkConfig": {
+            "description": "The job's configuration details.  The configuration keys depend on the type of job.  Use `/spark/schema` to see the configuration schemas for all job types.",
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/KeyValue"
+            }
+          },
+          "type": {
+            "description": "The job type.",
+            "type": "string"
+          }
+        },
+        "discriminator": {
+          "propertyName": "type"
+        }
+      },
+      "SparkJobResult": {
+        "type": "object",
+        "properties": {
+          "jobConfigId": {
+            "description": "The name of the job configuration.",
+            "type": "string"
+          },
+          "jobRunId": {
+            "description": "The unique ID of this job run.",
+            "type": "string"
+          },
+          "exception": {
+            "description": "Any special condition that occurred during the job run.",
+            "type": "object",
+            "additionalProperties": {
+              "type": "object"
+            }
+          }
+        }
+      },
+      "SparkJobStatus": {
+        "type": "object",
+        "properties": {
+          "state": {
+            "description": "The job run's current status.",
+            "type": "string",
+            "enum": [
+              "unknown",
+              "idle",
+              "starting",
+              "running",
+              "finishing",
+              "cancelling",
+              "finished",
+              "cancelled",
+              "error",
+              "skipped"
+            ]
+          },
+          "jobId": {
+            "description": "The unique job run ID.",
+            "type": "string"
+          },
+          "jobConfig": {
+            "description": "The job's configuration details.",
+            "$ref": "#/components/schemas/SparkJobConfig"
+          },
+          "hostname": {
+            "description": "The host that ran the job.",
+            "type": "string"
+          },
+          "result": {
+            "$ref": "#/components/schemas/SparkJobResult"
+          },
+          "startTime": {
+            "description": "The job's start time, shown if the job has finished.",
+            "type": "string",
+            "format": "date-time"
+          },
+          "endTime": {
+            "description": "The job's end time, shown if the job has finished.",
+            "type": "string",
+            "format": "date-time"
+          },
+          "duration": {
+            "description": "The job's total run time, shown if the job has finished.",
+            "type": "integer",
+            "format": "int64"
+          }
+        }
+      },
+      "Experiment": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "description": "The experiment ID.",
+            "type": "string"
+          },
+          "description": {
+            "description": "The experiment's description.",
+            "type": "string"
+          },
+          "uniqueIdParameter": {
+            "description": "The name of the request parameter containing the user ID.",
+            "type": "string"
+          },
+          "baseSignalsCollection": {
+            "description": "Signals resulting from requests that flow through this experiment will go into the signal collection associated with this base collection.",
+            "type": "string"
+          },
+          "variants": {
+            "description": "The variants belonging to this experiment.",
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ExperimentVariant"
+            }
+          },
+          "automaticallyAdjustTraffic": {
+            "description": "`true` to enable multi-armed bandits, eliminating the need to specify a traffic weight for each variant.",
+            "type": "boolean"
+          },
+          "enabled": {
+            "description": "`true` if this experiment is enabled.",
+            "type": "boolean"
+          },
+          "startTimestamp": {
+            "description": "The experiment's start time.",
+            "type": "string",
+            "format": "date-time"
+          },
+          "runId": {
+            "description": "The experiment run ID.",
+            "type": "string"
+          },
+          "metrics": {
+            "description": "Metrics calculated during the experiment.",
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ExperimentMetric"
+            }
+          }
+        }
+      },
+      "ExperimentMetric": {
+        "required": [
+          "type"
+        ],
+        "type": "object",
+        "properties": {
+          "name": {
+            "description": "The metric name.",
+            "type": "string"
+          },
+          "description": {
+            "description": "A human-readable description of the metric.",
+            "type": "string"
+          },
+          "jobId": {
+            "description": "The ID of the experiment metrics job.",
+            "type": "string"
+          },
+          "binary": {
+            "description": "",
+            "type": "boolean"
+          },
+          "primary": {
+            "description": "",
+            "type": "boolean"
+          },
+          "type": {
+            "description": "An abbreviation for the metric type, such as `ctr` for Click-Through Rate.",
+            "type": "string"
+          }
+        },
+        "discriminator": {
+          "propertyName": "type"
+        }
+      },
+      "ExperimentVariant": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "description": "The unique ID for this variant.",
+            "type": "string"
+          },
+          "name": {
+            "description": "The variant name.",
+            "type": "string"
+          },
+          "collection": {
+            "description": "The name of the main collection with which this variant is associated.  The signals collection associated with the main collection is used for the experiment.",
+            "type": "string"
+          },
+          "queryPipeline": {
+            "description": "The name of the query pipeline used by this variant.",
+            "type": "string"
+          },
+          "params": {
+            "description": "The variant's query parameters.",
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ParamAndValue"
+            }
+          },
+          "weight": {
+            "description": "This variant's traffic weight.",
+            "type": "number",
+            "format": "double"
+          }
+        }
+      },
+      "ParamAndValue": {
+        "type": "object",
+        "properties": {
+          "key": {
+            "type": "string"
+          },
+          "value": {
+            "type": "string"
+          },
+          "policy": {
+            "type": "string",
+            "enum": [
+              "replace",
+              "append",
+              "remove",
+              "default"
+            ]
+          }
+        }
+      },
+      "CollectionNames": {
+        "type": "object",
+        "properties": {
+          "collection": {
+            "description": "The name of the main collection.",
+            "type": "string"
+          },
+          "signalsCollection": {
+            "description": "The name of the raw signals collection.",
+            "type": "string"
+          },
+          "signalsAggrCollection": {
+            "description": "The name of the aggregated signals collection.",
+            "type": "string"
+          }
+        }
+      },
+      "Feature": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "description": "",
+            "type": "string"
+          },
+          "collectionId": {
+            "description": "The name of the signals collection.",
+            "type": "string"
+          },
+          "params": {
+            "description": "",
+            "type": "object",
+            "additionalProperties": {
+              "type": "object"
+            }
+          },
+          "enabled": {
+            "description": "",
+            "type": "boolean"
+          }
+        }
+      },
+      "AnyType": {
+        "type": "object",
+        "properties": {
+          "type": {
+            "type": "string",
+            "enum": [
+              "string",
+              "number",
+              "integer",
+              "boolean",
+              "object",
+              "array",
+              "null",
+              "ref"
+            ]
+          },
+          "title": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          },
+          "enum": {
+            "uniqueItems": true,
+            "type": "array",
+            "items": {
+              "type": "object"
+            }
+          },
+          "default": {
+            "type": "object"
+          },
+          "category": {
+            "type": "string"
+          },
+          "categoryPriority": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "hints": {
+            "uniqueItems": true,
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "oneOf": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/AnyTypeObjectObject"
+            }
+          }
+        }
+      },
+      "AnyTypeObjectObject": {
+        "type": "object",
+        "properties": {
+          "type": {
+            "type": "string",
+            "enum": [
+              "string",
+              "number",
+              "integer",
+              "boolean",
+              "object",
+              "array",
+              "null",
+              "ref"
+            ]
+          },
+          "title": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          },
+          "enum": {
+            "uniqueItems": true,
+            "type": "array",
+            "items": {
+              "type": "object"
+            }
+          },
+          "default": {
+            "type": "object"
+          },
+          "category": {
+            "type": "string"
+          },
+          "categoryPriority": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "hints": {
+            "uniqueItems": true,
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        }
+      },
+      "ObjectType": {
+        "type": "object",
+        "properties": {
+          "type": {
+            "type": "string",
+            "enum": [
+              "string",
+              "number",
+              "integer",
+              "boolean",
+              "object",
+              "array",
+              "null",
+              "ref"
+            ]
+          },
+          "title": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          },
+          "required": {
+            "uniqueItems": true,
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "properties": {
+            "type": "object",
+            "additionalProperties": {
+              "$ref": "#/components/schemas/AnyType"
+            }
+          },
+          "additionalProperties": {
+            "type": "object"
+          },
+          "minProperties": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "maxProperties": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "definitions": {
+            "type": "object",
+            "additionalProperties": {
+              "$ref": "#/components/schemas/AnyType"
+            }
+          },
+          "category": {
+            "type": "string"
+          },
+          "categoryPriority": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "enum": {
+            "uniqueItems": true,
+            "type": "array",
+            "items": {
+              "type": "object"
+            }
+          },
+          "hints": {
+            "uniqueItems": true,
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "default": {
+            "type": "object"
+          },
+          "oneOf": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/AnyTypeObjectObject"
+            }
+          },
+          "propertyGroups": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/PropertyGroup"
+            }
+          }
+        }
+      },
+      "PropertyGroup": {
+        "type": "object",
+        "properties": {
+          "label": {
+            "type": "string"
+          },
+          "properties": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        }
+      },
+      "MultiValueMapStringString": {
+        "type": "object",
+        "properties": {
+          "all": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "string"
+            },
+            "writeOnly": true
+          },
+          "empty": {
+            "type": "boolean"
+          }
+        },
+        "additionalProperties": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "securitySchemes": {
+      "Basic auth": {
+        "type": "http",
+        "scheme": "basic"
+      },
+      "API key": {
+        "name": "x-api-key",
+        "type": "apiKey",
+        "in": "header"
+      }
+    }
+  },
+  "security": [
+    {
+      "Basic auth": []
+    },
+    {
+      "API key": []
+    }
+  ]
+}

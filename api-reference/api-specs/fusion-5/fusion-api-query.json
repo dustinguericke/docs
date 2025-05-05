@@ -1,0 +1,5325 @@
+{
+  "openapi": "3.0.1",
+  "info": {
+    "title": "Fusion Query API",
+    "description": "A Lucidworks Fusion microservice for machine-learning-enhanced ranking and retrieval.",
+    "contact": {
+      "name": "Lucidworks",
+      "url": "www.lucidworks.com",
+      "email": "support@lucidworks.com"
+    },
+    "license": {
+      "name": "License of API",
+      "url": "https://lucidworks.com/legal/developer-license-agreement/"
+    },
+    "version": "5.12.0"
+  },
+  "externalDocs": {
+    "description": "Lucidworks Documentation.",
+    "url": "https://doc.lucidworks.com/"
+  },
+  "servers": [
+    {
+      "url": "https://{FUSION HOST}/api",
+      "description": "Fusion",
+      "variables": {
+        "FUSION HOST": {
+          "default": "FUSION_HOST",
+          "description": "Your environment host."
+        }
+      }
+    },
+    {
+      "url": "https://{FUSION HOST}/api/apps/{APP_NAME}",
+      "description": "Fusion app",
+      "variables": {
+        "FUSION HOST": {
+          "default": "FUSION_HOST",
+          "description": "Your environment host."
+        },
+        "APP_NAME": {
+          "default": "APP_NAME",
+          "description": "The name of your Fusion app."
+        }
+      }
+    }
+  ],
+  "tags": [
+    {
+      "name": "Custom Rule Type API",
+      "description": "Endpoints to define and manage custom rule type definitions."
+    },
+    {
+      "name": "Experiments API",
+      "description": "Use the Experiments API to compare different configuration variants and determine which ones are most successful."
+    },
+    {
+      "name": "Query Pipelines API",
+      "description": "Use these endpoints to view and manage your query pipelines.  You can also send queries using this API, though the Query Profiles API is recommended instead."
+    },
+    {
+      "name": "Query Profiles API",
+      "description": "The Query Profiles API provides static endpoints that you can consistently point to when querying your collections.  Query profiles allow you to change the query pipelines or collections behind them without changing the endpoint you use for your search queries.  See the Query Profiles CRUD API for endpoints that create and modify query profiles."
+    },
+    {
+      "name": "Query Profiles CRUD API",
+      "description": "Use these endpoints to create and modify query profiles.  Query profiles allow you to change the query pipelines or collections behind them without changing the endpoint you use for your search queries.  See the Query Profiles API for the query endpoints."
+    },
+    {
+      "name": "Query Rewrite API",
+      "description": "The Query Rewrite API manages documents used for query rewriting to improve relevancy using AI-generated data. Primarily for internal use."
+    },
+    {
+      "name": "Query Stage API",
+      "description": "Use these endpoints to view the available query pipeline stages and their configuration parameters."
+    },
+    {
+      "name": "Query Stage Plugins API",
+      "description": "Use these endpoints to view, install, and manage custom query stages developed with the Query Stage SDK."
+    },
+    {
+      "name": "Signal Indexing API",
+      "description": "Endpoints to index signals."
+    }
+  ],
+  "paths": {
+    "/query/status": {
+      "get": {
+        "tags": [
+          "Query Profiles API"
+        ],
+        "summary": "Get the service status",
+        "description": "Check the status of the Query service.",
+        "operationId": "getStatus",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ServiceStatusSet"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/query/{id}": {
+      "get": {
+        "tags": [
+          "Query Profiles API"
+        ],
+        "summary": "Retrieve query results",
+        "description": "Send a query to a query profile, using the Solr query language.\n\nThe response contains matching documents, plus statistics about the query operation.\n\nUse the `/api/query-profiles` endpoint to get the query profile ID for this request.  For a Domain Search Language (DSL) search, see the `POST` method for this endpoint.",
+        "operationId": "query",
+        "externalDocs": {
+          "description": "See the Solr documentation.",
+          "url": "https://solr.apache.org/guide/solr/latest/query-guide/standard-query-parser.html"
+        },
+        "parameters": [
+          {
+            "name": "id",
+            "description": "The query profile ID.",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "q",
+            "description": "The query terms, using the Solr query language.",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "params",
+            "description": "Additional Solr query parameters.",
+            "in": "query",
+            "schema": {
+              "$ref": "#/components/schemas/MultiValueMapStringString"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/SearchResponse"
+                },
+                "examples": {}
+              },
+              "text/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/SearchResponse"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Query Profiles API"
+        ],
+        "summary": "Retrieve query results (DSL mode)",
+        "description": "Send a query to a query profile, using Fusion's Domain Specific Language (DSL).  The response contains matching documents, plus statistics about the query operation.\n\nUse the `/api/query-profiles` endpoint to get the query profile ID for this request.",
+        "operationId": "queryWithDsl",
+        "parameters": [
+          {
+            "name": "id",
+            "description": "The query profile ID.",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/DslRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DslResponseWrapper"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/query/{id}/signals": {
+      "post": {
+        "tags": [
+          "Query Profiles API"
+        ],
+        "summary": "Index response signals",
+        "description": "Index JSON-formatted response signals into the signal collection specified in a query profile.  Usually this means signal documents were previously processed by another pipeline.",
+        "operationId": "submitSignalsAsPipelineDocuments_1",
+        "parameters": [
+          {
+            "name": "id",
+            "description": "The query profile ID.",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "pipelineId",
+            "description": "An index pipeline to use for processing signals. Note that the index pipeline must end with a Solr Indexer stage, and in this stage the `enforce_schema` property must be set to 'true'.",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "commit",
+            "description": "Whether to commit signals to the collection immediately after indexing.",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "boolean",
+              "default": true
+            }
+          },
+          {
+            "name": "async",
+            "description": "Whether to execute the request asynchronously. If true, an autoCommit is issued and failures are not reported.",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "boolean",
+              "default": false
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/vnd.lucidworks-document": {
+              "schema": {
+                "type": "object"
+              }
+            },
+            "application/json": {
+              "schema": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/schemas/Event"
+                }
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/query/{id}/": {
+      "get": {
+        "tags": [
+          "Query Profiles API"
+        ],
+        "summary": "Retrieve query results",
+        "description": "This endpoint supports a path with a trailing slash to allow SolrJ to use a query profile by setting the `requestHandler` to \"/\".  For longer parameter lists, use POST instead.",
+        "operationId": "querySolrj",
+        "parameters": [
+          {
+            "name": "id",
+            "description": "The query profile ID.",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "params",
+            "description": "Additional parameters used when executing the query.",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/MultiValueMapStringString"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/WriteableResponseObject"
+                }
+              },
+              "text/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/WriteableResponseObject"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Query Profiles API"
+        ],
+        "summary": "Retrieve query results",
+        "description": "This endpoint supports a path with a trailing slash to allow SolrJ to use a query profile by setting the `requestHandler` to \"/\". Same as GET, but uses POST for long parameter lists.",
+        "operationId": "queryWithPostSolrj",
+        "parameters": [
+          {
+            "name": "id",
+            "description": "The query profile ID.",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/WriteableResponseObject"
+                }
+              },
+              "text/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/WriteableResponseObject"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/query-profiles/status": {
+      "get": {
+        "tags": [
+          "Query Profiles CRUD API"
+        ],
+        "summary": "Get the service status",
+        "description": "Get the status of the Query Profiles service.",
+        "operationId": "getStatus_3",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ServiceStatusSet"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/query-profiles": {
+      "get": {
+        "tags": [
+          "Query Profiles CRUD API"
+        ],
+        "summary": "List all query profiles",
+        "description": "Use this endpoint to discover existing query profiles and their IDs and attributes.",
+        "operationId": "getAllEntities",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/QueryProfile"
+                  }
+                },
+                "examples": {}
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Query Profiles CRUD API"
+        ],
+        "summary": "Create a query profile",
+        "description": "The request is a JSON body defining the new query profile.",
+        "operationId": "createEntity",
+        "parameters": [
+          {
+            "name": "context",
+            "description": "The app to which this object belongs, as `app:SomeApp`.",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "example": "app:SomeApp"
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/QueryProfile"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/QueryProfile"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/query-profiles/{id}": {
+      "get": {
+        "tags": [
+          "Query Profiles CRUD API"
+        ],
+        "summary": "Retrieve a query profile",
+        "description": "Fetch a query profile by ID.  The response is the query profile schema in JSON format.",
+        "operationId": "getEntity",
+        "parameters": [
+          {
+            "name": "id",
+            "description": "The query profile ID.",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/QueryProfile"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "Query Profiles CRUD API"
+        ],
+        "summary": "Update a query profile",
+        "description": "Use this endpoint to change a query profile's query pipeline, collection, or other attributes.  The request is a JSON body containing the query profile's updated attributes.",
+        "operationId": "updateEntity",
+        "parameters": [
+          {
+            "name": "id",
+            "description": "The query profile ID.",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "ifMatch",
+            "description": "An optional tag to match.",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "$ref": "#/components/schemas/IfMatchHeader"
+            }
+          },
+          {
+            "name": "context",
+            "description": "The app to which this object belongs, as `app:SomeApp`.",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "example": "app:SomeApp"
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/QueryProfile"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/QueryProfile"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Query Profiles CRUD API"
+        ],
+        "summary": "Delete a query profile",
+        "description": "The request specifies the ID of the query profile to delete.",
+        "operationId": "deleteEntity",
+        "parameters": [
+          {
+            "name": "id",
+            "description": "The query profile ID.",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "ifMatch",
+            "description": "An optional tag to match.",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "$ref": "#/components/schemas/IfMatchHeader"
+            }
+          },
+          {
+            "name": "context",
+            "description": "The app to which this object belongs, as `app:SomeApp`.",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "example": "app:SomeApp"
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "No Content - This message indicates the operation was successful, and there is no content in the response message."
+          }
+        }
+      }
+    },
+    "/query-profiles/_schema": {
+      "get": {
+        "tags": [
+          "Query Profiles CRUD API"
+        ],
+        "summary": "Retrieve the JSON schema",
+        "description": "Retrieve the configuration schema for query profiles.",
+        "operationId": "getEntitySchema",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/schema+json;qs=1.0": {
+                "schema": {
+                  "$ref": "#/components/schemas/ObjectType"
+                }
+              },
+              "application/json;qs=0.9": {
+                "schema": {
+                  "$ref": "#/components/schemas/ObjectType"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/query-pipelines": {
+      "get": {
+        "tags": [
+          "Query Pipelines API"
+        ],
+        "summary": "Get all query pipelines",
+        "description": "Retrieve existing query pipelines and their IDs and attributes.",
+        "operationId": "getAllEntities_1",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/QueryPipelineDefinition"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Query Pipelines API"
+        ],
+        "summary": "Create a query pipeline",
+        "description": "The request is a JSON body defining the new query pipeline.  Only the `id` field is required to create a pipeline with no stages.  Include a `stages` array with at least the `type` field per stage to create a working pipeline.",
+        "operationId": "createEntity_1",
+        "parameters": [
+          {
+            "name": "context",
+            "description": "The app to which this object belongs, as `app:SomeApp`.",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "example": "app:SomeApp"
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/QueryPipelineDefinition"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/QueryPipelineDefinition"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/query-pipelines/{id}": {
+      "get": {
+        "tags": [
+          "Query Pipelines API"
+        ],
+        "summary": "Retrieve a query pipeline",
+        "description": "Fetch a query pipeline by ID.  The response is the query pipeline's properties in JSON format.",
+        "operationId": "getEntity_1",
+        "parameters": [
+          {
+            "name": "id",
+            "description": "The query pipeline ID.",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/QueryPipelineDefinition"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "Query Pipelines API"
+        ],
+        "summary": "Update a query pipeline",
+        "description": "The request is a JSON body containing the query pipeline's updated attributes.",
+        "operationId": "updateEntity_1",
+        "parameters": [
+          {
+            "name": "id",
+            "description": "The query pipeline ID.",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "ifMatch",
+            "description": "An optional tag to match.",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "$ref": "#/components/schemas/IfMatchHeader"
+            }
+          },
+          {
+            "name": "context",
+            "description": "The app to which this object belongs, as `app:SomeApp`.",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "example": "app:SomeApp"
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/QueryPipelineDefinition"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/QueryPipelineDefinition"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Query Pipelines API"
+        ],
+        "summary": "Delete a query pipeline",
+        "description": "The request specifies the ID of the index pipeline to delete.",
+        "operationId": "deleteEntity_1",
+        "parameters": [
+          {
+            "name": "id",
+            "description": "The query pipeline ID.",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "ifMatch",
+            "description": "An optional tag to match.",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "$ref": "#/components/schemas/IfMatchHeader"
+            }
+          },
+          {
+            "name": "context",
+            "description": "The app to which this object belongs, as `app:SomeApp`.",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "example": "app:SomeApp"
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "No Content - This message indicates the operation was successful, and there is no content in the response message."
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Query Pipelines API"
+        ],
+        "summary": "Retrieve query results (DSL mode)",
+        "description": "Send a query to a query pipeline, using Fusion's Domain Specific Language (DSL).  The response contains matching documents, plus statistics about the query operation.\n\nUse the `/api/query-pipelines` endpoint to get the query pipeline ID for this request.",
+        "operationId": "queryWithDSL",
+        "parameters": [
+          {
+            "name": "id",
+            "description": "The query pipeline ID.",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/DslRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DslResponseWrapper"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/query-pipelines/{id}/collections/{collection}/{handler}": {
+      "get": {
+        "tags": [
+          "Query Pipelines API"
+        ],
+        "summary": "Retrieve query results",
+        "description": "Send a query to a query pipeline, using the Solr query language and a specific Solr request handler.\n\nThe response contains matching documents, plus statistics about the query operation.\n\nUse the `/api/query-pipelines` endpoint to get the query pipeline ID for this request.  For longer parameter lists, use `POST` with this endpoint.  For a Domain Search Language (DSL) search, see the `POST` method for the `/query-pipelines/{id}` endpoint.",
+        "externalDocs": {
+          "description": "See the Solr documentation.",
+          "url": "https://solr.apache.org/guide/8_8/requesthandlers-and-searchcomponents-in-solrconfig.html"
+        },
+        "operationId": "query_1",
+        "parameters": [
+          {
+            "name": "id",
+            "description": "The query pipeline ID.",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "collection",
+            "description": "The data collection to query.",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "handler",
+            "description": "The Solr search handler to use for this query.",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "q",
+            "description": "The query terms, using the Solr query language.",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "params",
+            "description": "Additional Solr query parameters.",
+            "in": "query",
+            "schema": {
+              "$ref": "#/components/schemas/MultiValueMapStringString"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/SearchResponse"
+                }
+              },
+              "text/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/SearchResponse"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Query Pipelines API"
+        ],
+        "summary": "Retrieve query results",
+        "description": "Use this method if the length of your query exceeds normal GET limitations.\n\nThe response contains matching documents, plus statistics about the query operation.\n\nUse the `/api/query-pipelines` endpoint to get the query pipeline ID for this request.  For a Domain Search Language (DSL) search, see the `POST` method for the `/query-pipelines/{id}` endpoint.",
+        "externalDocs": {
+          "description": "See the Solr documentation.",
+          "url": "https://solr.apache.org/guide/8_8/requesthandlers-and-searchcomponents-in-solrconfig.html"
+        },
+        "operationId": "queryWithAudio_1_1",
+        "parameters": [
+          {
+            "name": "id",
+            "description": "The query pipeline ID.",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "collection",
+            "description": "The data collection to query.",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "handler",
+            "description": "The Solr search handler to use for this query.",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "q",
+            "description": "The query terms, using the Solr query language.",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "params",
+            "description": "Additional Solr query parameters.",
+            "in": "query",
+            "schema": {
+              "$ref": "#/components/schemas/MultiValueMapStringString"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/WriteableResponseObject"
+                }
+              },
+              "text/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/WriteableResponseObject"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/query-pipelines/status": {
+      "get": {
+        "tags": [
+          "Query Pipelines API"
+        ],
+        "summary": "Get the service status",
+        "description": "Get the status of the Query Pipelines service.",
+        "operationId": "getStatus_4",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ServiceStatusSet"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/query-pipelines/_schema": {
+      "get": {
+        "tags": [
+          "Query Pipelines API"
+        ],
+        "summary": "Retrieve the JSON schema",
+        "description": "Fetch the configuration schema for query pipelines.",
+        "operationId": "getEntitySchema_1",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/schema+json;qs=1.0": {
+                "schema": {
+                  "$ref": "#/components/schemas/ObjectType"
+                }
+              },
+              "application/json;qs=0.9": {
+                "schema": {
+                  "$ref": "#/components/schemas/ObjectType"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/query-stages/status": {
+      "get": {
+        "tags": [
+          "Query Stage API"
+        ],
+        "summary": "Get the service status",
+        "description": "Get the status of the Query Stages service.",
+        "operationId": "getStatus_1",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ServiceStatusSet"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/query-stages/schema": {
+      "get": {
+        "tags": [
+          "Query Stage API"
+        ],
+        "summary": "Retrieve all JSON schemas",
+        "description": "Fetch the configuration schemas for all query pipeline stage types.",
+        "operationId": "listStageSchemas",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": {
+                    "$ref": "#/components/schemas/ObjectType"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/query-stages/schema/{type}": {
+      "get": {
+        "tags": [
+          "Query Stage API"
+        ],
+        "summary": "Retrieve a JSON schema",
+        "description": "Get the JSON schema for a single query stage type.",
+        "operationId": "getStageSchema",
+        "parameters": [
+          {
+            "name": "type",
+            "description": "The query pipeline stage type.  Use `/query-stages/schema` to get the available stage types.",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ObjectType"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/query-stage-plugins": {
+      "get": {
+        "tags": [
+          "Query Stage Plugins API"
+        ],
+        "summary": "List all plugins",
+        "description": "Get the complete list of all installed custom query stage plugins.",
+        "operationId": "getPlugins",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "string",
+                    "example": "custom-graph-security-trimming-stage"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "Query Stage Plugins API"
+        ],
+        "summary": "Install or update a plugin",
+        "description": "Install a new plugin or update an installed plugin.",
+        "operationId": "installOrUpdatePlugin",
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/query-stage-plugins/{pluginId}": {
+      "delete": {
+        "tags": [
+          "Query Stage Plugins API"
+        ],
+        "summary": "Delete a plugin",
+        "description": "Uninstall a query stage plugin.",
+        "operationId": "uninstallPlugin",
+        "parameters": [
+          {
+            "name": "pluginId",
+            "description": "The query stage plugin ID.",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/query-rewrite/{type}": {
+      "get": {
+        "tags": [
+          "Query Rewrite API"
+        ],
+        "summary": "Get the query rewrite status",
+        "description": "Check the status of any instances of a specific query rewrite type, such as rules or spell correction.",
+        "operationId": "getQueryRewriteTypeStatus",
+        "parameters": [
+          {
+            "name": "type",
+            "description": "The query rewrite type.  Use `/query-rewrite/instances` to get the types for your existing query rewrites, or `/query-rewrite/schema` to get all possible types.\n\n\n<!-- theme: info -->\n\n>In the Fusion UI, some of these types correspond to the rewrite types in the Rewrites Manager and others correspond to action types in the Rules Manager.",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "context",
+            "description": "The app to which this object belongs, as `app:SomeApp`. If the app doesn't exist, the request fails. Other comma-separated contexts in the `context` parameter are allowed but ignored.",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "example": "app:SomeApp"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/QueryRewriteTypeStatus"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "Query Rewrite API"
+        ],
+        "summary": "Enable or disable a query rewrite",
+        "description": "Update the enabled status of a query rewrite type.",
+        "operationId": "updateQueryRewriteTypeEnabled",
+        "parameters": [
+          {
+            "name": "type",
+            "description": "The query rewrite type.  Use `/query-rewrite/schema` to get the available query rewrite types.",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "context",
+            "description": "The app to which this object belongs, as `app:SomeApp`. If the app doesn't exist, the request fails. Other comma-separated contexts in the `context` parameter are allowed but ignored.",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "example": "app:SomeApp"
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/QueryRewriteTypeStatus"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/QueryRewriteTypeStatus"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/query-rewrite/publish": {
+      "put": {
+        "tags": [
+          "Query Rewrite API"
+        ],
+        "summary": "Publish query rewrites",
+        "description": "Publish un-deployed query rewrites.",
+        "operationId": "publish",
+        "parameters": [
+          {
+            "name": "context",
+            "description": "The app to which this object belongs, as `app:SomeApp`. If the app doesn't exist, the request fails. Other comma-separated contexts in the `context` parameter are allowed but ignored.",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "example": "app:SomeApp"
+          },
+          {
+            "name": "editSessionId",
+            "description": "The edit session ID associated with this request. Equivalent to a Fusion username.",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "noOptimizeWithin",
+            "description": "The number of seconds to wait after a publish before optimizing the query rewrite collection.",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/octet-stream": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Query Rewrite API"
+        ],
+        "summary": "Delete query rewrites",
+        "description": "Delete un-deployed query rewrites.",
+        "operationId": "rollback",
+        "parameters": [
+          {
+            "name": "context",
+            "description": "The app to which this object belongs, as `app:SomeApp`. If the app doesn't exist, the request fails. Other comma-separated contexts in the `context` parameter are allowed but ignored.",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "example": "app:SomeApp"
+          },
+          {
+            "name": "editSessionId",
+            "description": "The edit session ID associated with this request. Equivalent to a Fusion username.",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/octet-stream": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/query-rewrite/publish/{type}": {
+      "delete": {
+        "tags": [
+          "Query Rewrite API"
+        ],
+        "summary": "Delete an un-deployed query rewrite",
+        "description": "Delete un-deployed query rewrites with an optional `type` filter.",
+        "operationId": "rollbackType",
+        "parameters": [
+          {
+            "name": "type",
+            "description": "The query rewrite type.  Use `/query-rewrite/instances` to get the types for your existing query rewrites, or `/query-rewrite/schema` to get all possible types.\n\n\n<!-- theme: info -->\n\n>In the Fusion UI, some of these types correspond to the types in the Rewrites Manager and others correspond to actions in the Rules Manager.",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "context",
+            "description": "The app to which this object belongs, as `app:SomeApp`. If the app doesn't exist, the request fails. Other comma-separated contexts in the `context` parameter are allowed but ignored.",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "example": "app:SomeApp"
+          },
+          {
+            "name": "editSessionId",
+            "description": "The edit session ID associated with this request. Equivalent to a Fusion username.",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/octet-stream": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/query-rewrite/publish/{types}": {
+      "put": {
+        "tags": [
+          "Query Rewrite API"
+        ],
+        "summary": "Publish query rewrites by type",
+        "description": "Publish un-deployed query rewrites with an optional `types` filter.",
+        "operationId": "publishType",
+        "parameters": [
+          {
+            "name": "types",
+            "description": "A comma-separated list of query rewrite types.  Use `/query-rewrite/schema` to check the available query rewrite types.",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "enum": [
+                  "bury_list",
+                  "simq",
+                  "boost_attributes",
+                  "filter_list",
+                  "json_blob",
+                  "block_list",
+                  "ingroup_bury_list",
+                  "boost_list",
+                  "redirect",
+                  "response_value",
+                  "banner",
+                  "removeWords",
+                  "ingroup_pinned",
+                  "set_params",
+                  "ground_truth",
+                  "spell",
+                  "phrase",
+                  "tail",
+                  "synonym",
+                  "set_facets",
+                  "pinned",
+                  "ingroup_boost_list"
+                ]
+              }
+            }
+          },
+          {
+            "name": "context",
+            "description": "The app to which this object belongs, as `app:SomeApp`. If the app doesn't exist, the request fails. Other comma-separated contexts in the `context` parameter are allowed but ignored.",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "example": "app:SomeApp"
+          },
+          {
+            "name": "editSessionId",
+            "description": "The edit session ID associated with this request. Equivalent to a Fusion username.",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "noOptimizeWithin",
+            "description": "The number of seconds to wait after a publish before optimizing the query rewrite collection.",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/octet-stream": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/query-rewrite/instances": {
+      "get": {
+        "tags": [
+          "Query Rewrite API"
+        ],
+        "summary": "List query rewrites",
+        "description": "Retrieve details about configured query rewrites. \n\n\n<!-- theme: info -->\n\n> #### Using query parameters\n>\n> You can specify most of the field value pairs returned in the response as parameters in your request URL. For example, you can request a specific type of query rewrite to return in the response by adding `type=REWRITE_TYPE` to the request URL: \n>\n> ```curl\n> curl --request GET \\\n>   --url 'https://FUSION_HOST.com/api/apps/APP_NAME/query-rewrite/instances?type=synonym' \n> ```\n.",
+        "operationId": "list",
+        "parameters": [
+          {
+            "name": "context",
+            "description": "The app to which this object belongs, as `app:SomeApp`. If the app doesn't exist, the request fails. Other comma-separated contexts in the `context` parameter are allowed but ignored.",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "example": "app:SomeApp"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/QueryRewrite"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "Query Rewrite API"
+        ],
+        "summary": "Create/update/delete query rewrites",
+        "description": "A bulk CRUD endpoint for query rewrites.  The request body includes one or more `create`, `update`, or `delete` operations.  Use `/query-rewrite/instances` to get the configuration schemas for your existing query rewrites, or `/query-rewrite/schema` and `/query-rewrite/schema/{type}` to get the configuration schemas for the available query rewrite types.\n\n\n<!-- theme: info -->\n\n>In the Fusion UI, some of these types correspond to the types in the Rewrites Manager and others correspond to actions in the Rules Manager.",
+        "operationId": "doBulkOperation",
+        "parameters": [
+          {
+            "name": "context",
+            "description": "The app to which this object belongs, as `app:SomeApp`. If the app doesn't exist, the request fails. Other comma-separated contexts in the `context` parameter are allowed but ignored.",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "example": "app:SomeApp"
+          },
+          {
+            "name": "editSessionId",
+            "description": "The edit session ID associated with this request. Equivalent to a Fusion username.",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "checkUpdateConflict",
+            "description": "Whether to check for conflicts caused by this update.",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "boolean",
+              "default": false
+            }
+          },
+          {
+            "name": "checkCreateConflict",
+            "description": "Whether to check for conflicts caused by creating this query rewrite.",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "boolean",
+              "default": false
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/BulkOperation"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/octet-stream": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Query Rewrite API"
+        ],
+        "summary": "Create a query rewrite",
+        "description": "The request is a JSON body defining the new query rewrite.",
+        "operationId": "create",
+        "parameters": [
+          {
+            "name": "context",
+            "description": "The app to which this object belongs, as `app:SomeApp`. If the app doesn't exist, the request fails. Other comma-separated contexts in the `context` parameter are allowed but ignored.",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "example": "app:SomeApp"
+          },
+          {
+            "name": "editSessionId",
+            "description": "The edit session ID associated with this request. Equivalent to a Fusion username.",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/QueryRewrite"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/QueryRewrite"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/query-rewrite/instances/{id}": {
+      "get": {
+        "tags": [
+          "Query Rewrite API"
+        ],
+        "summary": "Retrieve a query rewrite",
+        "description": "Get details for an existing query rewrite.",
+        "operationId": "getQueryRewrite",
+        "parameters": [
+          {
+            "name": "id",
+            "description": "The query rewrite ID.",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "context",
+            "description": "The app to which this object belongs, as `app:SomeApp`. If the app doesn't exist, the request fails. Other comma-separated contexts in the `context` parameter are allowed but ignored.",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "example": "app:SomeApp"
+          },
+          {
+            "name": "editSessionId",
+            "description": "An edit session ID filter. Equivalent to a Fusion username.",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/QueryRewrite"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "Query Rewrite API"
+        ],
+        "summary": "Update a query rewrite",
+        "description": "Use this endpoint to change a query rewrite's attributes.  The request is a JSON body containing the updated attributes.",
+        "operationId": "updateQueryRewrite",
+        "parameters": [
+          {
+            "name": "id",
+            "description": "The query rewrite ID.",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "context",
+            "description": "The app to which this object belongs, as `app:SomeApp`. If the app doesn't exist, the request fails. Other comma-separated contexts in the `context` parameter are allowed but ignored.",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "example": "app:SomeApp"
+          },
+          {
+            "name": "editSessionId",
+            "description": "The edit session ID associated with this request. Equivalent to a Fusion username.",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/QueryRewrite"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/QueryRewrite"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Query Rewrite API"
+        ],
+        "summary": "Delete a query rewrite",
+        "description": "The request specifies the ID of the query rewrite to delete.",
+        "operationId": "deleteQueryRewrite",
+        "parameters": [
+          {
+            "name": "id",
+            "description": "The query rewrite ID.",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "context",
+            "description": "The app to which this object belongs, as `app:SomeApp`. If the app doesn't exist, the request fails. Other comma-separated contexts in the `context` parameter are allowed but ignored.",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "example": "app:SomeApp"
+          },
+          {
+            "name": "editSessionId",
+            "description": "The edit session ID associated with this request. Equivalent to a Fusion username.",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/octet-stream": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/query-rewrite/instances/{id}/publish": {
+      "put": {
+        "tags": [
+          "Query Rewrite API"
+        ],
+        "summary": "Publish a query rewrite",
+        "description": "Publish an un-deployed query rewrite matching the specified ID.",
+        "operationId": "publishById",
+        "parameters": [
+          {
+            "name": "id",
+            "description": "The query rewrite ID.",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "context",
+            "description": "The app to which this object belongs, as `app:SomeApp`. If the app doesn't exist, the request fails. Other comma-separated contexts in the `context` parameter are allowed but ignored.",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "example": "app:SomeApp"
+          },
+          {
+            "name": "editSessionId",
+            "description": "The edit session ID associated with this request. Equivalent to a Fusion username.",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "noOptimizeWithin",
+            "description": "The number of seconds to wait after a publish before optimizing the query rewrite collection.",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/octet-stream": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/query-rewrite/status": {
+      "get": {
+        "tags": [
+          "Query Rewrite API"
+        ],
+        "summary": "Get the service status",
+        "description": "Check the status of the Query Rewrite service.",
+        "operationId": "getStatus_2",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/ServiceStatusSet"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/query-rewrite/search": {
+      "get": {
+        "tags": [
+          "Query Rewrite API"
+        ],
+        "summary": "Retrieve query rewrite facets and hits",
+        "description": "Search the query rewrite staging collection to get facets and hits",
+        "operationId": "search",
+        "parameters": [
+          {
+            "name": "context",
+            "description": "The app to which this object belongs, as `app:SomeApp`. If the app doesn't exist, the request fails. Other comma-separated contexts in the `context` parameter are allowed but ignored.",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "example": "app:SomeApp"
+          },
+          {
+            "name": "editSessionId",
+            "description": "An edit session ID filter. Equivalent to a Fusion username.",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "params",
+            "description": "Additional parameters used when executing the query.",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/MultiValueMapStringString"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/SearchResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/query-rewrite/search/{type}": {
+      "get": {
+        "tags": [
+          "Query Rewrite API"
+        ],
+        "summary": "Retrieve query rewrite facets and hits",
+        "description": "Search the query rewrite staging collection to get facets and hits.",
+        "operationId": "searchType",
+        "parameters": [
+          {
+            "name": "type",
+            "description": "The query rewrite type.  Use `/query-rewrite/schema` to get the available query rewrite types.",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "context",
+            "description": "An application name",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "example": "app:SomeApp"
+          },
+          {
+            "name": "editSessionId",
+            "description": "An edit session ID filter. Equivalent to a Fusion username.",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "params",
+            "description": "Additional parameters used when executing the query.",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/MultiValueMapStringString"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/SearchResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/query-rewrite/search/targeted-docs": {
+      "get": {
+        "tags": [
+          "Query Rewrite API"
+        ],
+        "summary": "Retrieve rules by targeted docs",
+        "description": "Identify rules targeting the specified document IDs.",
+        "operationId": "searchByTargetedDocIdGET",
+        "parameters": [
+          {
+            "name": "context",
+            "description": "The app to which this object belongs, as `app:SomeApp`. If the app doesn't exist, the request fails. Other comma-separated contexts in the `context` parameter are allowed but ignored.",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "example": "app:SomeApp"
+          },
+          {
+            "name": "editSessionId",
+            "description": "An edit session ID filter. Equivalent to a Fusion username.",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "documentIds",
+            "description": "A list of main collection document IDs.",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": {
+                    "type": "object"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/query-rewrite/schema": {
+      "get": {
+        "tags": [
+          "Query Rewrite API"
+        ],
+        "summary": "Retrieve the JSON schema",
+        "description": "Get the JSON schema for query rewrite objects.",
+        "operationId": "getSchema",
+        "parameters": [
+          {
+            "name": "context",
+            "description": "The app to which this object belongs, as `app:SomeApp`. If the app doesn't exist, the request fails. Other comma-separated contexts in the `context` parameter are allowed but ignored.",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "example": "app:SomeApp"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/ObjectType"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/query-rewrite/schema/{type}": {
+      "get": {
+        "tags": [
+          "Query Rewrite API"
+        ],
+        "summary": "Retrieve the JSON schema by type",
+        "description": "Get the JSON schema for creating a specific type of object, such as a rule",
+        "operationId": "getSchemaType",
+        "parameters": [
+          {
+            "name": "type",
+            "description": "The query rewrite type.  Use `/query-rewrite/schema` to get the available query rewrite types.",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "context",
+            "description": "The app to which this object belongs, as `app:SomeApp`. If the app doesn't exist, the request fails. Other comma-separated contexts in the `context` parameter are allowed but ignored.",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "example": "app:SomeApp"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/ObjectType"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/query-rewrite/export/{id}": {
+      "get": {
+        "tags": [
+          "Query Rewrite API"
+        ],
+        "summary": "Export query rewrite docs",
+        "description": "Export all query rewrite documents from a Solr collection.",
+        "operationId": "exportQueryRewriteCollection",
+        "parameters": [
+          {
+            "name": "id",
+            "description": "The query rewrite ID.",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/StreamingResponseBody"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/query-rewrite/undo/{id}": {
+      "delete": {
+        "tags": [
+          "Query Rewrite API"
+        ],
+        "summary": "Undo pending changes",
+        "description": "Undo all pending changes to a specific doc that has not been published; this is not an ACID transactional operation in that we remove all changes made to a doc in a session and not just the last operation.",
+        "operationId": "undo",
+        "parameters": [
+          {
+            "name": "id",
+            "description": "The query rewrite ID.",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "context",
+            "description": "The app to which this object belongs, as `app:SomeApp`. If the app doesn't exist, the request fails. Other comma-separated contexts in the `context` parameter are allowed but ignored.",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "example": "app:SomeApp"
+          },
+          {
+            "name": "editSessionId",
+            "description": "The edit session ID associated with this request. Equivalent to a Fusion username.",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/octet-stream": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/experiments/{id}": {
+      "get": {
+        "tags": [
+          "Experiments API"
+        ],
+        "summary": "Retrieve an experiment",
+        "description": "Fetch an experiment by ID.  The response is the experiment's attributes in JSON format.",
+        "operationId": "getEntity_2",
+        "parameters": [
+          {
+            "name": "id",
+            "description": "The experiment ID.",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/Experiment"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "Experiments API"
+        ],
+        "summary": "Update an experiment",
+        "description": "Use this endpoint to change an experiment's attributes.  The request is a JSON body containing the updated attributes.",
+        "operationId": "updateEntity_2",
+        "parameters": [
+          {
+            "name": "id",
+            "description": "The experiment ID.",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "ifMatch",
+            "description": "An optional tag to match.",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "$ref": "#/components/schemas/IfMatchHeader"
+            }
+          },
+          {
+            "name": "context",
+            "description": "The app to which this object belongs, as `app:SomeApp`.",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "example": "app:SomeApp"
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Experiment"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/Experiment"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Experiments API"
+        ],
+        "summary": "Delete an experiment",
+        "description": "The request specifies the ID of the experiment to delete.",
+        "operationId": "deleteEntity_2",
+        "parameters": [
+          {
+            "name": "id",
+            "description": "The experiment ID.",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "ifMatch",
+            "description": "An optional tag to match.",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "$ref": "#/components/schemas/IfMatchHeader"
+            }
+          },
+          {
+            "name": "context",
+            "description": "The app to which this object belongs, as `app:SomeApp`.",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "example": "app:SomeApp"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/experiments/{id}/metrics": {
+      "get": {
+        "tags": [
+          "Experiments API"
+        ],
+        "summary": "Retrieve experiment metrics",
+        "description": "Get metrics for all runs of an experiment.",
+        "operationId": "getMetrics",
+        "parameters": [
+          {
+            "name": "id",
+            "description": "The experiment ID.",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ExperimentMetricResponse"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "Experiments API"
+        ],
+        "summary": "Recompute experiment metrics",
+        "description": "Recompute metrics based on the results of an experiment",
+        "operationId": "recompute",
+        "parameters": [
+          {
+            "name": "id",
+            "description": "The experiment ID.",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "sync",
+            "description": "Whether to wait for the experiment to finish. If false, metrics are retrieved from the current job status which may be empty if the job has not started yet.",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "boolean",
+              "default": false
+            }
+          },
+          {
+            "name": "syncWait",
+            "description": "The maximum time to wait for an experiment to finish in seconds. Only used if sync=true.",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "format": "int32",
+              "default": 300
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/ExperimentRecomputeResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/experiments": {
+      "get": {
+        "tags": [
+          "Experiments API"
+        ],
+        "summary": "List all experiments",
+        "description": "Use this endpoint to discover existing experiments and their attributes.",
+        "operationId": "getAllEntities_2",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Experiment"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Experiments API"
+        ],
+        "summary": "Create an experiment",
+        "description": "The JSON request body describes the attributes of the new experiment.",
+        "operationId": "createEntity_2",
+        "parameters": [
+          {
+            "name": "context",
+            "description": "The app to which this object belongs, as `app:SomeApp`.",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "example": "app:SomeApp"
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Experiment"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/Experiment"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/experiments/{id}/job": {
+      "post": {
+        "tags": [
+          "Experiments API"
+        ],
+        "summary": "Start an experiment",
+        "description": "Activate the specified experiment.  The response shows the experiment's properties, including `enabled=true`.",
+        "operationId": "startJob",
+        "parameters": [
+          {
+            "name": "id",
+            "description": "The experiment ID.",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "ifMatch",
+            "description": "An optional tag to match.",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "$ref": "#/components/schemas/IfMatchHeader"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/Experiment"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Experiments API"
+        ],
+        "summary": "Stop an experiment",
+        "description": "De-activate the specified experiment.  The response shows the experiment's properties, including `enabled=false`.",
+        "operationId": "stopJob",
+        "parameters": [
+          {
+            "name": "id",
+            "description": "The experiment ID.",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "ifMatch",
+            "description": "An optional tag to match.",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "$ref": "#/components/schemas/IfMatchHeader"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/Experiment"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/experiments/{id}/variant": {
+      "get": {
+        "tags": [
+          "Experiments API"
+        ],
+        "summary": "Retrieve a variant",
+        "description": "Get the variant that would be picked for a given user ID.  This is useful for debugging.  Note that this assumes all traffic is routed to the experiment.",
+        "operationId": "getVariant",
+        "parameters": [
+          {
+            "name": "id",
+            "description": "The ID of the experiment from which to pick a variant.  Use `/experiments` to get experiment IDs.",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "userId",
+            "description": "The name of the field containing the user ID for which to pick a variant.",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/ExperimentVariant"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/experiments/{id}/metrics/{runId}": {
+      "get": {
+        "tags": [
+          "Experiments API"
+        ],
+        "summary": "Retrieve experiment run metrics",
+        "description": "Get metrics for a specific run of an experiment.",
+        "operationId": "getMetricsForRun",
+        "parameters": [
+          {
+            "name": "id",
+            "description": "The experiment ID.",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "runId",
+            "description": "The experiment run ID.",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/ExperimentMetricResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/experiments/{id}/history": {
+      "get": {
+        "tags": [
+          "Experiments API"
+        ],
+        "summary": "Get experiment job history",
+        "description": "Get the job histories for an experiment",
+        "operationId": "getHistory",
+        "parameters": [
+          {
+            "name": "id",
+            "description": "The experiment ID.",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ExperimentHistoryEntry"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/experiments/{id}/groundTruth": {
+      "get": {
+        "tags": [
+          "Experiments API"
+        ],
+        "summary": "Retrieve ground truth results",
+        "description": "Get the ground truth results for an experiment as JSON",
+        "operationId": "getGroundTruthResultsAsCsv_1",
+        "parameters": [
+          {
+            "name": "id",
+            "description": "The experiment ID.",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "queryLimit",
+            "description": "A limit on the number of queries to return per entry.",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "format": "int32",
+              "default": 100
+            }
+          },
+          {
+            "name": "docLimit",
+            "description": "A limit on the number of entries to return.",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "format": "int32",
+              "default": 10
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/experiments/status": {
+      "get": {
+        "tags": [
+          "Experiments API"
+        ],
+        "summary": "Get the service status",
+        "description": "Check the status of the Experiments service.",
+        "operationId": "getStatus_5",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/ServiceStatusSet"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/experiments/_schema": {
+      "get": {
+        "tags": [
+          "Experiments API"
+        ],
+        "summary": "Retrieve the JSON schema",
+        "description": "Get JSON schema for experiments.",
+        "operationId": "getEntitySchema_2",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/schema+json;qs=1.0": {
+                "schema": {
+                  "$ref": "#/components/schemas/ObjectType"
+                }
+              },
+              "application/json;qs=0.9": {
+                "schema": {
+                  "$ref": "#/components/schemas/ObjectType"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/custom-rule-types/{id}": {
+      "get": {
+        "tags": [
+          "Custom Rule Type API"
+        ],
+        "summary": "Retrieve a custom rule type",
+        "description": "Get the custom rule type as JSON by unique ID.",
+        "operationId": "getEntity_3",
+        "parameters": [
+          {
+            "name": "id",
+            "description": "The custom rule type ID.",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CustomRuleTypeConfig"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "Custom Rule Type API"
+        ],
+        "summary": "Update a custom rule type",
+        "description": "Use this endpoint to change a custom rule type's attributes.  The request is a JSON body containing the updated attributes.",
+        "operationId": "updateEntity_3",
+        "parameters": [
+          {
+            "name": "id",
+            "description": "The custom rule type ID.",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "ifMatch",
+            "description": "An optional tag to match.",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "$ref": "#/components/schemas/IfMatchHeader"
+            }
+          },
+          {
+            "name": "context",
+            "description": "The app to which this object belongs, as `app:SomeApp`.",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "example": "app:SomeApp"
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CustomRuleTypeConfig"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CustomRuleTypeConfig"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Custom Rule Type API"
+        ],
+        "summary": "Delete a custom rule type",
+        "description": "The request specifies the ID of the custom rule type to delete.",
+        "operationId": "deleteEntity_3",
+        "parameters": [
+          {
+            "name": "id",
+            "description": "The custom rule type ID.",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "ifMatch",
+            "description": "An optional tag to match.",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "$ref": "#/components/schemas/IfMatchHeader"
+            }
+          },
+          {
+            "name": "context",
+            "description": "The app to which this object belongs, as `app:SomeApp`.",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "example": "app:SomeApp"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/custom-rule-types": {
+      "get": {
+        "tags": [
+          "Custom Rule Type API"
+        ],
+        "summary": "List all custom rule types",
+        "description": "Use this endpoint to discover existing custom rule types and their attributes.",
+        "operationId": "getAllEntities_3",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/CustomRuleTypeConfig"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Custom Rule Type API"
+        ],
+        "summary": "Create a custom rule type",
+        "description": "The request is a JSON body defining the new custom rule type.",
+        "operationId": "createEntity_3",
+        "parameters": [
+          {
+            "name": "context",
+            "description": "The app to which this object belongs, as `app:SomeApp`.",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "example": "app:SomeApp"
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CustomRuleTypeConfig"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CustomRuleTypeConfig"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/custom-rule-types/status": {
+      "get": {
+        "tags": [
+          "Custom Rule Type API"
+        ],
+        "summary": "Get the service status",
+        "description": "Check the status of the Custom Rule Type service.",
+        "operationId": "getStatus_6",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ServiceStatusSet"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/custom-rule-types/_schema": {
+      "get": {
+        "tags": [
+          "Custom Rule Type API"
+        ],
+        "summary": "Retrieve the JSON schema",
+        "description": "Get the configuration schema for custom rule types.",
+        "operationId": "getEntitySchema_3",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/schema+json;qs=1.0": {
+                "schema": {
+                  "$ref": "#/components/schemas/ObjectType"
+                }
+              },
+              "application/json;qs=0.9": {
+                "schema": {
+                  "$ref": "#/components/schemas/ObjectType"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/signals/{collection}": {
+      "post": {
+        "tags": [
+          "Signal Indexing API"
+        ],
+        "summary": "Index an event signal",
+        "description": "Index an event signal into the specified collection.  The JSON request body describes the signal's attributes.",
+        "operationId": "createSignals",
+        "parameters": [
+          {
+            "name": "collection",
+            "description": "The data collection to which this signal belongs.",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "pipelineId",
+            "description": "An index pipeline to use for processing signals. Note that the index pipeline must end with a Solr Indexer stage, and in this stage the `enforce_schema` property must be set to 'true'.",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "commit",
+            "description": "Whether to commit signals to the collection immediately after indexing.",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "boolean"
+            }
+          },
+          {
+            "name": "async",
+            "description": "Whether to execute the request asynchronously. If true, an `autoCommit` is issued and failures are not reported.",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "boolean",
+              "default": true
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/schemas/Event"
+                }
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "JobRunView": {
+        "type": "object",
+        "properties": {
+          "resource": {
+            "description": "The resource ID, prefixed with the job type: `spark`, `datasource`, or `task`.",
+            "type": "string",
+            "example": "`spark:api-test-app_synonym_detection`"
+          },
+          "runId": {
+            "description": "The job run ID.",
+            "type": "string",
+            "example": "zyGUs6XsQ3"
+          },
+          "startTime": {
+            "description": "The job run start time.",
+            "type": "string",
+            "format": "date-time",
+            "example": "2024-11-13T08:52:35.589Z"
+          },
+          "endTime": {
+            "description": "The job run end time.",
+            "type": "string",
+            "format": "date-time",
+            "example": "2024-11-13T08:52:54.309Z"
+          },
+          "status": {
+            "description": "The job run status.",
+            "type": "string",
+            "example": "Success"
+          },
+          "error": {
+            "description": "A job run error, if any.",
+            "type": "object",
+            "additionalProperties": {
+              "type": "object"
+            }
+          },
+          "extra": {
+            "description": "Additional statistics about the job run. For example:\n\n* `connectorType: \"web-v2\"`\n* Timers such as crawldb and item timers\n* Counters such as plug-in and request information",
+            "type": "object",
+            "additionalProperties": {
+              "type": "object"
+            }
+          },
+          "startedBy": {
+            "description": "The username of the user who started the job.",
+            "type": "string",
+            "example": "jane.doe"
+          }
+        }
+      },
+      "QueryRewriteTypeStatus": {
+        "type": "object",
+        "properties": {
+          "app": {
+            "description": "The Fusion app to which this query rewrite belongs.",
+            "type": "string",
+            "example": "my-test-app"
+          },
+          "type": {
+            "description": "The query rewrite type.",
+            "type": "string",
+            "example": "boost_list"
+          },
+          "enabled": {
+            "description": "This field specifies if this query rewrite is enabled for use. If set to `true`, the query rewrite is enabled.",
+            "type": "boolean",
+            "default": true
+          },
+          "numDeployed": {
+            "description": "The number of deployed (published) query rewrites of this type.",
+            "type": "integer",
+            "format": "int64",
+            "example": 5
+          },
+          "collection": {
+            "description": "The data collection to which this query rewrite belongs.",
+            "type": "string",
+            "example": "my-test-collection"
+          },
+          "job": {
+            "description": "The job type: `spark`, `datasource`, or `task`.",
+            "type": "string",
+            "example": "datasource"
+          },
+          "lastDeployedOn": {
+            "description": "The date and time at which this query rewrite was last deployed.",
+            "type": "string",
+            "format": "date-time",
+            "example": "2024-04-05T18:01:19.865Z"
+          },
+          "lastJobStatus": {
+            "$ref": "#/components/schemas/JobRunView"
+          }
+        }
+      },
+      "BulkOperation": {
+        "type": "object",
+        "properties": {
+          "delete": {
+            "description": "One or more query rewrites to delete.",
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "update": {
+            "description": "One or more query rewrites to update.",
+            "type": "array",
+            "items": {
+              "type": "object",
+              "additionalProperties": {
+                "type": "object"
+              }
+            }
+          },
+          "create": {
+            "description": "One or more new query rewrites to create.",
+            "type": "array",
+            "items": {
+              "type": "object",
+              "additionalProperties": {
+                "type": "object"
+              }
+            }
+          }
+        }
+      },
+      "QueryRewrite": {
+        "type": "object",
+        "discriminator": {
+          "propertyName": "type"
+        },
+        "required": [
+          "type",
+          "id",
+          "createdOn",
+          "updatedOn",
+          "review",
+          "deployed",
+          "is_deleted",
+          "base_object_id_s",
+          "doc_type",
+          "priority",
+          "matching",
+          "rollup"
+        ],
+        "properties": {
+          "type": {
+            "enum": [
+              "banner",
+              "block_list",
+              "boost_attributes",
+              "boost_list",
+              "bury_list",
+              "filter_list",
+              "ground_truth",
+              "ingroup_boost_list",
+              "ingroup_bury_list",
+              "ingroup_pinned",
+              "json_blob",
+              "phrase",
+              "pinned",
+              "redirect",
+              "removeWords",
+              "response_value",
+              "set_facets",
+              "set_params",
+              "simq",
+              "spell",
+              "synonym",
+              "tail"
+            ],
+            "description": "The type of rule, written in snake case.  In the Fusion UI, some of these types correspond to the types in the Rewrites Manager and others correspond to actions in the Rules Manager.\n\n* `banner` - A _rule_ that adds an HTML-formatted banner to query responses.\n* `block_list` - A _rule_ that blocks values from appearing in query results.\n* `boost_attributes` - A _rule_ that boosts documents in query results.\n* `boost_list` - A _rule_ that boosts documents with a large multiplicative boost.\n* `bury_list` - A _rule_ that buries documents so they are minimized but not blocked.\n* `filter_list` - A _rule_ that applies filter queries (`fq`) to matching queries.\n* `ground_truth` - A query rewrite that estimates ground truth queries using click signals and query signals.\n* `ingroup_boost_list` - A _rule_ that boosts an item within a product group.\n* `ingroup_bury_list` - A _rule_ that buries an item within a product group.\n* `ingroup_pinned` - A _rule_ that pins a document to a specific location within a product group.\n* `json_blob` - A _rule_ that returns an arbitrary JSON blob for display outside of the search results.\n* `phrase` - A _query rewrite_ that boosts phrases when they appear in queries.\n* `pinned` - A _rule_ that pins a document to a specific location within the search results.\n* `redirect` - A _rule_ that adds a redirect message to the query response.\n* `removeWords` - A _query rewrite_ that removes phrases from queries.\n* `response_value` - A _rule_ that sends an arbitrary value to the front end or pipeline.\n* `set_facets` - A _rule_ that customizes the facets returned in the query response.\n* `set_params` - A _rule_ that sets a parameter name and value to a search query.\n* `simq` - A _query rewrite_ that detects overlap between the results of similar queries.\n* `spell` - A _query rewrite_ that maps misspellings to their corrected spellings.\n* `synonym` - A _query rewrite_ that maps query terms to their synonyms.\n* `tail` - A _query rewrite_ that replaces under-performing queries with queries that produce higher click-through rates."
+          },
+          "id": {
+            "type": "string",
+            "description": "A unique ID for the query rewrite.",
+            "example": "qPopCp6kr3"
+          },
+          "source": {
+            "description": "The name of the store that made the update.",
+            "type": "string"
+          },
+          "sourceType": {
+            "description": "The type the store that made the update.",
+            "type": "string"
+          },
+          "createdOn": {
+            "type": "string",
+            "format": "date-time",
+            "description": "A timestamp value that describes when the rule was created.",
+            "example": "2024-04-05T19:40:06.958Z"
+          },
+          "updatedOn": {
+            "type": "string",
+            "format": "date-time",
+            "description": "A timestamp value that describes when the rule was last modified. ",
+            "example": "2024-04-12T19:40:06.958Z"
+          },
+          "reviewer": {
+            "type": "string",
+            "description": "The name of the user logged in when the last review occurred.",
+            "example": "jane.doe"
+          },
+          "reviewedOn": {
+            "type": "string",
+            "format": "date-time",
+            "example": "2024-04-16T19:40:06.958Z"
+          },
+          "review": {
+            "type": "string",
+            "enum": [
+              "auto",
+              "pending",
+              "approved",
+              "denied",
+              "supplied"
+            ],
+            "description": "The query rewrite's review status."
+          },
+          "deployed": {
+            "type": "boolean",
+            "description": "Describes whether the query rewrite is published. \n\nWhen `true`, the query rewrite is published and the latest changes are live. When `false`, the latest changes are not live, though previous versions may be live."
+          },
+          "tags": {
+            "type": "array",
+            "description": "An array of conditional tags that are used to restrict the triggering of the query rewrite.",
+            "items": {
+              "type": "string",
+              "example": "test1, test2"
+            }
+          },
+          "is_deleted": {
+            "type": "boolean",
+            "description": "Describes whether the query rewrite is marked for deletion.\n\nWhen `true`, the query rewrite will be deleted when the latest changes are published. When `false`, the query rewrite will not be deleted when the latest changes are published. ",
+            "default": false
+          },
+          "base_object_id_s": {
+            "type": "string",
+            "description": "A unique ID for the query rewrite. Matches the value of `id`. ",
+            "example": "qPopCp6kr3"
+          },
+          "doc_type": {
+            "description": "Either `query_rewrite` or `rule`.",
+            "type": "string",
+            "example": "query_rewrite"
+          },
+          "description": {
+            "description": "The rule description.",
+            "type": "string",
+            "x-stoplight": {
+              "id": "tnuwejztlnl0q"
+            }
+          },
+          "priority": {
+            "type": "integer",
+            "x-stoplight": {
+              "id": "5zbjpoi874rgv"
+            },
+            "description": "Used when multiple rules could take effect for a given query; higher number means higher precedence. For example, a rule with precedence of 10 will take effect before a rule with precedence of 3. Ties on precedence are broken based on creation time - the more recently created rule will take effect before the older rule.",
+            "example": 5
+          },
+          "matching": {
+            "type": "string",
+            "x-stoplight": {
+              "id": "pn6wn7jaq1b63"
+            },
+            "example": "keywords"
+          },
+          "groups": {
+            "type": "string",
+            "x-stoplight": {
+              "id": "igpylzyzzoi7t"
+            },
+            "description": "The groups associated with this query rewrite."
+          },
+          "rollup": {
+            "type": "string",
+            "x-stoplight": {
+              "id": "tjo6xjwc16u3w"
+            },
+            "description": "Where the results display.",
+            "example": "Boost List"
+          }
+        }
+      },
+      "IfMatchHeader": {
+        "type": "object"
+      },
+      "ExperimentReference": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "description": "The experiment ID.",
+            "type": "string",
+            "example": "test-experiment"
+          },
+          "percentOfTraffic": {
+            "description": "The percentage of traffic included in the experiment.",
+            "type": "number",
+            "format": "double"
+          }
+        }
+      },
+      "ParamAndValue": {
+        "type": "object",
+        "properties": {
+          "key": {
+            "type": "string",
+            "description": "The name of the key used in the query profile.",
+            "example": "rule_simulate"
+          },
+          "value": {
+            "type": "string",
+            "description": "The value of the `key` field.",
+            "example": "query_profile_query_rewrite"
+          },
+          "policy": {
+            "type": "string",
+            "enum": [
+              "replace",
+              "append",
+              "remove",
+              "default"
+            ],
+            "description": "The operation executed when the key:value pair is processed."
+          }
+        }
+      },
+      "QueryProfile": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "description": "The query profile ID.",
+            "type": "string",
+            "example": "test-app-query-profile"
+          },
+          "queryPipeline": {
+            "description": "The query pipeline associated with this query profile.",
+            "type": "string",
+            "example": "test-app-query-pipeline"
+          },
+          "collection": {
+            "description": "The data collection associated with this query profile.",
+            "type": "string",
+            "example": "my-test-collection"
+          },
+          "searchHandler": {
+            "description": "The Solr search handler to use with this query profile.",
+            "externalDocs": {
+              "description": "See the Solr documentation.",
+              "url": "https://cwiki.apache.org/confluence/display/solr/SearchHandler"
+            },
+            "type": "string",
+            "example": "/select"
+          },
+          "searchMode": {
+            "type": "string",
+            "description": "The search mode to use with this query profile:\n\n* `dsl` - Fusion's Domain Specific Language.\n\n* `legacy` - Solr query parameters.\n\n* `all` - Use both DSL and legacy search modes. This is the default value that works well for most use cases.",
+            "pattern": "dsl|legacy|all",
+            "example": "all"
+          },
+          "params": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ParamAndValue"
+            }
+          },
+          "experiment": {
+            "$ref": "#/components/schemas/ExperimentReference"
+          }
+        }
+      },
+      "QueryPipelineDefinition": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "description": "The query pipeline ID.",
+            "type": "string",
+            "example": "Items_for_recommendations"
+          },
+          "stages": {
+            "description": "The stages in this query pipeline.",
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/StageConfig"
+            }
+          },
+          "properties": {
+            "type": "object",
+            "description": "Qualifiers that help the pipeline determine relevant results.",
+            "additionalProperties": {
+              "type": "string"
+            }
+          }
+        }
+      },
+      "StageConfig": {
+        "type": "object",
+        "discriminator": {
+          "propertyName": "type"
+        },
+        "properties": {
+          "type": {
+            "description": "The query stage type.",
+            "type": "string",
+            "example": "user_recommendation"
+          },
+          "id": {
+            "description": "The query stage ID.",
+            "type": "string",
+            "example": "user_rec"
+          },
+          "skip": {
+            "description": "This field specifies if the stage is skipped during processing. If set to `true`, the stage is skipped.",
+            "type": "boolean",
+            "default": false
+          },
+          "label": {
+            "description": "An optional descriptor for this stage.",
+            "type": "string",
+            "example": "Items for user recommendations"
+          },
+          "condition": {
+            "description": "A conditional statement that must evaluate to `true` in order to execute this stage.",
+            "type": "string"
+          }
+        }
+      },
+      "Experiment": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "description": "The experiment ID.",
+            "type": "string",
+            "example": "test-experiment"
+          },
+          "description": {
+            "description": "A description of this experiment.",
+            "type": "string",
+            "example": "Test experiment descri"
+          },
+          "uniqueIdParameter": {
+            "description": "The name of the request parameter containing the user ID.",
+            "type": "string",
+            "example": "userId"
+          },
+          "baseSignalsCollection": {
+            "description": "Signals resulting from requests that flow through this experiment will go into the signal collection associated with this base collection.",
+            "type": "string",
+            "example": "signals_collection"
+          },
+          "variants": {
+            "description": "The variants belonging to this experiment.",
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ExperimentVariant"
+            }
+          },
+          "automaticallyAdjustTraffic": {
+            "description": "If set to `true`, enable multi-armed bandits. If `true`, there is no the need to specify a traffic weight for each variant.",
+            "type": "boolean",
+            "default": true
+          },
+          "enabled": {
+            "description": "If set to `true`, this experiment is enabled.",
+            "type": "boolean",
+            "default": true
+          },
+          "startTimestamp": {
+            "description": "The date and time when the experiment was launched.",
+            "type": "string",
+            "format": "date-time",
+            "example": "2024-02-06T14:53:11.781Z"
+          },
+          "runId": {
+            "description": "The experiment run ID.",
+            "type": "string",
+            "example": "AkRzWHdrLV"
+          },
+          "metrics": {
+            "description": "Experiment metrics.",
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ExperimentMetric"
+            }
+          }
+        }
+      },
+      "ExperimentMetric": {
+        "type": "object",
+        "discriminator": {
+          "propertyName": "type"
+        },
+        "required": [
+          "type"
+        ],
+        "properties": {
+          "name": {
+            "description": "Experiment metric name.",
+            "type": "string",
+            "example": "ctr"
+          },
+          "description": {
+            "description": "Experiment metric description.",
+            "type": "string",
+            "example": "This is the click-through metric for the experiment."
+          },
+          "jobId": {
+            "description": "The job that produced this metric.",
+            "type": "string",
+            "example": "spark:experiment-click-through"
+          },
+          "binary": {
+            "type": "boolean",
+            "description": "This field specifies if the type of measurement is one of two outcomes. For example, success or failure. If set to `true`, the experiment metric outcome is set to this binary choice."
+          },
+          "primary": {
+            "type": "boolean",
+            "description": "The field specifies if the metric is primary, which measures the direct impact of the experiment result. If set to `true`, the metric is primary and the outcomes are the changes listed in the experiment results."
+          },
+          "type": {
+            "type": "string",
+            "description": "The type of metric. For example `ctr` is click-through.",
+            "example": "ctr"
+          }
+        }
+      },
+      "ExperimentVariant": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "description": "The experiment variant ID.",
+            "type": "string",
+            "example": "cdb50872ab"
+          },
+          "name": {
+            "description": "The experiment variant name.",
+            "type": "string",
+            "example": "control"
+          },
+          "collection": {
+            "description": "The data collection associated with this experiment variant.",
+            "type": "string",
+            "example": "signals_collection"
+          },
+          "queryPipeline": {
+            "description": "The query pipeline associated with this experiment variant.",
+            "type": "string",
+            "example": "QUERY_PIPELINE"
+          },
+          "params": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ParamAndValue"
+            }
+          },
+          "weight": {
+            "description": "This variant's traffic weight.",
+            "type": "number",
+            "format": "double",
+            "example": 1
+          }
+        }
+      },
+      "ExperimentRecomputeResponse": {
+        "type": "object",
+        "properties": {
+          "jobs": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/SparkJobStatus"
+            }
+          }
+        }
+      },
+      "SparkJobStatus": {
+        "type": "object",
+        "properties": {
+          "state": {
+            "description": "The job's current state.",
+            "type": "string",
+            "enum": [
+              "unknown",
+              "idle",
+              "starting",
+              "running",
+              "finishing",
+              "cancelling",
+              "finished",
+              "cancelled",
+              "error",
+              "skipped"
+            ]
+          },
+          "jobId": {
+            "description": "The job ID.",
+            "type": "string"
+          }
+        }
+      },
+      "AnyType": {
+        "type": "object",
+        "properties": {
+          "type": {
+            "type": "string",
+            "enum": [
+              "string",
+              "number",
+              "integer",
+              "boolean",
+              "object",
+              "array",
+              "null",
+              "ref"
+            ],
+            "description": "The type of property in the schema."
+          },
+          "title": {
+            "type": "string",
+            "description": "The name of the property in the schema.",
+            "example": "Query Pipeline"
+          },
+          "description": {
+            "type": "string",
+            "description": "Information about the contents of the property in the schema.",
+            "example": "This property describes the query pipeline contents in the schema."
+          },
+          "default": {
+            "type": "object",
+            "description": "This field contains the type of operation or default for the property. For example, the default for `searchHandler` is `select`, and for `searchMode`, the default is `all`."
+          },
+          "category": {
+            "type": "string",
+            "description": "The property grouping in the schema.",
+            "example": "query"
+          },
+          "categoryPriority": {
+            "type": "integer",
+            "format": "int32",
+            "example": 1,
+            "description": "The importance (priority) of the object in the schema"
+          },
+          "hints": {
+            "uniqueItems": true,
+            "type": "array",
+            "description": "Words or phrases that help guide the query optimizer best use the property in the schema. ",
+            "items": {
+              "type": "string",
+              "example": "query param property, top priority param"
+            }
+          },
+          "unsafe": {
+            "type": "boolean",
+            "description": "The security status of the object in the schema. If `false`, the schema contents are valid. If `true`, the schema contents are not valid.",
+            "default": false
+          },
+          "oneOf": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/AnyTypeObjectObject"
+            }
+          }
+        }
+      },
+      "AnyTypeObjectObject": {
+        "type": "object",
+        "properties": {
+          "type": {
+            "type": "string",
+            "enum": [
+              "string",
+              "number",
+              "integer",
+              "boolean",
+              "object",
+              "array",
+              "null",
+              "ref"
+            ],
+            "description": "The type of property in the schema."
+          },
+          "title": {
+            "type": "string",
+            "description": "The name of the property in the schema.",
+            "example": "Query Param"
+          },
+          "description": {
+            "type": "string",
+            "description": "Information about the contents of the property in the schema.",
+            "example": "This property describes the query param contents in the schema."
+          },
+          "default": {
+            "type": "object",
+            "description": "This field contains the type of operation or default for the property. For example, the default for `searchHandler` is `select`, and for `searchMode`, the default is `all`."
+          },
+          "category": {
+            "type": "string",
+            "description": "The property grouping in the schema.",
+            "example": "param"
+          },
+          "categoryPriority": {
+            "type": "integer",
+            "format": "int32",
+            "description": "The importance (priority) of the object in the schema",
+            "example": 2
+          },
+          "hints": {
+            "uniqueItems": true,
+            "type": "array",
+            "description": "Words or phrases that help guide the query optimizer best use the property in the schema. ",
+            "items": {
+              "type": "string",
+              "example": "query param property, secondary priority param"
+            }
+          },
+          "unsafe": {
+            "type": "boolean",
+            "description": "The security status of the object in the schema. If `false`, the schema contents are valid. If `true`, the schema contents are not valid.",
+            "default": false
+          }
+        }
+      },
+      "CustomRuleTypeConfig": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "description": "The custom rule type ID.",
+            "type": "string"
+          },
+          "display_type": {
+            "description": "A user-friendly name for the custom rule type.",
+            "type": "string",
+            "example": "new-custom-rule"
+          },
+          "pipeline_id": {
+            "description": "The ID of the pipeline that is invoked during rule processing.",
+            "type": "string",
+            "example": "custom-rule-pipeline"
+          },
+          "schema": {
+            "$ref": "#/components/schemas/ObjectType"
+          }
+        }
+      },
+      "ObjectType": {
+        "type": "object",
+        "properties": {
+          "type": {
+            "type": "string",
+            "enum": [
+              "string",
+              "number",
+              "integer",
+              "boolean",
+              "object",
+              "array",
+              "null",
+              "ref"
+            ]
+          },
+          "title": {
+            "type": "string",
+            "description": "The name of the schema.",
+            "example": "This schema details the configuration of the query profiles."
+          },
+          "description": {
+            "type": "string",
+            "description": "Information about the contents of the schema."
+          },
+          "required": {
+            "uniqueItems": true,
+            "type": "array",
+            "description": "This array contains a list of the fields that are required in request for the schema.",
+            "items": {
+              "type": "string",
+              "example": "id, queryPipeline, collection"
+            }
+          },
+          "properties": {
+            "type": "object",
+            "additionalProperties": {
+              "$ref": "#/components/schemas/AnyType"
+            }
+          },
+          "additionalProperties": {
+            "type": "object",
+            "description": "Properties that contain data and are valid even though they may not match the other properties or patterns for the existing properties."
+          },
+          "minProperties": {
+            "type": "integer",
+            "format": "int32",
+            "description": "The lowest number of properties that must be included for validation to be successful.",
+            "example": 1
+          },
+          "maxProperties": {
+            "type": "integer",
+            "format": "int32",
+            "description": "The maximum number of properties that can be included for validation to be successful. If the number of properties exceeds this value, validation is not successful.",
+            "example": 100
+          },
+          "definitions": {
+            "type": "object",
+            "additionalProperties": {
+              "$ref": "#/components/schemas/AnyType"
+            }
+          },
+          "category": {
+            "type": "string",
+            "description": "The designated group of the schema."
+          },
+          "categoryPriority": {
+            "type": "integer",
+            "format": "int32",
+            "description": "The importance (priority) of the object in the schema.",
+            "example": 5
+          },
+          "hints": {
+            "uniqueItems": true,
+            "type": "array",
+            "description": "Words or phrases that help guide the query optimizer best use the properties in the schema.",
+            "items": {
+              "type": "string"
+            }
+          },
+          "unsafe": {
+            "type": "boolean",
+            "description": "The security status of the objects in the schema. If false, the schema contents are valid. If true, the schema contents are not valid."
+          },
+          "default": {
+            "type": "object",
+            "description": "This field contains the type of operation or default for the properties in the schema."
+          },
+          "oneOf": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/AnyTypeObjectObject"
+            }
+          },
+          "propertyGroups": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/PropertyGroup"
+            }
+          }
+        }
+      },
+      "PropertyGroup": {
+        "type": "object",
+        "properties": {
+          "label": {
+            "type": "string",
+            "description": "The name of the group of associated properties.",
+            "example": "params"
+          },
+          "properties": {
+            "type": "array",
+            "description": "The list of properties linked to this group. For example, `params` might include Parameter Name, Parameter Value, and Update Policy.",
+            "items": {
+              "type": "string"
+            }
+          }
+        }
+      },
+      "Event": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "epoch": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "timestamp": {
+            "type": "string"
+          },
+          "type": {
+            "type": "string"
+          },
+          "params": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "object"
+            }
+          }
+        }
+      },
+      "BoostByValue": {
+        "type": "object",
+        "properties": {
+          "field": {
+            "description": "The document field to filter on.",
+            "type": "string"
+          },
+          "boosts": {
+            "description": "A list of `value`/`boost` pairs.",
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/KeyAndBoost"
+            }
+          }
+        }
+      },
+      "BoostQuery": {
+        "type": "object",
+        "properties": {
+          "query": {
+            "$ref": "#/components/schemas/Query"
+          },
+          "boost": {
+            "description": "The numeric boost value.",
+            "type": "number",
+            "format": "double"
+          },
+          "type": {
+            "type": "string"
+          }
+        }
+      },
+      "DslRequest": {
+        "type": "object",
+        "properties": {
+          "queryDefinition": {
+            "description": "Defines the logic of what to query for.",
+            "$ref": "#/components/schemas/QueryDefinition"
+          },
+          "results": {
+            "description": "How the results should be displayed and organized.",
+            "$ref": "#/components/schemas/Results"
+          },
+          "params": {
+            "description": "Arbitrary query parameters to be added to the underlying Solr query, also used to supply Security Trimming Stage parameters.",
+            "type": "object",
+            "additionalProperties": {
+              "type": "object"
+            }
+          },
+          "context": {
+            "description": "Parameters used by various query stages as well as DSL hints.",
+            "type": "object",
+            "additionalProperties": {
+              "type": "object"
+            }
+          },
+          "facets": {
+            "$ref": "#/components/schemas/Facets"
+          }
+        }
+      },
+      "FacetDomain": {
+        "type": "object",
+        "properties": {
+          "additionalFilters": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Query"
+            }
+          },
+          "excludedFiltersByName": {
+            "type": "array",
+            "description": "The names of the filters to exclude in the facet.",
+            "items": {
+              "type": "string"
+            }
+          }
+        }
+      },
+      "FacetField": {
+        "description": "A field designated for faceting.",
+        "type": "object",
+        "properties": {
+          "field": {
+            "description": "The name of the facet field.",
+            "type": "string",
+            "example": "product_description_t"
+          },
+          "prefix": {
+            "description": "A Solr facet prefix that is used for hierarchical faceting. This value works in coordination with the facet field.",
+            "type": "string",
+            "externalDocs": {
+              "description": "See the Solr documentation.",
+              "url": "https://cwiki.apache.org/confluence/display/solr/HierarchicalFaceting"
+            },
+            "example": "prod"
+          },
+          "sort": {
+            "description": "The order in which facet values are listed:\n\n* `count` ordering is by documents per term, descending.\n\n* `index` ordering is sorted on term values themselves.",
+            "type": "string",
+            "enum": [
+              "count",
+              "index"
+            ]
+          },
+          "limit": {
+            "description": "The maximum number of terms to be returned.",
+            "type": "integer",
+            "format": "int32",
+            "default": 100
+          },
+          "offset": {
+            "description": "The number of top facet values to skip in the response (just like paging through search results and choosing an offset of 51 to start on page 2 when showing 50 results per page).",
+            "type": "integer",
+            "format": "int32",
+            "default": 0
+          },
+          "minCount": {
+            "description": "The minimum count required for a facet field to be included in the response.",
+            "type": "integer",
+            "format": "int32",
+            "example": 3
+          },
+          "missing": {
+            "description": "This checkbox lets you include a 'missing' facet bucket for documents that do not contain the selected field. If selected, the value is `true` and a missing facet bucket is included. If not selected, the value is `false` and the bucket is not included.",
+            "type": "boolean"
+          },
+          "ensuredValues": {
+            "type": "array",
+            "description": "Field values to include statistics for, even if they don't fall within the natural top limit values for the facet. Only supported on DSL requests.",
+            "items": {
+              "type": "string",
+              "example": "product_description_t"
+            }
+          },
+          "domain": {
+            "$ref": "#/components/schemas/FacetDomain"
+          }
+        }
+      },
+      "FacetRange": {
+        "description": "Range facets are used for fields that contain date or number values.",
+        "type": "object",
+        "properties": {
+          "field": {
+            "description": "The name of the numeric field that functions as a range facet field.",
+            "type": "string",
+            "example": "number_of_reviews_t"
+          },
+          "start": {
+            "description": "The lower number of the facet range. If this number is not met, the facet range information is not included.",
+            "type": "integer",
+            "example": 1
+          },
+          "end": {
+            "description": "The upper limit of the facet range. If the results returned exceed this number, they are not included.",
+            "type": "integer",
+            "example": 100
+          },
+          "gap": {
+            "description": "The span of the range as a value to be added to the lower bound.",
+            "type": "integer",
+            "example": 3
+          },
+          "hardEnd": {
+            "description": "A boolean parameter that specifies how Solr handles a range gap that cannot be evenly divided between the range start and end values.\n\n* If `true`, the last range constraint will have the `facet.range.end` value an upper bound.\n\n* If `false`, the last range will have the smallest possible upper bound greater than `facet.range.end` such that the range is the exact width of the specified range gap. Solr's default value for this parameter is `false`.",
+            "type": "boolean",
+            "default": false
+          },
+          "minCount": {
+            "description": "The minimum count required for a range to be included in the response.",
+            "type": "integer",
+            "format": "int32",
+            "example": 3
+          },
+          "include": {
+            "description": "By default, the ranges used to compute range faceting between `start` and `end` are inclusive of their lower bounds and exclusive of the upper bounds. The \"before\" range defined with the `other` parameter is exclusive and the \"after\" range is inclusive. This default, equivalent to \"lower\" below, will not result in double counting at the boundaries.\n\nYou can use the `include` parameter to modify this behavior using the following options:\n\n* `lower` - All gap-based ranges include their lower bound.\n\n* `upper` - All gap-based ranges include their upper bound.\n\n* `edge` - The first and last gap ranges include their edge bounds (lower for the first one, upper for the last one) even if the corresponding upper/lower option is not specified.\n\n* `outer` - The \"before\" and \"after\" ranges will be inclusive of their bounds, even if the first or last ranges already include those boundaries.\n\n* `all` - Includes all options: lower, upper, edge, outer.",
+            "type": "array",
+            "items": {
+              "type": "string",
+              "enum": [
+                "lower",
+                "upper",
+                "outer",
+                "edge",
+                "all"
+              ]
+            }
+          },
+          "other": {
+            "description": "This parameter specifies that, in addition to the counts for each range constraint between `start` and `end`, counts should also be computed for these options:\n\n* `before` - All records with field values lower then lower bound of the first range.\n\n* `after` - All records with field values greater then the upper bound of the last range.\n\n* `between` - All records with field values between the start and end bounds of all ranges.\n\n* `none` - Do not compute any counts.\n\n* `all` - Compute counts for before, between, and after.",
+            "type": "array",
+            "items": {
+              "type": "string",
+              "enum": [
+                "before",
+                "after",
+                "between",
+                "non",
+                "all"
+              ]
+            }
+          },
+          "domain": {
+            "$ref": "#/components/schemas/FacetDomain"
+          }
+        }
+      },
+      "Facets": {
+        "type": "object",
+        "properties": {
+          "fields": {
+            "description": "Fields designated for faceting.",
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/FacetField"
+            }
+          },
+          "ranges": {
+            "description": "Range facets.",
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/FacetRange"
+            }
+          },
+          "groupFacets": {
+            "description": "If this field is set to `true`, compute grouped facets for the field facets specified in `field` parameters. Grouped facets are computed based on the first specified group. As with normal field faceting, fields shouldn't be tokenized (otherwise counts are computed for each token). Grouped faceting supports single and multi-valued fields. Solr's default is `false`.",
+            "type": "boolean",
+            "default": false
+          },
+          "groupingMethod": {
+            "type": "string",
+            "enum": [
+              "unique",
+              "header_doc"
+            ],
+            "description": "The method used to group facets."
+          }
+        }
+      },
+      "Group": {
+        "type": "object",
+        "properties": {
+          "field": {
+            "type": "string",
+            "description": "The name of the field associated with the group."
+          },
+          "leaderStrategy": {
+            "$ref": "#/components/schemas/GroupLeaderStrategy"
+          },
+          "sort": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/SortElement"
+            }
+          },
+          "size": {
+            "type": "integer",
+            "format": "int64"
+          }
+        }
+      },
+      "GroupLeaderStrategy": {
+        "type": "object",
+        "properties": {
+          "type": {
+            "type": "string"
+          }
+        },
+        "discriminator": {
+          "propertyName": "type"
+        }
+      },
+      "Highlight": {
+        "description": "Highlighting for instances of query terms in search results.",
+        "type": "object",
+        "properties": {
+          "fields": {
+            "description": "The fields to use for highlighting. Highlighting should be used for text fields only. These fields are typically identified by the `_t` suffix, as in `longDescription_t`.",
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "pre": {
+            "description": "The characters immediately preceding a highlighted value. Usually an opening HTML tag.",
+            "type": "string",
+            "default": "<em>"
+          },
+          "post": {
+            "description": "The characters immediately following a highlighted value. Usually a closing HTML tag.",
+            "type": "string",
+            "default": "</em>"
+          },
+          "length": {
+            "description": "The highlight snippet length in characters.",
+            "type": "integer",
+            "format": "int32",
+            "default": 100
+          },
+          "count": {
+            "description": "The number of highlight snippets to generate for each configured field.",
+            "type": "integer",
+            "format": "int32",
+            "default": 1
+          },
+          "defaultHighlight": {
+            "description": "If no highlight match is found in the field, return the leading part of the field instead. Can be used to avoid returning large fields if you need to display something even when there is no highlight match.",
+            "type": "boolean",
+            "default": false
+          }
+        }
+      },
+      "KeyAndBoost": {
+        "type": "object",
+        "properties": {
+          "key": {
+            "description": "A term used for boosting.",
+            "type": "string"
+          },
+          "boost": {
+            "description": "The numeric boost value.",
+            "type": "number",
+            "format": "double",
+            "default": 100
+          }
+        }
+      },
+      "NamedFilter": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "description": "The filter name.",
+            "type": "string"
+          },
+          "query": {
+            "$ref": "#/components/schemas/Query"
+          }
+        }
+      },
+      "Query": {
+        "type": "object",
+        "discriminator": {
+          "propertyName": "type"
+        },
+        "properties": {
+          "type": {
+            "type": "string",
+            "description": "Fields to include in the query."
+          }
+        }
+      },
+      "QueryDefinition": {
+        "type": "object",
+        "properties": {
+          "main": {
+            "$ref": "#/components/schemas/Query"
+          },
+          "boostsByValues": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/BoostByValue"
+            }
+          },
+          "boostsByQuery": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/BoostQuery"
+            }
+          },
+          "userQuery": {
+            "description": "The user query.",
+            "type": "string"
+          },
+          "filters": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Query"
+            }
+          },
+          "namedFilters": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/NamedFilter"
+            }
+          },
+          "groupedQuery": {
+            "$ref": "#/components/schemas/Query"
+          },
+          "groupedFilters": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Query"
+            }
+          }
+        }
+      },
+      "Results": {
+        "type": "object",
+        "properties": {
+          "cursor": {
+            "description": "In requests, set this to `*` to use Solr's deep paging.  This is analogous to start=0.  Deep paging is the recommended pagination method.\n\nThis property is mutually exclusive with `start`. You can use either cursor or start, you cannot use both.\n\nIn responses, this is the cursor position when deep paging is used.",
+            "type": "string"
+          },
+          "start": {
+            "description": "The pagination offset, that is, the number of skipped results for pagination.\n\nThis property is mutually exclusive with `cursor`; you can use one but not both.",
+            "type": "integer",
+            "format": "int64",
+            "default": 0
+          },
+          "size": {
+            "description": "The number of results per page.",
+            "type": "integer",
+            "format": "int64",
+            "example": 10
+          },
+          "sort": {
+            "description": "The sort field(s) and direction.",
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/SortElement"
+            }
+          },
+          "fields": {
+            "description": "Search result fields.",
+            "type": "array",
+            "items": {
+              "type": "string",
+              "example": "product_name_t, product_description_t, number_of_reviews_t"
+            }
+          },
+          "highlight": {
+            "$ref": "#/components/schemas/Highlight"
+          },
+          "returnScore": {
+            "description": "If this field is set to `true`, document scores are included in the search results.",
+            "type": "boolean",
+            "default": true
+          },
+          "includeRawResponse": {
+            "type": "boolean",
+            "description": "If this field is set to `true`, the raw response is included.",
+            "default": false
+          },
+          "group": {
+            "$ref": "#/components/schemas/Group"
+          }
+        }
+      },
+      "SortElement": {
+        "type": "object",
+        "properties": {
+          "type": {
+            "type": "string",
+            "enum": [
+              "field",
+              "expression",
+              "relevancy",
+              "query"
+            ],
+            "description": "The type of sort for the results."
+          },
+          "value": {
+            "type": "string"
+          },
+          "order": {
+            "description": "The sort order, either ascending (`asc`) or descending (`desc`).",
+            "type": "string",
+            "enum": [
+              "asc",
+              "desc"
+            ]
+          },
+          "query": {
+            "$ref": "#/components/schemas/Query"
+          }
+        }
+      },
+      "Banner": {
+        "description": "A banner to include in query responses.",
+        "type": "object",
+        "properties": {
+          "url": {
+            "description": "URL to a banner, typically an HTML file.",
+            "type": "string"
+          },
+          "zone": {
+            "description": "Zone for the banner in the search UI.",
+            "type": "string"
+          }
+        }
+      },
+      "Collation": {
+        "description": "A query correction using collation.",
+        "type": "object",
+        "properties": {
+          "collationQuery": {
+            "description": "The collated query suggestion.",
+            "type": "string"
+          },
+          "hits": {
+            "description": "The number of documents matching this collated query.",
+            "type": "integer",
+            "format": "int64",
+            "example": 2439
+          },
+          "misspellingsAndCorrections": {
+            "description": "The misspelled term and the corrected term.",
+            "type": "object",
+            "additionalProperties": {
+              "type": "string"
+            }
+          }
+        }
+      },
+      "Debug": {
+        "type": "object",
+        "properties": {
+          "solrParams": {
+            "description": "Solr parameters for debugging.",
+            "type": "object",
+            "additionalProperties": {
+              "type": "object"
+            }
+          }
+        }
+      },
+      "DslResponseWrapper": {
+        "type": "object",
+        "properties": {
+          "meta": {
+            "$ref": "#/components/schemas/Meta"
+          },
+          "facets": {
+            "$ref": "#/components/schemas/Facets"
+          },
+          "results": {
+            "$ref": "#/components/schemas/Results"
+          },
+          "spellcheck": {
+            "$ref": "#/components/schemas/Spellcheck"
+          },
+          "debugResponse": {
+            "type": "object",
+            "description": "The information returned when a debug process is executed.",
+            "additionalProperties": {
+              "type": "object"
+            }
+          },
+          "rules": {
+            "$ref": "#/components/schemas/Rules"
+          }
+        }
+      },
+      "JsonBlobs": {
+        "description": "An arbitrary JSON blob returned by a Json Blob rule.",
+        "type": "object"
+      },
+      "Meta": {
+        "description": "Assorted metadata about the query, such as timing and debug information",
+        "type": "object",
+        "properties": {
+          "timing": {
+            "$ref": "#/components/schemas/Timing"
+          },
+          "debug": {
+            "$ref": "#/components/schemas/Debug"
+          }
+        }
+      },
+      "ResponseValues": {
+        "type": "object"
+      },
+      "Rules": {
+        "type": "object",
+        "properties": {
+          "redirects": {
+            "description": "URLs returned by redirect rules.",
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "responseValues": {
+            "$ref": "#/components/schemas/ResponseValues"
+          },
+          "banners": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Banner"
+            }
+          },
+          "jsonBlobs": {
+            "$ref": "#/components/schemas/JsonBlobs"
+          }
+        }
+      },
+      "Spellcheck": {
+        "description": "Spellcheck results.",
+        "type": "object",
+        "properties": {
+          "suggestions": {
+            "type": "object",
+            "additionalProperties": {
+              "$ref": "#/components/schemas/Suggestion"
+            }
+          },
+          "correctlySpelled": {
+            "description": "The value in this field is `true` if no misspellings are detected in the query terms.",
+            "type": "boolean",
+            "default": true
+          },
+          "collations": {
+            "description": "Spellcheck collations for this query.",
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Collation"
+            }
+          }
+        }
+      },
+      "StageTime": {
+        "type": "object",
+        "properties": {
+          "stage": {
+            "type": "string",
+            "description": "The name of the pipeline stage used in the query.",
+            "example": "Solr Query"
+          },
+          "time": {
+            "type": "integer",
+            "format": "int64",
+            "description": "The number of milliseconds the pipeline stage is used during the query.",
+            "example": 200
+          }
+        }
+      },
+      "Suggestion": {
+        "description": "A suggested spelling correction for a query term.",
+        "type": "object",
+        "properties": {
+          "numFound": {
+            "description": "The number of spelling suggestions found for this term.",
+            "type": "integer",
+            "format": "int32",
+            "example": 3
+          },
+          "startOffset": {
+            "description": "The starting offset for pagination.",
+            "type": "integer",
+            "format": "int32",
+            "example": 1
+          },
+          "endOffset": {
+            "description": "The ending offset for pagination.",
+            "type": "integer",
+            "format": "int32",
+            "example": 10
+          },
+          "origFreq": {
+            "description": "The number of times the original, uncorrected query term appears in results.",
+            "type": "integer",
+            "format": "int32",
+            "example": 6
+          },
+          "suggestion": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "word": {
+                  "description": "A suggested spell-corrected word.",
+                  "type": "string",
+                  "example": "shoe"
+                },
+                "freq": {
+                  "description": "The number of times the suggested word appears in results.",
+                  "type": "integer",
+                  "example": 6
+                }
+              }
+            }
+          },
+          "wordFreqList": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/WordFreq"
+            }
+          }
+        }
+      },
+      "Timing": {
+        "type": "object",
+        "properties": {
+          "total": {
+            "type": "integer",
+            "format": "int64",
+            "description": "The total number of milliseconds for the response to be returned.",
+            "example": 500
+          },
+          "mainQuery": {
+            "type": "integer",
+            "format": "int64",
+            "description": "The number of milliseconds for the main query to process. ",
+            "example": 300
+          },
+          "pipeline": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/StageTime"
+            }
+          }
+        }
+      },
+      "WordFreq": {
+        "description": "A word and its frequency in the query results.",
+        "type": "object",
+        "properties": {
+          "word": {
+            "description": "A word.",
+            "type": "string",
+            "example": "shoe"
+          },
+          "freq": {
+            "description": "The word's frequency.",
+            "type": "integer",
+            "format": "int32",
+            "example": 6
+          }
+        }
+      },
+      "MediaType": {
+        "type": "object",
+        "properties": {
+          "type": {
+            "type": "string",
+            "description": "The format of the data.",
+            "example": "application"
+          },
+          "subtype": {
+            "type": "string",
+            "description": "A secondary type that specifies the format of the data.",
+            "example": "json"
+          },
+          "parameters": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "string",
+              "description": "Additional properties"
+            }
+          },
+          "wildcardType": {
+            "type": "boolean",
+            "description": "This field specifies if a wildcard character is used as the value of the `type` field.",
+            "default": false
+          },
+          "wildcardSubtype": {
+            "type": "boolean",
+            "description": "This field specifies if a wildcard character is used as the value of the `subtype` field.",
+            "default": false
+          }
+        }
+      },
+      "WriteableResponseObject": {
+        "description": "Query response object.",
+        "type": "object",
+        "properties": {
+          "contentType": {
+            "type": "string",
+            "description": "The name of the HTTP header field that specifies the media type.",
+            "example": "Content-Type"
+          },
+          "mediaType": {
+            "$ref": "#/components/schemas/MediaType"
+          },
+          "contentCharset": {
+            "type": "string",
+            "description": "The set of characters in the response. For example, ASCII encodes 128 characters (letters, numbers, and punctuation) used in the English language.",
+            "example": "ASCII"
+          }
+        }
+      },
+      "MultiValueMapStringString": {
+        "description": "The parameters of the query request.",
+        "type": "object",
+        "properties": {
+          "all": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "string"
+            },
+            "writeOnly": true
+          },
+          "empty": {
+            "type": "boolean"
+          }
+        },
+        "additionalProperties": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      },
+      "ServiceStatus": {
+        "type": "object",
+        "properties": {
+          "status": {
+            "description": "The status of the service.",
+            "type": "string",
+            "enum": [
+              "starting",
+              "ok",
+              "warning",
+              "error",
+              "shutdown"
+            ]
+          },
+          "node": {
+            "description": "The service node.",
+            "type": "string",
+            "example": "http://query/query"
+          },
+          "messages": {
+            "description": "Service status details.",
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/StatusMessage"
+            }
+          }
+        }
+      },
+      "ServiceStatusSet": {
+        "description": "Service status.",
+        "type": "array",
+        "properties": {
+          "empty": {
+            "type": "boolean"
+          }
+        },
+        "items": {
+          "$ref": "#/components/schemas/ServiceStatus"
+        }
+      },
+      "StatusMessage": {
+        "description": "Service status message.",
+        "type": "object",
+        "properties": {
+          "date": {
+            "type": "string",
+            "format": "date-time",
+            "example": "2024-08-24T14:15:22Z"
+          },
+          "message": {
+            "type": "string",
+            "example": "http://127.0.0.1:8000, 127.255.255.255:8001"
+          }
+        }
+      },
+      "FacetCountsCollection": {
+        "description": "Counts of facets matching the query.",
+        "type": "object",
+        "properties": {
+          "facet_fields": {
+            "description": "The number of matching documents for the `facet field` value.",
+            "type": "object",
+            "additionalProperties": {
+              "type": "object"
+            }
+          },
+          "facet_queries": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "object"
+            }
+          },
+          "facet_ranges": {
+            "type": "object",
+            "additionalProperties": {
+              "$ref": "#/components/schemas/FacetRange"
+            }
+          },
+          "facet_intervals": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "object"
+            }
+          },
+          "facet_heatmaps": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "object"
+            }
+          }
+        }
+      },
+      "GroupsCollection": {
+        "type": "object",
+        "properties": {
+          "numFound": {
+            "type": "integer",
+            "format": "int64",
+            "example": 5,
+            "description": "The number of groups associated with the response based on the configured parameters."
+          },
+          "groups": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Group"
+            }
+          }
+        }
+      },
+      "Response": {
+        "description": "The query result documents and statistics.",
+        "type": "object",
+        "properties": {
+          "numFound": {
+            "description": "The number of documents matching the query.",
+            "type": "integer",
+            "format": "int64",
+            "example": 83
+          },
+          "start": {
+            "description": "The response start position, for pagination.",
+            "type": "integer",
+            "format": "int64",
+            "example": 0
+          },
+          "numFoundExact": {
+            "description": "If `true` if the `numFound` value is exact.  If `false`, the real number of hits for the query is guaranteed to be greater than or equal to `numFound`.  You can enable approximate document counts using Solr's `minExactCount` parameter.",
+            "type": "boolean",
+            "default": false
+          },
+          "docs": {
+            "description": "The set of documents matching the query.\n\nExample:\n\n\"docs\": [\n    {\n        \"product\": \"red shoes\",\n        \"description\": \"Girls Mary-Jane leather, all sizes.\",\n        \"number_in_stock\": 200,\n        \"number_of_reviews\": 25\n    }\n]",
+            "type": "array",
+            "items": {
+              "type": "object",
+              "additionalProperties": {
+                "description": "The document fields.",
+                "type": "object"
+              }
+            }
+          }
+        }
+      },
+      "ResponseHeader": {
+        "type": "object",
+        "properties": {
+          "zkConnected": {
+            "description": "`true` if the node that processed the request was connected to ZooKeeper at the time.",
+            "type": "boolean",
+            "default": true
+          },
+          "QTime": {
+            "description": "The request processing time in milliseconds.",
+            "type": "integer",
+            "format": "int32",
+            "example": 500
+          },
+          "totalTime": {
+            "description": "The sum of all request processing times (in milliseconds) since the Solr process was started.",
+            "type": "integer",
+            "format": "int32",
+            "example": 1000
+          },
+          "params": {
+            "description": "The query request parameters.",
+            "type": "object",
+            "additionalProperties": {
+              "type": "object"
+            }
+          },
+          "status": {
+            "description": "The request status as an HTTP status code, or `0` for `200` (success).",
+            "type": "integer",
+            "format": "int32",
+            "example": 0
+          }
+        }
+      },
+      "SearchResponse": {
+        "description": "The search response.",
+        "type": "object",
+        "properties": {
+          "spellcheck": {
+            "$ref": "#/components/schemas/Spellcheck"
+          },
+          "response": {
+            "$ref": "#/components/schemas/Response"
+          },
+          "responseHeader": {
+            "$ref": "#/components/schemas/ResponseHeader"
+          },
+          "facet_counts": {
+            "$ref": "#/components/schemas/FacetCountsCollection"
+          },
+          "facets": {
+            "type": "object",
+            "description": "Facets indicate categories and aggregations of results according to values in the fields configured for the facets.",
+            "additionalProperties": {
+              "type": "object"
+            }
+          },
+          "stats": {
+            "$ref": "#/components/schemas/Stats"
+          },
+          "grouped": {
+            "type": "object",
+            "additionalProperties": {
+              "$ref": "#/components/schemas/GroupsCollection"
+            }
+          },
+          "debug": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "object"
+            }
+          },
+          "highlighting": {
+            "description": "Highlight snippets per matching document, if requested.",
+            "type": "object",
+            "additionalProperties": {
+              "type": "object"
+            }
+          },
+          "fusionResponse": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "object"
+            }
+          }
+        }
+      },
+      "Stats": {
+        "type": "object",
+        "properties": {
+          "stats_fields": {
+            "type": "object",
+            "description": "The fields that contain the statistics for the response.",
+            "additionalProperties": {
+              "type": "object"
+            }
+          }
+        }
+      },
+      "StreamingResponseBody": {
+        "type": "object"
+      },
+      "DateAndValue": {
+        "type": "object",
+        "properties": {
+          "timestamp": {
+            "type": "string",
+            "format": "date-time",
+            "example": "2024-11-15T19:12:11.187Z"
+          },
+          "value": {
+            "type": "number",
+            "format": "double"
+          }
+        }
+      },
+      "ExperimentMetricResponse": {
+        "description": "Experiment metrics.",
+        "type": "object",
+        "properties": {
+          "experimentStartDate": {
+            "description": "The experiment start date and time.",
+            "type": "string",
+            "format": "date-time",
+            "example": "2024-07-09T15:43:18.548Z"
+          },
+          "experimentEndDate": {
+            "description": "The experiment end date and time.",
+            "type": "string",
+            "format": "date-time",
+            "example": "2024-07-09T15:43:22.548Z"
+          },
+          "dataStartDate": {
+            "type": "string",
+            "format": "date-time",
+            "example": "2024-07-09T15:43:18.548Z"
+          },
+          "dataEndDate": {
+            "type": "string",
+            "format": "date-time",
+            "example": "2024-11-15T19:12:11.187Z"
+          },
+          "runId": {
+            "description": "The metric job run ID.",
+            "type": "string",
+            "example": "6V771zYcc9"
+          },
+          "totalRequests": {
+            "type": "integer",
+            "format": "int64",
+            "example": 6
+          },
+          "requestsInExperiment": {
+            "type": "integer",
+            "format": "int64",
+            "example": 1
+          },
+          "confidence": {
+            "description": "A confidence index expressing the confidence that the experiment results are statistically significant.",
+            "type": "number",
+            "format": "double",
+            "example": 100
+          },
+          "results": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ExperimentMetricVariantResult"
+            }
+          }
+        }
+      },
+      "ExperimentMetricResult": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "description": "The experiment metric name.",
+            "type": "string"
+          },
+          "values": {
+            "description": "Experiment metric values.",
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/DateAndValue"
+            }
+          },
+          "probabilityOfBeating": {
+            "description": "The percent chance that an experiment variant performs better than the control.",
+            "type": "number",
+            "format": "double",
+            "example": 95
+          },
+          "p": {
+            "description": "The p-value, which is the probability of obtaining the expected results.",
+            "type": "number",
+            "format": "double",
+            "example": 0.05
+          },
+          "confidence": {
+            "description": "A confidence index expressing the confidence that the experiment results are statistically significant.",
+            "type": "number",
+            "format": "double"
+          }
+        }
+      },
+      "ExperimentMetricVariantResult": {
+        "description": "Results for an experiment variant.",
+        "type": "object",
+        "properties": {
+          "variantName": {
+            "description": "The experiment variant name.",
+            "type": "string",
+            "example": "control"
+          },
+          "results": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ExperimentMetricResult"
+            }
+          },
+          "requests": {
+            "description": "The number of requests directed to this experiment variant.",
+            "type": "integer",
+            "format": "int64"
+          },
+          "percentRequests": {
+            "description": "The percentage of total requests directed to this experiment variant.",
+            "type": "number",
+            "format": "double"
+          }
+        }
+      },
+      "ExperimentHistoryEntry": {
+        "type": "object",
+        "properties": {
+          "experiment": {
+            "$ref": "#/components/schemas/Experiment"
+          },
+          "experimentStartDate": {
+            "description": "The experiment start date.",
+            "type": "string",
+            "format": "date-time",
+            "example": "2024-07-09T15:43:18.548Z"
+          },
+          "experimentEndDate": {
+            "description": "The experiment end date.",
+            "type": "string",
+            "format": "date-time",
+            "example": "2024-07-09T15:43:52.548Z"
+          }
+        }
+      }
+    },
+    "securitySchemes": {
+      "Basic auth": {
+        "type": "http",
+        "scheme": "basic"
+      },
+      "API key": {
+        "name": "x-api-key",
+        "type": "apiKey",
+        "in": "header"
+      }
+    }
+  },
+  "security": [
+    {
+      "Basic auth": []
+    },
+    {
+      "API key": []
+    }
+  ]
+}

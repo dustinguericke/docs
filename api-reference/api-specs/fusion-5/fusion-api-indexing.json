@@ -1,0 +1,2695 @@
+{
+  "openapi": "3.0.1",
+  "info": {
+    "title": "Fusion Indexing API",
+    "description": "The Lucidworks Fusion Indexing API manages\nparsers, index pipelines, index stages, index profiles, and subscriptions.",
+    "contact": {
+      "name": "Lucidworks",
+      "url": "www.lucidworks.com",
+      "email": "support@lucidworks.com"
+    },
+    "license": {
+      "name": "License of API",
+      "url": "https://lucidworks.com/legal/developer-license-agreement/"
+    },
+    "version": "5.12.0"
+  },
+  "externalDocs": {
+    "description": "Lucidworks Documentation",
+    "url": "https://doc.lucidworks.com/"
+  },
+  "servers": [
+    {
+      "url": "https://{FUSION HOST}/api",
+      "description": "Fusion",
+      "variables": {
+        "FUSION HOST": {
+          "default": "FUSION_HOST",
+          "description": "Your environment host."
+        }
+      }
+    },
+    {
+      "url": "https://{FUSION HOST}/api/apps/{APP_NAME}",
+      "description": "Fusion app",
+      "variables": {
+        "FUSION HOST": {
+          "default": "FUSION_HOST",
+          "description": "Your environment host."
+        },
+        "APP_NAME": {
+          "default": "APP_NAME",
+          "description": "The name of your Fusion application."
+        }
+      }
+    }
+  ],
+  "tags": [
+    {
+      "name": "Index Pipelines API",
+      "description": "Use these endpoints to view and manage your index pipelines.  You can also index documents using this API, though the Index Profiles API is recommended instead."
+    },
+    {
+      "name": "Index Profiles API",
+      "description": "The Index Profiles API provides static endpoints that you can consistently point to when indexing your documents.  Index profiles allow you to change the index pipelines, parsers, or collections behind them without changing the endpoint you use for indexing.  See the Index Profiles CRUD API for endpoints that create and modify index profiles."
+    },
+    {
+      "name": "Index Profiles CRUD API",
+      "description": "Use these endpoints to create and modify index profiles.  Index profiles allow you to change the index pipelines, parsers, or collections behind them without changing the endpoint you use for indexing.  See the Index Profiles API for the indexing endpoints."
+    },
+    {
+      "name": "Index Stage API",
+      "description": "Use these endpoints to view the available index pipeline stages and their configuration parameters."
+    },
+    {
+      "name": "Index Stage Plugins API",
+      "description": "Use these endpoints to view, install, and manage custom index stages developed with the Index Stage SDK."
+    },
+    {
+      "name": "Parsers CRUD API",
+      "description": "Endpoints to perform Create-Read-Update-Delete operations on Parsers, Deprecated: use async-parsing endpoint instead."
+    },
+    {
+      "name": "Parsers Schema API",
+      "description": "Endpoints to get the Schema of Parsers. Deprecated: use async-parsing endpoint instead."
+    },
+    {
+      "name": "Subscriptions API",
+      "description": "The Subscriptions API"
+    }
+  ],
+  "paths": {
+    "/index/status": {
+      "get": {
+        "summary": "Get indexing service status",
+        "description": "Check the status of the Indexing service.",
+        "tags": [
+          "Index Profiles API"
+        ],
+        "operationId": "getStatus_2",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ServiceStatusSet"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/index/{id}": {
+      "post": {
+        "summary": "Index a document",
+        "description": "This is the recommended endpoint to use for indexing documents.  The request body is the document, as binary data.  The response is statistics about the indexed document.",
+        "tags": [
+          "Index Profiles API"
+        ],
+        "operationId": "indexPipelineDocument_1",
+        "parameters": [
+          {
+            "name": "id",
+            "description": "The index profile ID",
+            "in": "path",
+            "required": true,
+            "schema": {
+                "type": "string"
+            }
+          },
+          {
+            "name": "simulate",
+            "description": "Run the pipeline in \"simulate\" mode for these docs. Stages with \"side-effects\" are skipped.",
+            "in": "query",
+            "schema": {
+              "type": "boolean",
+              "default": false
+            }
+          },
+          {
+            "name": "echo",
+            "description": "If `true`, indexed documents are included in the response.",
+            "in": "query",
+            "schema": {
+              "type": "boolean",
+              "default": true
+            }
+          },
+          {
+            "name": "echoMaxCount",
+            "description": "The number of documents to include in the response, with `-1` implying \"all\".",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int32",
+              "default": -1
+            }
+          },
+          {
+            "name": "stats",
+            "description": "Return statistics about pipeline processing events.",
+            "in": "query",
+            "schema": {
+              "type": "boolean",
+              "default": false
+            }
+          },
+          {
+            "name": "bufferDocsForSolr",
+            "description": "If `true`, the SolrIndexStage buffers docs.",
+            "in": "query",
+            "schema": {
+              "type": "boolean"
+            }
+          },
+          {
+            "name": "params",
+            "description": "Indexing request parameters.",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/MultiValueMapStringString"
+            }
+          },
+          {
+            "name": "contentType",
+            "description": "MIME type",
+            "in": "header",
+            "schema": {
+              "type": "string",
+              "default": "application/octet-stream"
+            }
+          },
+          {
+            "name": "contentSourceName",
+            "description": "The filename on the source system.",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "default": "unknown"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/vnd.lucidworks-document": {
+              "schema": {
+                "type": "object"
+              }
+            },
+            "application/vnd.solr-document": {
+              "schema": {
+                "type": "object"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/IndexPipelineStatResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/index/{id}/debug": {
+      "post": {
+        "tags": [
+          "Index Profiles API"
+        ],
+        "summary": "Index a document (debug)",
+        "description": "Use this endpoint to get debugging information about the indexing process.  You can index a document at the same time, or use `simulate=true` to get debugging information without indexing anything.  The document format must be `application/vnd.lucidworks-document` or `application/vnd.solr-document`.",
+        "operationId": "debug",
+        "parameters": [
+          {
+            "name": "id",
+            "description": "The index profile ID",
+            "in": "path",
+            "required": true,
+            "schema": {
+                "type": "string"
+            }
+          },
+          {
+            "name": "simulate",
+            "description": "Run the pipeline in \"simulate\" mode for these docs. Stages with \"side-effects\" are skipped.",
+            "in": "query",
+            "schema": {
+              "type": "boolean",
+              "default": false
+            }
+          },
+          {
+            "name": "echo",
+            "description": "If `true`, indexed documents are included in the response.",
+            "in": "query",
+            "schema": {
+              "type": "boolean",
+              "default": true
+            }
+          },
+          {
+            "name": "echoMaxCount",
+            "description": "The number of documents to include in the response, with `-1` implying \"all\".",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int32",
+              "default": -1
+            }
+          },
+          {
+            "name": "bufferDocsForSolr",
+            "description": "If `true`, the SolrIndexStage buffers docs.",
+            "in": "query",
+            "schema": {
+              "type": "boolean"
+            }
+          },
+          {
+            "name": "params",
+            "description": "Indexing request parameters.",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/MultiValueMapStringString"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/vnd.lucidworks-document": {
+              "schema": {
+                "type": "object"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/IndexPipelineDebugResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/index-profiles": {
+      "get": {
+        "tags": [
+          "Index Profiles CRUD API"
+        ],
+        "summary": "List all index profiles",
+        "description": "Use this endpoint to discover existing index profiles and their IDs and attributes.  Optionally, you can filter the list by index pipeline, collection, and so on.",
+        "operationId": "getAllEntities_2",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/IndexProfile"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Index Profiles CRUD API"
+        ],
+        "summary": "Create an index profile",
+        "description": "The request is a JSON body defining the new index profile.",
+        "operationId": "createEntity_2",
+        "parameters": [
+          {
+            "name": "context",
+            "description": "The app to which this object belongs, as `app:SomeApp`. If the object is not part of this app, the request fails. Other comma-separated contexts in the `context` parameter are allowed but ignored.",
+            "example": "app:api-test-app",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/IndexProfile"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "description": "Created",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/IndexProfile"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/index-profiles/{id}": {
+      "get": {
+        "tags": [
+          "Index Profiles CRUD API"
+        ],
+        "summary": "Get an index profile",
+        "description": "Fetch an index profile by ID.  The response is the index profile schema in JSON format.",
+        "operationId": "getEntity_2",
+        "parameters": [
+          {
+            "name": "id",
+            "description": "The index profile ID",
+            "in": "path",
+            "required": true,
+            "schema": {
+                "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/IndexProfile"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "Index Profiles CRUD API"
+        ],
+        "summary": "Update an index profile",
+        "description": "Use this endpoint to change an index profile's parser, index pipeline, or collection.  The request is a JSON body containing the index profile's attributes.  All attributes are required, including those not being updated.  Use GET to fetch the current attributes to edit and submit as the body of this request.",
+        "operationId": "updateEntity_2",
+        "parameters": [
+          {
+            "name": "id",
+            "description": "The index profile ID",
+            "in": "path",
+            "required": true,
+            "schema": {
+                "type": "string"
+            }
+          },
+          {
+            "name": "ifMatch",
+            "description": "Optional tag to match.",
+            "in": "header",
+            "schema": {
+              "$ref": "#/components/schemas/IfMatchHeader"
+            }
+          },
+          {
+            "name": "context",
+            "description": "The app to which this object belongs, as `app:SomeApp`. If the object is not part of the app, this request fails. Other comma-separated contexts in the `context` parameter are allowed but ignored.",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/IndexProfile"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/IndexProfile"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Index Profiles CRUD API"
+        ],
+        "summary": "Delete an index profile",
+        "description": "The request specifies the ID of the index profile to delete.",
+        "operationId": "deleteEntity_2",
+        "parameters": [
+          {
+            "name": "id",
+            "description": "The index profile ID",
+            "in": "path",
+            "required": true,
+            "schema": {
+                "type": "string"
+            }
+          },
+          {
+            "name": "ifMatch",
+            "description": "Optional tag to match.",
+            "in": "header",
+            "schema": {
+              "$ref": "#/components/schemas/IfMatchHeader"
+            }
+          },
+          {
+            "name": "context",
+            "description": "The app to which this object belongs, as `app:SomeApp`. If the object is not part of this app, the request fails. Other comma-separated contexts in the `context` parameter are allowed but ignored.",
+            "example": "app:api-test-app",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/index-profiles/status": {
+      "get": {
+        "summary": "Get index profiles service status",
+        "description": "Check the status of the Index Profiles service.",
+        "tags": [
+          "Index Profiles CRUD API"
+        ],
+        "operationId": "getStatus_4",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ServiceStatusSet"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/index-profiles/_schema": {
+      "get": {
+        "tags": [
+          "Index Profiles CRUD API"
+        ],
+        "summary": "Get the JSON schema",
+        "description": "Get the JSON configuration schema for index profiles.",
+        "operationId": "getEntitySchema_2",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/schema+json;qs=1.0": {
+                "schema": {
+                  "$ref": "#/components/schemas/ObjectType"
+                }
+              },
+              "application/json;qs=0.9": {
+                "schema": {
+                  "$ref": "#/components/schemas/ObjectType"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/index-pipelines/status": {
+      "get": {
+        "summary": "Get index pipelines service status",
+        "description": "Check the status of the Index Pipelines service.",
+        "tags": [
+          "Index Pipelines API"
+        ],
+        "operationId": "getStatus_5",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ServiceStatusSet"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/index-pipelines": {
+      "get": {
+        "tags": [
+          "Index Pipelines API"
+        ],
+        "summary": "List all index pipelines",
+        "description": "Use this endpoint to discover existing index pipelines and their IDs and attributes.  Optionally, you can filter the list by index stages, properties, and so on.",
+        "operationId": "getAllEntities_3",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/IndexPipelineDefinition"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Index Pipelines API"
+        ],
+        "summary": "Create an index pipeline",
+        "description": "The request is a JSON body defining the new index pipeline.  Only the `id` field is required to create a pipeline with no stages.  Include a `stages` array with at least the `type` and `id` field per stage to create a working pipeline.",
+        "operationId": "createEntity_3",
+        "parameters": [
+          {
+            "name": "context",
+            "description": "The app to which this object belongs, as `app:SomeApp`. If the app doesn't exist, the request fails. Other comma-separated contexts in the `context` parameter are allowed but ignored.",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/IndexPipelineDefinition"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "description": "Created",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/IndexPipelineDefinition"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/index-pipelines/{id}": {
+      "get": {
+        "tags": [
+          "Index Pipelines API"
+        ],
+        "summary": "Get an index pipeline",
+        "description": "Fetch an index pipeline by ID.  The response is the index pipeline's properties in JSON format.",
+        "operationId": "getEntity_3",
+        "parameters": [
+          {
+            "name": "id",
+            "description": "The index profile ID",
+            "in": "path",
+            "required": true,
+            "schema": {
+                "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/IndexPipelineDefinition"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "Index Pipelines API"
+        ],
+        "summary": "Update an index pipeline",
+        "description": "The request is a JSON body containing the index pipeline's attributes.  All attributes are required, including those not being updated.  Use GET to fetch the current attributes to edit and submit as the body of this request.",
+        "operationId": "updateEntity_3",
+        "parameters": [
+          {
+            "name": "id",
+            "description": "The index profile ID",
+            "in": "path",
+            "required": true,
+            "schema": {
+                "type": "string"
+            }
+          },
+          {
+            "name": "ifMatch",
+            "description": "Optional tag to match.",
+            "in": "header",
+            "schema": {
+              "$ref": "#/components/schemas/IfMatchHeader"
+            }
+          },
+          {
+            "name": "context",
+            "description": "The app to which this object belongs, as `app:SomeApp`. If the object is not part of this app, the request fails. Other comma-separated contexts in the `context` parameter are allowed but ignored.",
+            "example": "app:api-test-app",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/IndexPipelineDefinition"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/IndexPipelineDefinition"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Index Pipelines API"
+        ],
+        "summary": "Delete an index pipeline",
+        "description": "The request specifies the ID of the index pipeline to delete.",
+        "operationId": "deleteEntity_3",
+        "parameters": [
+          {
+            "name": "id",
+            "description": "The index profile ID",
+            "in": "path",
+            "required": true,
+            "schema": {
+                "type": "string"
+            }
+          },
+          {
+            "name": "ifMatch",
+            "description": "Optional tag to match.",
+            "in": "header",
+            "schema": {
+              "$ref": "#/components/schemas/IfMatchHeader"
+            }
+          },
+          {
+            "name": "context",
+            "description": "The app to which this object belongs, as `app:SomeApp`. If the object is not part of this app, the request fails. Other comma-separated contexts in the `context` parameter are allowed but ignored.",
+            "example": "app:api-test-app",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/index-pipelines/{id}/refresh": {
+      "put": {
+        "tags": [
+          "Index Pipelines API"
+        ],
+        "summary": "Reload an index pipeline",
+        "description": "Get an index pipeline's latest changes by reloading it.  To reload all pipelines, restart Fusion.",
+        "operationId": "refreshPipeline",
+        "parameters": [
+          {
+            "name": "id",
+            "description": "The index profile ID",
+            "in": "path",
+            "required": true,
+            "schema": {
+                "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/index-pipelines/{id}/collections/{collection}/index": {
+      "post": {
+        "tags": [
+          "Index Pipelines API"
+        ],
+        "summary": "Index a document (deprecated)",
+        "description": "Use `/api/index/{id}` instead.",
+        "operationId": "indexPipelineDocumentNoStats_1_1_1",
+        "parameters": [
+          {
+            "name": "id",
+            "description": "The index pipeline ID",
+            "in": "path",
+            "required": true,
+            "schema": {
+                "type": "string"
+            }
+          },
+          {
+            "name": "collection",
+            "description": "The collection ID",
+            "in": "path",
+            "required": true,
+            "schema": {
+                "type": "string"
+            }
+          },
+          {
+            "name": "simulate",
+            "description": "Run the pipeline in \"simulate\" mode for these docs. Stages with \"side-effects\" are skipped.",
+            "in": "query",
+            "schema": {
+              "type": "boolean",
+              "default": false
+            }
+          },
+          {
+            "name": "echo",
+            "description": "If `true`, indexed documents are included in the response.",
+            "in": "query",
+            "schema": {
+              "type": "boolean",
+              "default": true
+            }
+          },
+          {
+            "name": "echoMaxCount",
+            "description": "The number of documents to include in the response, with `-1` implying \"all\".",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int32",
+              "default": -1
+            }
+          },
+          {
+            "name": "bufferDocsForSolr",
+            "description": "If `true`, the SolrIndexStage buffers docs.",
+            "in": "query",
+            "schema": {
+              "type": "boolean"
+            }
+          },
+          {
+            "name": "throwOnError",
+            "description": "Indicates if the indexing should proceed if an error is encountered or if it should throw an exception.",
+            "in": "query",
+            "schema": {
+              "type": "boolean",
+              "default": true
+            }
+          },
+          {
+            "name": "params",
+            "description": "Indexing request parameters.",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/MultiValueMapStringString"
+            }
+          },
+          {
+            "name": "stats",
+            "description": "Return statistics about pipeline processing events.",
+            "in": "query",
+            "schema": {
+              "type": "boolean",
+              "default": false
+            }
+          },
+          {
+            "name": "autoDetectFormat",
+            "description": "Deprecated.",
+            "in": "query",
+            "deprecated": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "parserId",
+            "description": "(Deprecated) Id of the parser to be used. Use async-parser instead.",
+            "in": "query",
+            "deprecated": true,
+            "schema": {
+              "type": "string",
+              "default": "_system"
+            }
+          },
+          {
+            "name": "skipParsing",
+            "description": "Skip the parsing and treat document as byte stream.",
+            "in": "query",
+            "schema": {
+              "type": "boolean",
+              "default": false
+            }
+          },
+          {
+            "name": "contentType",
+            "description": "MIME type",
+            "in": "header",
+            "schema": {
+              "type": "string",
+              "default": "application/octet-stream"
+            }
+          },
+          {
+            "name": "contentSourceName",
+            "description": "The filename on the source system.",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "default": "unknown"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/vnd.lucidworks-document": {
+              "schema": {
+                "type": "object"
+              }
+            },
+            "application/vnd.solr-document": {
+              "schema": {
+                "type": "object"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/vnd.lucidworks-document": {
+                "schema": {
+                  "type": "object"
+                }
+              },
+              "application/vnd.solr-document": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          }
+        },
+        "deprecated": true
+      }
+    },
+    "/index-pipelines/{id}/collections/{collection}/debug": {
+      "post": {
+        "tags": [
+          "Index Pipelines API"
+        ],
+        "summary": "Index a document (debug)",
+        "description": "The document format must be `application/vnd.lucidworks-document` or `application/vnd.solr-document`.",
+        "operationId": "debugPipelineDocument",
+        "parameters": [
+          {
+            "name": "id",
+            "description": "The index pipeline ID",
+            "in": "path",
+            "required": true,
+            "schema": {
+                "type": "string"
+            }
+          },
+          {
+            "name": "collection",
+            "description": "The collection ID",
+            "in": "path",
+            "required": true,
+            "schema": {
+                "type": "string"
+            }
+          },
+          {
+            "name": "simulate",
+            "description": "Run the pipeline in \"simulate\" mode for these docs. Stages with \"side-effects\" are skipped.",
+            "in": "query",
+            "schema": {
+              "type": "boolean",
+              "default": false
+            }
+          },
+          {
+            "name": "echo",
+            "description": "If `true`, indexed documents are included in the response.",
+            "in": "query",
+            "schema": {
+              "type": "boolean",
+              "default": true
+            }
+          },
+          {
+            "name": "echoMaxCount",
+            "description": "The number of documents to include in the response, with `-1` implying \"all\".",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int32",
+              "default": -1
+            }
+          },
+          {
+            "name": "bufferDocsForSolr",
+            "description": "If `true`, the SolrIndexStage buffers docs.",
+            "in": "query",
+            "schema": {
+              "type": "boolean"
+            }
+          },
+          {
+            "name": "throwOnError",
+            "description": "Indicates if the indexing should proceed if an error is encountered or if it should throw an exception.",
+            "in": "query",
+            "schema": {
+              "type": "boolean",
+              "default": true
+            }
+          },
+          {
+            "name": "params",
+            "description": "Indexing request parameters.",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/MultiValueMapStringString"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/vnd.lucidworks-document": {
+              "schema": {
+                "type": "object"
+              }
+            },
+            "application/vnd.solr-document": {
+              "schema": {
+                "type": "object"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/IndexPipelineDebugResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/index-pipelines/{id}/async-enrichment/skip-pending": {
+      "put": {
+        "tags": [
+          "Index Pipelines API"
+        ],
+        "summary": "Skip pending async requests",
+        "description": "Skip all the pending async enrichment requests for this pipeline. Typically used when a pipeline for async enrichment is developed and debugged.",
+        "operationId": "skipPendingAsyncRequests",
+        "parameters": [
+          {
+            "name": "id",
+            "description": "The index pipeline ID",
+            "in": "path",
+            "required": true,
+            "schema": {
+                "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/index-pipelines/_schema": {
+      "get": {
+        "tags": [
+          "Index Pipelines API"
+        ],
+        "summary": "Get the JSON schema",
+        "description": "Get the JSON configuration schema for index pipelines.",
+        "operationId": "getEntitySchema_3",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/schema+json;qs=1.0": {
+                "schema": {
+                  "$ref": "#/components/schemas/ObjectType"
+                }
+              },
+              "application/json;qs=0.9": {
+                "schema": {
+                  "$ref": "#/components/schemas/ObjectType"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/index-stages/status": {
+      "get": {
+        "summary": "Get index stages service status",
+        "description": "Check the status of the Index Stage service.",
+        "tags": [
+          "Index Stage API"
+        ],
+        "operationId": "getStatus_3",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ServiceStatusSet"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/index-stages/schema": {
+      "get": {
+        "tags": [
+          "Index Stage API"
+        ],
+        "summary": "List all index stages",
+        "description": "Use this endpoint to discover existing index stage types and their configuration schemas.",
+        "operationId": "listStageSchemas",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": {
+                    "$ref": "#/components/schemas/ObjectType"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/index-stages/schema/{type}": {
+      "get": {
+        "tags": [
+          "Index Stage API"
+        ],
+        "summary": "Get an index stage",
+        "description": "Fetch an index stage by type.  The response is the index stage schema in JSON format.",
+        "operationId": "getStageSchema",
+        "parameters": [
+          {
+            "name": "type",
+            "description": "The name of the index stage.",
+            "in": "path",
+            "required": true,
+            "schema": {
+                "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ObjectType"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/index-stage-plugins": {
+      "get": {
+        "summary": "List all plugins",
+        "description": "Use this endpoint to discover existing index stage plugins and their IDs and attributes. [DETAILS NEEDED HERE; no plugins listed in test responses.]",
+        "tags": [
+          "Index Stage Plugins API"
+        ],
+        "operationId": "getPlugins",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "Index Stage Plugins API"
+        ],
+        "summary": "Add or update a plugin",
+        "description": "Install a new index stage plugin, or update the plugin if it already exists.",
+        "operationId": "installOrUpdatePlugin",
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/index-stage-plugins/{pluginId}": {
+      "delete": {
+        "tags": [
+          "Index Stage Plugins API"
+        ],
+        "summary": "Delete a plugin",
+        "description": "Uninstall an index stage plugin.",
+        "operationId": "uninstallPlugin",
+        "parameters": [
+          {
+            "name": "pluginId",
+            "description": "The plugin ID",
+            "in": "path",
+            "required": true,
+            "schema": {
+                "type": "string"
+            }
+          },
+          {
+            "name": "distrib",
+            "description": "Broadcast delete request",
+            "in": "query",
+            "schema": {
+              "type": "boolean",
+              "default": true
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/index-stage-plugins/{pluginId}/refresh": {
+      "put": {
+        "tags": [
+          "Index Stage Plugins API"
+        ],
+        "summary": "Reload a plugin",
+        "description": "Get an index stage plugin/s latest changes by reloading it.  To reload all plugins, restart Fusion.",
+        "operationId": "reloadPlugin",
+        "parameters": [
+          {
+            "name": "pluginId",
+            "description": "The plugin ID",
+            "in": "path",
+            "required": true,
+            "schema": {
+                "type": "string"
+            }
+          },
+          {
+            "name": "distrib",
+            "description": "Broadcast refresh request",
+            "in": "query",
+            "schema": {
+              "type": "boolean",
+              "default": true
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/parsers": {
+      "get": {
+        "tags": [
+          "Parsers CRUD API"
+        ],
+        "summary": "List all parsers",
+        "description": "Use this endpoint to discover existing parsers and their IDs and attributes.  Optionally, you can filter the list.",
+        "operationId": "getAllEntities",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "additionalProperties": {
+                      "type": "object"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "deprecated": true
+      },
+      "post": {
+        "tags": [
+          "Parsers CRUD API"
+        ],
+        "summary": "Create a parser",
+        "description": "The request is a JSON body defining the new parser.  Only the `id` field is required to create a new parser that contains no stages.  Use `/api/parsers/_schema` to get the schema for `parserStages` and other parser configuration keys.",
+        "operationId": "createEntity_1",
+        "parameters": [
+          {
+            "name": "context",
+            "description": "The app to which this object belongs, as `app:SomeApp`. If the app doesn't exist, the request fails. Other comma-separated contexts in the `context` parameter are allowed but ignored.",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "additionalProperties": {
+                  "type": "object"
+                }
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "description": "Created",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": {
+                    "type": "object"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "deprecated": true
+      }
+    },
+    "/parsers/{id}": {
+      "get": {
+        "tags": [
+          "Parsers CRUD API"
+        ],
+        "summary": "Get a parser",
+        "description": "Fetch a parser by ID.  The response is the parser schema in JSON format.",
+        "operationId": "getEntity_1",
+        "parameters": [
+          {
+            "name": "id",
+            "description": "The parser ID",
+            "in": "path",
+            "required": true,
+            "schema": {
+                "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": {
+                    "type": "object"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "deprecated": true
+      },
+      "put": {
+        "tags": [
+          "Parsers CRUD API"
+        ],
+        "summary": "Update a parser",
+        "description": "The request is a JSON body containing the parser's updated attributes.  All attributes are required, including those not being updated.  Use GET to fetch the current attributes to edit and submit as the body of this request.",
+        "operationId": "updateEntity_1",
+        "parameters": [
+          {
+            "name": "id",
+            "description": "The parser ID",
+            "in": "path",
+            "required": true,
+            "schema": {
+                "type": "string"
+            }
+          },
+          {
+            "name": "ifMatch",
+            "description": "Optional tag to match.",
+            "in": "header",
+            "schema": {
+              "$ref": "#/components/schemas/IfMatchHeader"
+            }
+          },
+          {
+            "name": "context",
+            "description": "The app to which this object belongs, as `app:SomeApp`. If the object is not part of this app, the request fails. Other comma-separated contexts in the `context` parameter are allowed but ignored.",
+            "example": "app:api-test-app",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "additionalProperties": {
+                  "type": "object"
+                }
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": {
+                    "type": "object"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "deprecated": true
+      },
+      "delete": {
+        "tags": [
+          "Parsers CRUD API"
+        ],
+        "summary": "Delete a parser",
+        "description": "The request specifies the ID of the parser to delete.",
+        "operationId": "deleteEntity_1",
+        "parameters": [
+          {
+            "name": "id",
+            "description": "The parser ID",
+            "in": "path",
+            "required": true,
+            "schema": {
+                "type": "string"
+            }
+          },
+          {
+            "name": "ifMatch",
+            "description": "Optional tag to match.",
+            "in": "header",
+            "schema": {
+              "$ref": "#/components/schemas/IfMatchHeader"
+            }
+          },
+          {
+            "name": "context",
+            "description": "The app to which this object belongs, as `app:SomeApp`. If the object is not part of this app, the request fails. Other comma-separated contexts in the `context` parameter are allowed but ignored.",
+            "example": "app:api-test-app",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "The parser was deleted."
+          }
+        },
+        "deprecated": true
+      }
+    },
+    "/parsers/_schema": {
+      "get": {
+        "tags": [
+          "Parsers Schema API"
+        ],
+        "summary": "Get the JSON schema",
+        "description": "Get the JSON configuration schema for parsers.",
+        "operationId": "getEntitySchema_1",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/schema+json;qs=1.0": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": {
+                    "type": "object"
+                  }
+                }
+              },
+              "application/json;qs=0.9": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": {
+                    "type": "object"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "deprecated": true
+      }
+    },
+    "/subscriptions/status": {
+      "get": {
+        "tags": [
+          "Subscriptions API"
+        ],
+        "summary": "Get subscriptions service status",
+        "description": "Check the status of the Subscriptions service.",
+        "operationId": "getStatus_1",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ServiceStatusSet"
+                }
+              }
+            }
+          }
+        },
+        "x-internal": true
+      }
+    },
+    "/subscriptions": {
+      "get": {
+        "tags": [
+          "Subscriptions API"
+        ],
+        "summary": "List all subscriptions",
+        "description": "Get any subscriptions associated with the given resource and, optionally, topics",
+        "operationId": "getAllEntities_1",
+        "parameters": [
+          {
+            "name": "resource",
+            "description": "The subscription resource",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "topics",
+            "description": "The topics subscribed to by this resource.",
+            "in": "query",
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          },
+          {
+            "name": "context",
+            "description": "The app to which this object belongs, as `app:SomeApp`. If the object is not part of this app, the request fails. Other comma-separated contexts in the `context` parameter are allowed but ignored.",
+            "example": "app:api-test-app",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Subscription"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "x-internal": true
+      },
+      "put": {
+        "tags": [
+          "Subscriptions API"
+        ],
+        "summary": "Update a subscription",
+        "description": "Update any subscriptions associated with the given resource and, optionally, topics",
+        "operationId": "updateSubscriptions",
+        "parameters": [
+          {
+            "name": "resource",
+            "description": "The subscription resource",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "topics",
+            "description": "The topics subscribed to by this resource.",
+            "in": "query",
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          },
+          {
+            "name": "context",
+            "description": "The app to which this object belongs, as `app:SomeApp`. If the object is not part of this app, the request fails. Other comma-separated contexts in the `context` parameter are allowed but ignored.",
+            "example": "app:api-test-app",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SubscriptionUpdate"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Subscription"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "x-internal": true
+      },
+      "post": {
+        "tags": [
+          "Subscriptions API"
+        ],
+        "summary": "Create a subscription",
+        "description": "Create a new subscription.",
+        "operationId": "createEntity",
+        "parameters": [
+          {
+            "name": "context",
+            "description": "The app to which this object belongs, as `app:SomeApp`. If the object is not part of this app, the request fails. Other comma-separated contexts in the `context` parameter are allowed but ignored.",
+            "example": "app:api-test-app",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Subscription"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "description": "Created",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Subscription"
+                }
+              }
+            }
+          }
+        },
+        "x-internal": true
+      },
+      "delete": {
+        "tags": [
+          "Subscriptions API"
+        ],
+        "summary": "Delete a subscription",
+        "description": "Delete any subscriptions associated with the given resource and, optionally, topics",
+        "operationId": "deleteSubscriptions",
+        "parameters": [
+          {
+            "name": "resource",
+            "description": "The subscription resource",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "topics",
+            "description": "The topics subscribed to by this resource. If an app context is not provided, these topics must include the namespace.",
+            "in": "query",
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          },
+          {
+            "name": "context",
+            "description": "The app to which this object belongs, as `app:SomeApp`. If the object is not part of this app, the request fails. Other comma-separated contexts in the `context` parameter are allowed but ignored.",
+            "example": "app:api-test-app",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        },
+        "x-internal": true
+      }
+    },
+    "/subscriptions/{id}": {
+      "get": {
+        "tags": [
+          "Subscriptions API"
+        ],
+        "summary": "Get a subscription",
+        "description": "Get the entity as JSON by unique ID",
+        "operationId": "getEntity",
+        "parameters": [
+          {
+            "name": "id",
+            "description": "The subscription ID",
+            "in": "path",
+            "required": true,
+            "schema": {
+                "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Subscription"
+                }
+              }
+            }
+          }
+        },
+        "x-internal": true
+      },
+      "put": {
+        "tags": [
+          "Subscriptions API"
+        ],
+        "summary": "Update a subscription",
+        "description": "Update a subscription from JSON",
+        "operationId": "updateEntity",
+        "parameters": [
+          {
+            "name": "id",
+            "description": "The subscription ID",
+            "in": "path",
+            "required": true,
+            "schema": {
+                "type": "string"
+            }
+          },
+          {
+            "name": "ifMatch",
+            "description": "A subscription version tag to match",
+            "in": "header",
+            "schema": {
+              "$ref": "#/components/schemas/IfMatchHeader"
+            }
+          },
+          {
+            "name": "context",
+            "description": "The app to which this object belongs, as `app:SomeApp`. If the object is not part of this app, the request fails. Other comma-separated contexts in the `context` parameter are allowed but ignored.",
+            "example": "app:api-test-app",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Subscription"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Subscription"
+                }
+              }
+            }
+          }
+        },
+        "x-internal": true
+      },
+      "delete": {
+        "tags": [
+          "Subscriptions API"
+        ],
+        "summary": "Delete a subscription",
+        "description": "Delete an entity by unique ID",
+        "operationId": "deleteEntity",
+        "parameters": [
+          {
+            "name": "id",
+            "description": "The subscription ID",
+            "in": "path",
+            "required": true,
+            "schema": {
+                "type": "string"
+            }
+          },
+          {
+            "name": "ifMatch",
+            "description": "Optional tag to match.",
+            "in": "header",
+            "schema": {
+              "$ref": "#/components/schemas/IfMatchHeader"
+            }
+          },
+          {
+            "name": "context",
+            "description": "The app to which this object belongs, as `app:SomeApp`. If the object is not part of this app, the request fails. Other comma-separated contexts in the `context` parameter are allowed but ignored.",
+            "example": "app:api-test-app",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        },
+        "x-internal": true
+      }
+    },
+    "/subscriptions/{id}/refresh": {
+      "put": {
+        "tags": [
+          "Subscriptions API"
+        ],
+        "summary": "Refresh a subscription",
+        "description": "When changes are made to a subscription, the subscription needs to be refreshed (reloaded). A Fusion restart refreshes all subscriptions.",
+        "operationId": "refreshSubscription",
+        "parameters": [
+          {
+            "name": "id",
+            "description": "The subscription ID",
+            "in": "path",
+            "required": true,
+            "schema": {
+                "type": "string"
+            }
+          },
+          {
+            "name": "action",
+            "description": "The action to apply when refreshing the subscription. This is currently either start or stop.",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "default": "start"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        },
+        "x-internal": true
+      }
+    },
+    "/subscriptions/_schema": {
+      "get": {
+        "tags": [
+          "Subscriptions API"
+        ],
+        "summary": "Get the schema",
+        "description": "Get JSON schema for objects managed by this API",
+        "operationId": "getEntitySchema",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/schema+json;qs=1.0": {
+                "schema": {
+                  "$ref": "#/components/schemas/ObjectType"
+                }
+              },
+              "application/json;qs=0.9": {
+                "schema": {
+                  "$ref": "#/components/schemas/ObjectType"
+                }
+              }
+            }
+          }
+        },
+        "x-internal": true
+      }
+    },
+    "/system/status": {
+      "get": {
+        "tags": [
+          "Index Pipelines API"
+        ],
+        "summary": "Get the system status",
+        "description": "Check the status of the system.",
+        "operationId": "getStatus",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/ServiceStatusSet"
+                }
+              }
+            }
+          }
+        },
+        "x-internal": true
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "SubscriptionUpdate": {
+        "type": "object",
+        "properties": {
+          "numberOfListenerThreads": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "maxRetries": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "initialPosition": {
+            "type": "string"
+          },
+          "contextProperties": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "object"
+            }
+          }
+        }
+      },
+      "Subscription": {
+        "type": "object",
+        "properties": {
+          "resource": {
+            "type": "string"
+          },
+          "topic": {
+            "type": "string"
+          },
+          "numberOfListenerThreads": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "maxRetries": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "initialPosition": {
+            "type": "string"
+          },
+          "contextProperties": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "object"
+            }
+          },
+          "id": {
+            "type": "string"
+          }
+        }
+      },
+      "IfMatchHeader": {
+        "description": "Optional tag to match.",
+        "type": "object"
+      },
+      "IndexProfile": {
+        "description": "A JSON object defining the index profile.",
+        "type": "object",
+        "properties": {
+          "id": {
+            "description": "A unique index profile ID.",
+            "type": "string"
+          },
+          "indexPipeline": {
+            "description": "The index pipeline associated with this index profile.",
+            "type": "string"
+          },
+          "collection": {
+            "description": "The collection associated with this index profile.",
+            "type": "string"
+          },
+          "parser": {
+            "description": "The parser associated with this index profile.",
+            "type": "string"
+          }
+        }
+      },
+      "IndexPipelineDefinition": {
+        "description": "A JSON object defining the index pipeline.",
+        "type": "object",
+        "properties": {
+          "id": {
+            "description": "The index pipeline ID.",
+            "type": "string"
+          },
+          "stages": {
+            "description": "The stages in this index pipeline and their configurations.  Use `/api/index-stages/schema` and `/api/index-stages/schema/{type}` to get the configuration schemas for the available index stage types.",
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/StageConfig"
+            }
+          },
+          "properties": {
+            "description": "Additional properties defining this index pipeline.",
+            "type": "object",
+            "additionalProperties": {
+              "type": "string"
+            }
+          }
+        }
+      },
+      "StageConfig": {
+        "description": "A JSON object defining the configuration of an index stage.",
+        "type": "object",
+        "properties": {
+          "type": {
+            "description": "The index stage type.",
+            "type": "string"
+          },
+          "id": {
+            "description": "The unique ID for this index stage.",
+            "type": "string"
+          },
+          "label": {
+            "description": "A unique human-readable label for this index stage.",
+            "type": "string"
+          },
+          "condition": {
+            "description": "A conditional script that must result in `true` or `false`. You can use this to run or skip this stage depending on whether conditions are met.",
+            "type": "string"
+          },
+          "skip": {
+            "description": "`True` to disable this index stage without removing it from the index pipeline.",
+            "type": "boolean"
+          }
+        },
+        "discriminator": {
+          "propertyName": "type"
+        }
+      },
+      "MultiValueMapStringString": {
+        "description": "The parameters of the indexing request.",
+        "type": "object",
+        "properties": {
+          "all": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "string"
+            },
+            "writeOnly": true
+          },
+          "empty": {
+            "type": "boolean"
+          }
+        },
+        "additionalProperties": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      },
+      "Annotation": {
+        "description": "Pipeline field annotation.",
+        "type": "object",
+        "properties": {
+          "type": {
+            "type": "string"
+          },
+          "start": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "end": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "features": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "string",
+              "deprecated": true
+            },
+            "deprecated": true
+          },
+          "label": {
+            "type": "string"
+          },
+          "featureCount": {
+            "type": "integer",
+            "format": "int32",
+            "deprecated": true
+          }
+        }
+      },
+      "Command": {
+        "description": "A Solr command.",
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "params": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "string"
+            }
+          }
+        }
+      },
+      "IndexPipelineStatResponse": {
+        "description": "The indexed documents, plus statistics about the indexing operation.  You can use this data to confirm that the results are as expected.",
+        "type": "object",
+        "properties": {
+          "docs": {
+            "description": "One or more JSON objects representing the indexed documents.",
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/PipelineDocument"
+            }
+          },
+          "stats": {
+            "description": "Statistics about the completed indexing operation.",
+            "type": "object",
+            "additionalProperties": {
+              "type": "object"
+            }
+          }
+        }
+      },
+      "PipelineDocument": {
+        "description": "An indexed document, as a JSON object.  You can use this to validate the index pipeline's output.",
+        "type": "object",
+        "properties": {
+          "id": {
+            "description": "The unique document ID.",
+            "type": "string"
+          },
+          "fields": {
+            "description": "The field present in the indexed document.",
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/PipelineField"
+            }
+          },
+          "metadata": {
+            "description": "Metadata about the index document.",
+            "type": "object",
+            "additionalProperties": {
+              "type": "string"
+            }
+          },
+          "commands": {
+            "description": "Solr commands.",
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Command"
+            }
+          },
+          "hints": {
+            "description": "Additional details about a field and its values.",
+            "type": "object",
+            "additionalProperties": {
+              "uniqueItems": true,
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          }
+        }
+      },
+      "PipelineField": {
+        "description": "A field in an indexed document.",
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "value": {
+            "type": "object"
+          },
+          "metadata": {
+            "description": "Pipeline field metadata.",
+            "type": "object",
+            "additionalProperties": {
+              "type": "string"
+            }
+          },
+          "annotations": {
+            "description": "Pipeline field annotations.",
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Annotation"
+            }
+          }
+        }
+      },
+      "ContextAndDoc": {
+        "description": "The indexed documents, plus context information for debugging.",
+        "type": "object",
+        "properties": {
+          "context": {
+            "description": "The indexing request parameters.",
+            "type": "object",
+            "additionalProperties": {
+              "type": "object"
+            }
+          },
+          "error": {
+            "description": "Indexing error, if any.",
+            "type": "string"
+          },
+          "doc": {
+            "$ref": "#/components/schemas/PipelineDocument"
+          }
+        }
+      },
+      "IndexPipelineDebugResponse": {
+        "description": "The indexed documents, plus additional details for debugging.",
+        "type": "object",
+        "properties": {
+          "stages": {
+            "description": "The stages executed by the index pipeline.",
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/StageConfig"
+            }
+          },
+          "output": {
+            "description": "The executed pipeline stages and their document output.",
+            "type": "object",
+            "additionalProperties": {
+              "type": "array",
+              "items": {
+                "$ref": "#/components/schemas/ContextAndDoc"
+              }
+            }
+          },
+          "outputEncounteredCount": {
+            "description": "The number of documents indexed.",
+            "type": "integer",
+            "format": "int64"
+          }
+        }
+      },
+      "ServiceStatus": {
+        "type": "object",
+        "description": "The status of the service.",
+        "properties": {
+          "status": {
+            "type": "string",
+            "enum": [
+              "starting",
+              "ok",
+              "warning",
+              "error",
+              "shutdown"
+            ]
+          },
+          "node": {
+            "description": "The service node.",
+            "type": "string"
+          },
+          "messages": {
+            "description": "Service status details.",
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/StatusMessage"
+            }
+          }
+        }
+      },
+      "ServiceStatusSet": {
+        "description": "Service status.",
+        "type": "array",
+        "properties": {
+          "empty": {
+            "type": "boolean"
+          }
+        },
+        "items": {
+          "$ref": "#/components/schemas/ServiceStatus"
+        }
+      },
+      "StatusMessage": {
+        "description": "Service instances.",
+        "type": "object",
+        "properties": {
+          "date": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "message": {
+            "type": "string"
+          }
+        }
+      },
+      "AnyType": {
+        "description": "Configuration properties.",
+        "type": "object",
+        "properties": {
+          "type": {
+            "type": "string",
+            "enum": [
+              "string",
+              "number",
+              "integer",
+              "boolean",
+              "object",
+              "array",
+              "null",
+              "ref"
+            ]
+          },
+          "title": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          },
+          "default": {
+            "type": "object"
+          },
+          "category": {
+            "type": "string"
+          },
+          "categoryPriority": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "hints": {
+            "uniqueItems": true,
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "unsafe": {
+            "type": "boolean"
+          },
+          "oneOf": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/AnyTypeObjectObject"
+            }
+          }
+        }
+      },
+      "AnyTypeObjectObject": {
+        "description": "Configuration properties.",
+        "type": "object",
+        "properties": {
+          "type": {
+            "type": "string",
+            "enum": [
+              "string",
+              "number",
+              "integer",
+              "boolean",
+              "object",
+              "array",
+              "null",
+              "ref"
+            ]
+          },
+          "title": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          },
+          "default": {
+            "type": "object"
+          },
+          "category": {
+            "type": "string"
+          },
+          "categoryPriority": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "hints": {
+            "uniqueItems": true,
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "unsafe": {
+            "type": "boolean"
+          }
+        }
+      },
+      "ObjectType": {
+        "description": "Configuration properties.",
+        "type": "object",
+        "properties": {
+          "type": {
+            "type": "string",
+            "enum": [
+              "string",
+              "number",
+              "integer",
+              "boolean",
+              "object",
+              "array",
+              "null",
+              "ref"
+            ]
+          },
+          "title": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          },
+          "required": {
+            "uniqueItems": true,
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "properties": {
+            "type": "object",
+            "additionalProperties": {
+              "$ref": "#/components/schemas/AnyType"
+            }
+          },
+          "additionalProperties": {
+            "type": "object"
+          },
+          "minProperties": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "maxProperties": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "definitions": {
+            "type": "object",
+            "additionalProperties": {
+              "$ref": "#/components/schemas/AnyType"
+            }
+          },
+          "category": {
+            "type": "string"
+          },
+          "categoryPriority": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "hints": {
+            "uniqueItems": true,
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "unsafe": {
+            "type": "boolean"
+          },
+          "default": {
+            "type": "object"
+          },
+          "oneOf": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/AnyTypeObjectObject"
+            }
+          },
+          "propertyGroups": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/PropertyGroup"
+            }
+          }
+        }
+      },
+      "PropertyGroup": {
+        "type": "object",
+        "properties": {
+          "label": {
+            "type": "string"
+          },
+          "properties": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        }
+      }
+    },
+    "securitySchemes": {
+      "Basic auth": {
+        "type": "http",
+        "scheme": "basic"
+      },
+      "API key": {
+        "name": "x-api-key",
+        "type": "apiKey",
+        "in": "header"
+      }
+    }
+  },
+  "security": [
+    {
+      "Basic auth": []
+    },
+    {
+      "API key": []
+    }
+  ]
+}
