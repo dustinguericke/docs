@@ -1,0 +1,153 @@
+---
+permalink: "l6f36o"
+subGroup: "cs"
+layout: default
+title: 'Visual Editor'
+description: 'Needs description'
+icon: 'text-size'
+order: 11
+doctype: concept
+---
+
+When you sign in to Lucidworks Platform, select the workspace, click **Commerce Studio**, and select the ecommerce configuration instance to manage. The Visual Editor screen is the default display. For example:
+
+![Home - Visual Editor](/assets/images/lw-platform/commerce-studio/lw-cs-home-visual-editor.png)
+
+## Build Visual Editor components
+
+Build the components of Visual Editor in the following order:
+
+* [Create a page](/lw-platform/cs/t968bf/pages) that reflects your website’s search experience.
+* [Create rules](/lw-platform/cs/ravw5k/ranking-rules) for the selected page.
+* [Add query rewrite functions](/lw-platform/cs/5zeagj/rewrite) such as synonyms and misspelling corrections.
+
+## Visual Editor features
+
+The Visual Editor lets you perform the following features:
+
+* Select the [page format](/lw-platform/cs/t968bf/pages) for the configuration you want to view and test.
+* Use the [search](#search) section to enter information to search, link to edit the page, test and preview results before you publish to your production site, publish the configuration to production, and view factors that impact result ranking.
+* View and manage your rules and the corresponding results in the [actions](#actions), [search results](#search-results), [changes](#changes), and [published rules](#published-rules) sections.
+
+### Search
+
+![Search](/assets/images/lw-platform/commerce-studio/lw-cs-search-home.png)
+
+The Search section of the Visual Editor screen lets you:
+
+* Enter text and search your site based on the [rules](/lw-platform/cs/ravw5k/ranking-rules) and [query rewrite](/lw-platform/cs/5zeagj/rewrite) configuration.
+* Click ![Edit Page](/assets/images/lw-platform/commerce-studio/lw-cs-search-edit-page.png) **Edit page** to modify the [page configuration](/lw-platform/cs/t968bf/pages).
+* Click [Preview Live](/lw-platform/cs/93f8tp/live-site-simulator) to test various terms and phrases for the [rules](/lw-platform/cs/ravw5k/ranking-rules) and [query rewrite](/lw-platform/cs/5zeagj/rewrite) configuration so you can refine the results returned before you publish the campaign for your customers.
+* Click **Publish** to activate the campaign on your production customer site.
+* Click **Ranking Factors** to view criteria such as sorting, relevance, and query processing that impact the results.
+
+### Actions
+
+The Actions section of the Visual Editor screen lets you set actions for rules.
+
+### Search Results
+
+The Search Results section of the Visual Editor screen displays information about individual items and lets you perform the following actions.
+
+#### Add or edit facets
+
+Use the **Facets** button to add, modify, or delete facets for the search. The calculated Facets display with the results.
+
+#### View and modify item
+
+An example of an individual item result is:
+
+![Item result](/assets/images/lw-platform/commerce-studio/lw-cs-item-result.png)
+
+* **Item rank.** The number of the rank displays, as well as an indicator if the rule that returned that item is unpublished. The example is ranked #1 and the rule that returned it is published. If the rule is unpublished, the text "Unpublished" displays next to the ranking number.
+* **Add.** Click **Add** and then boost, pin, bury, block, enter a number of rank, rerank the item in the group, or delete that item. You can also hold the pointer over the item, then click the **Drag** icon and drag the item to reorder its rank.
+* **Metrics.** Metrics display if [Inline analytics](#inline-analytics) are configured for the card.
+* **Add Rule.** Select the checkbox in one or more items to enable the **+ Add Rule** option to boost, bury, and block the selected items. For more information, see [Create a rule in Visual Editor](/lw-platform/cs/ravw5k/ranking-rules#visual).
+
+#### Results List
+
+The Results List section lets you change the [item card display](#change-item-card-display) and [apply tags](apply-tags).
+
+##### Change Item Card Display
+
+To view the settings or change what displays on each result item card, click **Results List** and select **Change Item Card Display**.
+
+![Results List](/assets/images/lw-platform/commerce-studio/lw-cs-results-list.png)
+
+On the Item Card Settings screen, the format of the card displays based on the configuration. If you change the fields or metrics values, the format displays the changes.
+
+![Item Card Settings](/assets/images/lw-platform/commerce-studio/lw-cs-item-card-settings.png)
+
+##### Fields
+
+The fields defined in the example include the product image and name. 
+
+To add a new field such as `price`, click **Add Field** and then enter information in the:
+
+* **Field Name.** The name of the field, such as `price_s`.
+* **Field Style.** The style of the field, such as price. The options are `price` to display money amounts, `url` to display the URL where the item is located, or `generic` to display text.
+* **Field Display Name.** The title of the field on the card. For example, the Field Display Name for the `product_title_s` field is `Product Name`. If you add the `price_s` field, the Field Display Name can be any text such as `Price`.
+
+In the default image field, you can select the **Show Variants** checkbox to enter an alternative to the specified field. If the checkbox is selected, you can enter an alternate product image or color as the variant.
+
+* Example 1:  
+
+  ![Show Variants Image](/assets/images/lw-platform/commerce-studio/lw-cs-item-card-show-variants-image.png)
+
+  * **Variant Field Name.** The dataset field name for the product image. For example, `image_s`.
+  * **Variant Field Type.** For a product image, the value is **image**. 
+  * **Variant SKU ID.** The unique identifier for the product. The product image is associated with this ID. For example, the SKU varies based on long-sleeved T-shirt versus a short-sleeved T-shirt.
+* Example 2:
+
+  ![Show Variants Color](/assets/images/lw-platform/commerce-studio/lw-cs-item-card-show-variants-color.png)
+  * **Variant Field Name.** The dataset field name for the color of product. For example, `color_s`. 
+  * **Variant Field Type.** For product color, the value is **color**.
+  * **Variant SKU ID.** The unique identifier for the product based on color. For example, the SKU varies if the T-shirt is red as opposed to blue.
+
+##### Inline Analytics
+
+To view key metrics captured by Analytics Studio for each item returned in the results, complete the following fields:
+
+* Click **Inline Analytics** to display the metrics on each item card. If this is not selected, metrics do not display on the items.
+
+![Show Variants](/assets/images/lw-platform/commerce-studio/lw-cs-item-card-inline-analytics.png)
+
+* Select a value in the **Metrics Duration** field. For example, `Last 30 Days`. This determines the amount of time calculated in the metrics. The duration displays on the item above the corresponding metrics.
+* In the **Document ID Field**, enter the field to be used as the document ID when retrieving metrics from the Signals Store. The default is `id`. 
+* In the **Add Up to 3 Metrics** field, you can select any or all of the following metrics to display for the item (and the amount of time selected in the **Metrics Duration** field):
+  * **ATC.** Add to cart is also referred to as cart add rate. The cart add rate measures the percentage of clicks that result in an item being added to the shopping cart. This metric highlights the effectiveness of product pages and user readiness to purchase. 
+  * **Purchases.** Displays the number of purchases related to this item.
+  * **Revenue.** Displays the revenue related to this item.
+  * **RPV.** Revenue per visit displays the average revenue received per visit for the item for the time period specified in the **Metrics Duration** field. This metric allows users to assess the effectiveness of driving revenue through individual customer visits, aiding in optimizing user engagement and marketing efforts.
+  * **CVR.** Conversion rate is also referred to as search conversion rate. The search conversion rate measures the percentage of searches that result in a completed purchase. This metric represents the final step in the user journey from query to conversion, offering a clear indicator of overall search effectiveness and customer satisfaction. For example, a conversion rate of 5% means that 5 out of every 100 searches lead to a purchase.
+
+    **📌 NOTE**\
+    For more information, see [Analytics Studio and Commerce Studio](/lw-platform/analytics/kvidem/analytics-studio-and-commerce-studio) and [Metrics](/lw-platform/analytics/xcd2n5/metrics).
+
+##### Apply tags
+
+To apply rules by tag to this section, click **Results List** and select **Apply Tags**. On the Apply Tags screen, tags entered on rules created in Ranking Rules display. You can select the tags you want to apply to the section and click **Apply**.
+
+![Apply tags](/assets/images/lw-platform/commerce-studio/lw-cs-apply-tags.png)
+
+### Changes
+
+This section displays the latest rule changes that affected the results displayed in the Visual Editor. The `Condition`, `Action`, `Precedence`, `Target` and `Last edited on` fields display for each rule change.
+
+You can click the pencil icon to edit the rule using the [Rule Wizard](/lw-platform/cs/ravw5k/ranking-rules#wizard), or click the trash can to delete that rule. 
+
+For more information about rules, see [Ranking Rules](/lw-platform/cs/ravw5k/ranking-rules).
+
+### Published Rules
+
+This section displays the published rules for the results in Visual Editor. 
+
+Select the checkbox of one or more rules and the number of published rules displays above the items. Click **Published Rules** and the rules associated with the selected items display. The `Condition`, `Action`, `Precedence`, `Target` and `Last edited on` fields display for each rule.
+
+The actions you can perform include:
+
+* **Unpublish the rule.** Select the checkbox for the rule and click the down arrow to unpublish the rule.
+* **Delete the rule.** Select the checkbox of one or more rules and click the trash can to delete those rules. You can also select the checkbox for an individual rule, then hold the pointer over the rule, and click the trash can for that individual rule to delete it.
+* **Edit the rule.** Hold the pointer over an individual rule and click the pencil icon to edit the rule using the [Rule Wizard](/lw-platform/cs/ravw5k/ranking-rules#wizard).
+
+For more information about rules, see [Ranking Rules](/lw-platform/cs/ravw5k/ranking-rules).

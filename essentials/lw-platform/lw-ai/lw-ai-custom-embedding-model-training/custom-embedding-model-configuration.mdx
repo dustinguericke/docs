@@ -1,0 +1,411 @@
+---
+subGroup: "ai"
+permalink: "tnwswb"
+title: 'Custom configuration'
+description: 'Needs description'
+icon: 'text-size'
+subtitle: 'Lucidworks AI custom embedding model training'
+data: index_stage_schema
+stage-name: embedding-config
+order: 56
+doctype: reference
+---
+
+## Custom configuration 
+
+Custom configuration is used to train models with advanced parameters in the [Custom model training user interface](/lw-platform/ai/6bb9s5/lw-ai-custom-embedding-model-training-user-interface/index).
+
+## Custom configuration scenarios
+
+Custom configuration is typically used in the following scenarios:
+
+* Training using the [Lucidworks AI Models API](/lw-platform/ai/e63rmi/models-api), which requires the minimal, required custom configuration JSON.
+* Training with advanced parameters using either the [Custom model training user interface](/lw-platform/ai/6bb9s5/lw-ai-custom-embedding-model-training-user-interface/index) or the [Lucidworks AI Models API](/lw-platform/ai/e63rmi/models-api).
+
+## Custom configuration parameters
+
+This section contains the most commonly used and important configuration parameters. You can use these parameters in the:
+
+* [Custom model training user interface](/lw-platform/ai/6bb9s5/lw-ai-custom-embedding-model-training-user-interface/index) > [Create a new model > Manual entry > Custom Config](/lw-platform/ai/vjs5ie/create-deploy-custom-models#manual-entry) field
+* [Lucidworks AI Models API](/lw-platform/ai/e63rmi/models-api)
+
+### Model type
+
+To set the dataset and training defaults, enter the appropriate value in the `dataset_config` and `trainer_config` fields:
+
+* `mlp_general`. This is used for the general recurrent neural networks (RNN) model type.
+* `mlp_ecommerce`. This is used for an ecommerce RNN model type.
+
+For example, to set General RNN model type, use:
+
+```json
+{
+  "dataset_config": "mlp_general",
+  "trainer_config": "mlp_general"
+}
+```
+
+To set the ecommerce RNN model type, use:
+
+```json
+{
+  "dataset_config": "mlp_ecommerce",
+  "trainer_config": "mlp_ecommerce"
+}
+```
+
+### Model parameters
+
+The parameters nested in `trainer_config` let you set training and model encoder parameters. The most important parameters are:
+
+* `"trainer_config/text_processor_config": "word_en"`. Determines which type of tokenization and embedding is used as the base for the recurrent neural network (RNN) model. For example, word or byte-pair encoding (BPE). For information about values, see [Text processor](/lw-platform/ai/b18rw1/custom-embedding-rnn-models#text-processor).
+
+  **❗ IMPORTANT**\
+  The syntax for the text_processor_config parameter name must use a forward slash `/` and not a period `.` because it sets a group of parameters using a group name. Other nested parameters use a period `.`.
+* `"trainer_config.encoder_config.rnn_names_list": ["gru"]`. Determines which bi-directional recurrent neural network (RNN) layers are used. Options include `gru` and `lstm`.
+* `"trainer_config.encoder_config.rnn_units_list": [128]`. The number of units for each recurrent neural network (RNN) layer. 
+
+  Because this is a bi-directional RNN, the encoder’s vector size is two times larger than the number of units in the last layer. For example, if one layer is 128 units, the output vector size is 256.
+
+You must specify the same number of units for `trainer_config.encoder_config.rnn_units_list` and its similarly-named `trainer_config.encoder_config.rnn_names_list` RNN layer. For example, `rnn_units_list` needs to be the same size as `rnn_names_list`. 
+
+## Advanced custom configuration parameters
+
+This section describes the most common advanced custom configuration parameters you can alter. Modifying the values does not typically provide a significant boost in quality. However, setting values incorrectly may cause serious quality degradation. 
+
+### Advanced model parameters 
+
+* `"trainer_config.trn_batch_size": null`. The batch size to be used for a single model training update. By default, an appropriate batch size is automatically determined based on the dataset size. If the field is set to `null`, the batch size is also automatically determined based on the dataset size.
+* `"trainer_config.num_epochs": 64`. The number of epochs the training data must complete. An epoch is a full cycle where training data passes through the designated algorithms. During one epoch, the model processes all the training data examples (queries and index documents) at least one time.
+* `"trainer_config.monitor_patience": 8`. The number of epochs the training passes before it stops if there is no validation metric improvement during the epochs. The best model state based on the monitor validation metric is used as the final model. 
+  * For the general RNN, the `mrr@3` metric is monitored and the `monitor_patience` default value is 8. 
+  * For the ecommerce RNN, the `ndcg@5` metric is monitored and the `monitor_patience` default value is 16.
+* `"trainer_config.encoder_config.emb_spdp": 0.3`. This field provides a regularization effect, which is the process to simplify result answers. The regularization is applied between the token embeddings layer and the first recurrent neural network (RNN) layer.
+* `"trainer_config.encoder_config.emb_trainable"`. This field determines if fine-tuning of the token embeddings is enabled. Examples of token embedding are word or byte pair encoding (BPE) token vectors. If set, it can improve the quality of the model if the query contains less natural language that negatively impacts training. Because the embeddings layer is the largest layer in the network, the process to improve the model requires enough training data to prevent overfitting.
+
+  The default values are:
+  * `"trainer_config.encoder_config.emb_trainable": false`. For `mlp_general` models.
+  * `"trainer_config.encoder_config.emb_trainable": true`. For `mlp_ecommerce` models.
+
+## Custom configuration examples
+
+To create a custom configuration, set a `dataset_config` and `trainer_config`. To minimize dimished quality in the training model, only change field parameters that deviate from the default.
+
+**📌 NOTE**\
+For detailed information about `dataset_config` for the index and query files, see [use case training data](/lw-platform/ai/g0ji3z/custom-embedding-model-training-data).
+
+## General configuration
+
+This configuration uses all of the defaults for general RNN training, since no values deviating from the defaults are specified.
+
+In most cases, this configuration is sufficient if all of these apply:
+
+* Index Parquet file contains the `pkid` and `text` columns
+* Query Parquet file contains the `pkid` and `query` columns
+
+```json
+{
+  "dataset_config": "mlp_general",
+  "trainer_config": "mlp_general"
+}
+```
+
+***Advanced configuration***
+
+```json
+{
+  "dataset_config": "mlp_general",	
+  "dataset_config.pkid_col_name": "pkid",
+  "dataset_config.index_title_col_name": null,
+  "dataset_config.index_desc_col_name": "text",
+  "dataset_config.index_body_col_name": null,
+  "dataset_config.query_col_name": "query",
+  "dataset_config.weight_col_name": null,
+  "dataset_config.metrics_config.monitor_metric": "mrr@3",
+  "trainer_config": "mlp_general",
+  "trainer_config/text_processor_config": "word_en",
+  "trainer_config.encoder_config.emb_trainable": false,
+  "trainer_config.encoder_config.emb_spdp": 0.3,
+  "trainer_config.encoder_config.rnn_names_list": ["gru"],
+  "trainer_config.encoder_config.rnn_units_list": [128],
+  "trainer_config.num_epochs": 64,
+  "trainer_config.monitor_patience": 8,
+  "trainer_config.trn_batch_size": null 
+}
+```
+
+### General configuration with multilingual BPE embeddings
+
+This configuration uses all of the defaults for general RNN training except `"trainer_config/text_processor_config": "bpe_multi"`. No other values deviate from the defaults.
+
+This configuration is sufficient if all of these apply:
+
+* Index Parquet file contains the `pkid` and `text` columns
+* Query Parquet file contains the `pkid` and `query` columns
+* Index and query data are composed of multilingual text
+
+```json
+{
+  "dataset_config": "mlp_general",
+  "trainer_config": "mlp_general",
+  "trainer_config/text_processor_config": "bpe_multi"
+}
+```
+
+**Advanced configuration**
+
+```json
+{
+  "dataset_config": "mlp_general",	
+  "dataset_config.pkid_col_name": "pkid",
+  "dataset_config.index_title_col_name": null,
+  "dataset_config.index_desc_col_name": "text",
+  "dataset_config.index_body_col_name": null,
+  "dataset_config.query_col_name": "query",
+  "dataset_config.weight_col_name": null,
+  "dataset_config.metrics_config.monitor_metric": "mrr@3",
+  "trainer_config": "mlp_general",
+  "trainer_config/text_processor_config": "bpe_multi",
+  "trainer_config.encoder_config.emb_trainable": false,
+  "trainer_config.encoder_config.emb_spdp": 0.3,
+  "trainer_config.encoder_config.rnn_names_list": ["gru"],
+  "trainer_config.encoder_config.rnn_units_list": [128],
+  "trainer_config.num_epochs": 64,
+  "trainer_config.monitor_patience": 8,
+  "trainer_config.trn_batch_size": null 
+}
+```
+
+### General configuration with token embeddings fine-tuning
+
+This configuration uses all of the defaults for general RNN training except `"trainer_config.encoder_config.emb_trainable": true"`, which enables embedding training. No other values deviate from the defaults.
+
+This configuration is sufficient if all of these apply:
+
+* Index Parquet file contains the `pkid` and `text` columns
+* Query Parquet file contains the `pkid` and `query` columns
+* Your data contains a significant number of business-specific or misspelled words, such as in ecommerce use cases
+
+```json
+{
+  "dataset_config": "mlp_general",
+  "trainer_config": "mlp_general",
+  "trainer_config.encoder_config.emb_trainable": true
+}
+```
+
+**Advanced configuration**
+
+```json
+{
+  "dataset_config": "mlp_general",	
+  "dataset_config.pkid_col_name": "pkid",
+  "dataset_config.index_title_col_name": null,
+  "dataset_config.index_desc_col_name": "text",
+  "dataset_config.index_body_col_name": null,
+  "dataset_config.query_col_name": "query",
+  "dataset_config.weight_col_name": null,
+  "dataset_config.metrics_config.monitor_metric": "mrr@3",
+  "trainer_config": "mlp_general",
+  "trainer_config/text_processor_config": "word_en",
+  "trainer_config.encoder_config.emb_trainable": true,
+  "trainer_config.encoder_config.emb_spdp": 0.3,
+  "trainer_config.encoder_config.rnn_names_list": ["gru"],
+  "trainer_config.encoder_config.rnn_units_list": [128],
+  "trainer_config.num_epochs": 64,
+  "trainer_config.monitor_patience": 8,
+  "trainer_config.trn_batch_size": null 
+}
+```
+
+### Classification configuration for custom embedding model
+
+The custom embedding models for classification uses the following parameters:
+
+* The Index file contains the:
+  * `dataset_config.pkid_col_name` where `label` is the default value.
+  * `dataset_config.index_title_col_name` where `label` is the default value.
+  * `dataset_config.index_desc_col_name` where `null` is the default value.
+  * `dataset_config.index_body_col_name` where `null` is the default value.
+* The Query file contains the:
+  * `dataset_config.pkid_col_name` where `pkid` is the default value and is used for `class` values.
+  * `dataset_config.query_col_name` where freeform text is the default value.
+  * `dataset_config.weight_col_name` where `null` is the default value in this positive numeric field.
+
+The basic ecommerce example uses:
+
+```
+{
+  "dataset_config" : "mlp_classification"
+  "trainer_config" : "mlp_ecommerce"
+}
+```
+
+The basic general example uses:
+
+```
+{
+  "dataset_config" : "mlp_classification"
+  "trainer_config" : "mlp_general"
+}
+```
+
+The basic tranformer example uses the `trainer_config": "mlp_transformer"` value. For example, if the transformer is `gte_large_rnn`, the example is:
+
+```
+{
+  "dataset_config" : "mlp_classification"
+  "trainer_config" : "gte_large_rnn"
+}
+```
+
+For more information about the configuration parameters, see [Configuration](#configuration).
+
+### Ecommerce configuration
+
+This configuration uses all of the defaults for ecommerce RNN training, since no values deviating from the defaults are specified.
+
+In most cases, this configuration is sufficient if all of these apply:
+
+* Index Parquet file contains the `pkid` and `name` columns
+* Query Parquet file contains the `pkid`, `query`, and `weight` columns
+
+```json
+{
+  "dataset_config": "mlp_ecommerce",
+  "trainer_config": "mlp_ecommerce"
+}
+```
+
+**Advanced configuration**
+
+```json
+{
+  "dataset_config": "mlp_ecommerce",
+  "dataset_config.pkid_col_name": "pkid",
+  "dataset_config.index_title_col_name": "name",
+  "dataset_config.index_desc_col_name": null,
+  "dataset_config.index_body_col_name": null,
+  "dataset_config.query_col_name": "query",
+  "dataset_config.weight_col_name": "aggr_count",
+  "dataset_config.metrics_config.monitor_metric": "ndcg@5",
+  "trainer_config": "mlp_ecommerce",
+  "trainer_config/text_processor_config": "word_en",
+  "trainer_config.encoder_config.emb_trainable": true,
+  "trainer_config.encoder_config.emb_spdp": 0.3,
+  "trainer_config.encoder_config.rnn_names_list": ["gru"],
+  "trainer_config.encoder_config.rnn_units_list": [128],
+  "trainer_config.num_epochs": 64,
+  "trainer_config.monitor_patience": 16,
+  "trainer_config.trn_batch_size": null 
+}
+```
+
+### Ecommerce configuration with Japanese small BPE embeddings
+
+This configuration uses all of the defaults for ecommerce RNN training except `"trainer_config/text_processor_config": "bpe_ja_small"`. No other values deviate from the defaults.
+
+This configuration is sufficient if all of these apply:
+
+* Index Parquet file contains the `pkid` and `text` columns
+* Query Parquet file contains the `pkid` and `query` columns
+* Index and query data are composed of Japanese text
+
+```json
+{
+  "dataset_config": "mlp_ecommerce",
+  "trainer_config": "mlp_ecommerce",
+  "trainer_config/text_processor_config": "bpe_ja_small"
+}
+```
+
+**Advanced configuration**
+
+```json
+{
+  "dataset_config": "mlp_ecommerce",
+  "dataset_config.pkid_col_name": "pkid",
+  "dataset_config.index_title_col_name": "name",
+  "dataset_config.index_desc_col_name": null,
+  "dataset_config.index_body_col_name": null,
+  "dataset_config.query_col_name": "query",
+  "dataset_config.weight_col_name": "aggr_count",
+  "dataset_config.metrics_config.monitor_metric": "ndcg@5",
+  "trainer_config": "mlp_ecommerce",
+  "trainer_config/text_processor_config": "bpe_ja_small",
+  "trainer_config.encoder_config.emb_trainable": true,
+  "trainer_config.encoder_config.emb_spdp": 0.3,
+  "trainer_config.encoder_config.rnn_names_list": ["gru"],
+  "trainer_config.encoder_config.rnn_units_list": [128],
+  "trainer_config.num_epochs": 64,
+  "trainer_config.monitor_patience": 16,
+  "trainer_config.trn_batch_size": null 
+}
+```
+
+### Ecommerce configuration with 2 RNN layers and 128 output vector size
+
+This configuration uses all of the defaults for ecommerce RNN training except `"trainer_config.encoder_config.rnn_names_list": ["gru", "gru"]`, which is an additional gru layer and `"trainer_config.encoder_config.rnn_units_list": [128, 64]` where the additional gru layer is 64 units. No other values deviate from the defaults.
+
+This configuration is sufficient if all of these apply:
+
+* Index Parquet file contains the `pkid` and `text` columns
+* Query Parquet file contains the `pkid` and `query` columns
+* The output of the model is 128 vector dimension
+
+```json
+{
+  "dataset_config": "mlp_ecommerce",
+  "trainer_config": "mlp_ecommerce",
+  "trainer_config.encoder_config.rnn_names_list": ["gru", "gru"],
+  "trainer_config.encoder_config.rnn_units_list": [128, 64]
+}
+```
+
+**Advanced configuration**
+
+```json
+{
+  "dataset_config": "mlp_ecommerce",
+  "dataset_config.pkid_col_name": "pkid",
+  "dataset_config.index_title_col_name": "name",
+  "dataset_config.index_desc_col_name": null,
+  "dataset_config.index_body_col_name": null,
+  "dataset_config.query_col_name": "query",
+  "dataset_config.weight_col_name": "aggr_count",
+  "dataset_config.metrics_config.monitor_metric": "ndcg@5",
+  "trainer_config": "mlp_ecommerce",
+  "trainer_config/text_processor_config": "word_en",
+  "trainer_config.encoder_config.emb_trainable": true,
+  "trainer_config.encoder_config.emb_spdp": 0.3,
+  "trainer_config.encoder_config.rnn_names_list": ["gru", "gru"],
+  "trainer_config.encoder_config.rnn_units_list": [128, 64],
+  "trainer_config.num_epochs": 64,
+  "trainer_config.monitor_patience": 16,
+  "trainer_config.trn_batch_size": null 
+}
+```
+
+### General configuration with all_minilm_l6_rnn transformer
+
+This configuration uses the `all_minilm_l6_rnn` transformer.
+
+```json
+{
+  "dataset_config": "mlp_ecommerce",
+  "trainer_config": "all_minilm_l6_rnn"
+}
+```
+
+### Ecommerce configuration with all_minilm_l6_rnn transformer
+
+This configuration uses the `all_minilm_l6_rnn` transformer.
+
+```json
+{
+  "dataset_config": "mlp_ecommerce",
+  "trainer_config": "all_minilm_l6_rnn"
+}
+```
+
+## Configuration

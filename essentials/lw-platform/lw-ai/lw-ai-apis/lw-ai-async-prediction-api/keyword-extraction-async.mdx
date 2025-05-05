@@ -1,0 +1,103 @@
+---
+subGroup: "ai"
+permalink: "937meo"
+title: 'Keyword extraction use case'
+description: 'Needs description'
+icon: 'text-size'
+subtitle: 'Lucidworks AI Async Prediction API'
+layout: stoplight
+data: api-machine-learning-platform-async-prediction
+private: true
+doctype: reference
+order: 25
+---
+
+In the Keyword extraction use case of the [Lucidworks AI Async Prediction API](/lw-platform/ai/55ug0f/async-prediction-api), the LLM ingests text and returns a JSON response that contains a list of keywords extracted from the text. No options can be configured.
+
+This use case can be used:
+
+* To extract keywords to create new facets
+* To extract keywords from each document:
+  * To write the keyword into a new field that subsequently searches large content documents more efficiently
+  * To boost specific keyword content
+  * For document clustering
+
+The Keyword extraction use case contains two requests:
+
+* The `USE_CASE` and `MODEL_ID` fields in the `/async-prediction` for the POST request. The path is `/ai/async-prediction/USE_CASE/MODEL_ID`. A list of supported modes is returned in the [Lucidworks AI Use Case API](/lw-platform/ai/0stpyb/use-case-api). For more information about supported models, see [Generative AI models](/lw-platform/ai/r7ai90/generative-ai#generative-ai-models).
+
+## Common POST request parameters and fields 
+
+### modelConfig
+
+Some parameters of the `/ai/async-prediction/USE_CASE/MODEL_ID` POST request are common to all of the generative AI (GenAI) use cases, including the `modelConfig` parameter. If you do not enter values, the following defaults are used.
+
+### Unique values for the keyword extraction use case
+
+The values available in this use case (that may not be available in other use cases) are:
+
+|====
+
+|Parameter |Value
+
+|"text" |Free-form content contained in the document.
+
+|"useCaseConfig" |"maxKeywords": integer
+
+This parameter specifies the maximum number of keywords that can be extracted, even though the model may contain more than the maximum number specified in this field.
+
+|====
+
+### Example POST request
+
+This example does not include `modelConfig` parameters, but you can submit requests that include parameters described in [Common POST request parameters and fields](#common-post-request-parameters-and-fields).
+
+```json
+curl --request POST \
+  --url https://APPLICATION_ID.applications.lucidworks.com/ai/async-prediction/keyword_extraction/MODEL_ID \
+  --header 'Authorization: Bearer ACCESS_TOKEN' \
+  --header 'Content-type: application/json' \
+  --data '{
+  "batch": [
+    {
+      "text": "Joseph Robinette Biden Jr.is an American politician who is the 46th and current president of the United States. Ideologically a moderate member of the Democratic Party, he previously served as the 47th vice president from 2009 to 2017 under President Barack Obama and represented Delaware in the United States Senate from 1973 to 2009.Born in Scranton, Pennsylvania, Biden moved with his family to Delaware in 1953. He studied at the University of Delaware before earning his law degree from Syracuse University. He was elected to the New Castle County Council in 1970 and to the U.S. Senate in 1972. As a senator, Biden drafted and led the effort to pass the Violent Crime Control and Law Enforcement Act and the Violence Against Women Act. He also oversaw six U.S. Supreme Court confirmation hearings, including the contentious hearings for Robert Bork and Clarence Thomas. Biden ran unsuccessfully for the Democratic presidential nomination in 1988 and 2008. In 2008, Obama chose Biden as his running mate, and Biden was a close counselor to Obama during his two terms as vice president. In the 2020 presidential election, Biden and his running mate, Kamala Harris, defeated incumbents Donald Trump and Mike Pence. Biden is the second Catholic president in U.S. history (after John F. Kennedy), and his politics have been widely described as profoundly influenced by Catholic social teaching."
+      }
+    ],
+    "useCaseConfig": {
+      "maxKeywords": 100
+    }    
+  }'
+```
+
+### Example GET request
+
+The following is an example response:
+
+```json
+{
+  "predictionId": "fd110486-f168-47c0-a419-1518a4840589",
+  "status": "READY",
+  "predictions": [
+    {
+      "response": "Joseph Robinette Biden Jr., 46th president of the United States, Democratic Party, Vice President, Barack Obama, Delaware, University of Delaware, Syracuse University, Violent Crime Control and Law Enforcement Act, Violence Against Women Act.",
+      "tokensUsed": {
+        "promptTokens": 148,
+        "completionTokens": 27,
+        "totalTokens": 175
+      },
+      "keywords": [
+        "Joseph Robinette Biden Jr.",
+        "46th president of the United States",
+        "Democratic Party",
+        "Vice President",
+        "Barack Obama",
+        "Delaware",
+        "University of Delaware",
+        "Syracuse University",
+        "Violent Crime Control and Law Enforcement Act",
+        "Violence Against Women Act"
+      ]
+    }
+  ]
+}
+```

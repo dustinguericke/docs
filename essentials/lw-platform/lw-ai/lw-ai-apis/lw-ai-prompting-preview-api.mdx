@@ -1,0 +1,287 @@
+---
+subGroup: "ai"
+permalink: "m0x9s2"
+title: 'Prompting Preview API'
+description: 'Needs description'
+icon: 'text-size'
+subtitle: 'Lucidworks AI Prediction API'
+layout: stoplight
+data: api-machine-learning-platform-prompt-passthrough
+private: true
+doctype: reference
+order: 67
+---
+
+The Lucidworks AI Generative AI Prompting Preview API returns [Prediction API `passthrough` use case](/lw-platform/ai/aimylh/pass-through-use-case) prompts before being sent to any [generative AI (GenAI) model](/lw-platform/ai/r7ai90/generative-ai#generative-ai-models).
+
+This API is used to help debug `passthrough` use case prompts to ensure the input to the GenAI model is valid, and within the model’s processing limits.
+
+**📌 NOTE**\
+Before the prompt is passed to the GenAI model, it may be formatted, truncated, expanded, or modified in other ways to meet that model’s requirements so the API call is successful.
+
+These preprocessing steps are integral to deliver an optimized prompt that generates coherent and relevant responses. By examining the prompt after preprocessing, you can better understand how your input is being interpreted by the AI, which can help you refine your queries for more accurate and useful outputs.
+
+The input parameter keys and values are the same used in the [Prediction API `passthrough` use case](/lw-platform/ai/aimylh/pass-through-use-case) except for `apiKey` or similar authentication params, which must be provided for consistency. However, the model third-party API is _not_ called, so those parameters are not used. You can enter placeholder values instead.
+
+## Prerequisites
+
+* The GenAI model name in the `MODEL_ID` field for the request. The path is: `/ai/prompt/passthrough/MODEL_ID`. For more information about supported models, see [Generative AI models](/lw-platform/ai/r7ai90/generative-ai#generative-ai-models).
+
+## Common parameters and fields 
+
+### modelConfig
+
+Some parameters of the `/ai/prompt/passthrough/MODEL_ID` request are common to all of the GenAI models, including the `modelConfig` parameter. If you do not enter values, the following defaults are used.
+
+```json
+"modelConfig":{
+  "temperature": 0.7,
+  "topP": 1.0,
+  "topK": -1.0,
+  "maxTokens": 256
+}
+```
+
+Also referred to as hyperparameters, these fields set certain controls on the response:
+
+|====
+
+|Field |Description
+
+|temperature |A sampling temperature between 0 and 2. A higher sampling temperature such as 0.8, results in more random (creative) output. A lower value such as 0.2 results in more focused (conservative) output. A lower value does not guarantee the model returns the same response for the same input.
+
+|topP |A floating-point number between 0 and 1 that controls the cumulative probability of the top tokens to consider, known as the randomness of the LLM’s response. This parameter is also referred to as top probability. Set `topP` to 1 to consider all tokens. A higher value specifies a higher probability threshold and selects tokens whose cumulative probability is greater than the threshold. The higher the value, the more diverse the output.
+
+|topK |An integer that controls the number of top tokens to consider. Set `top_k` to -1 to consider all tokens.
+
+|presencePenalty |A floating-point number between -2.0 and 2.0 that penalizes new tokens based on whether they have already appeared in the text. This increases the model’s use of diverse tokens. A value greater than zero (0) encourages the model to use new tokens. A value less than zero (0) encourages the model to repeat existing tokens. This is applicable for all OpenAI, Mistral, and Llama models.
+
+|frequencyPenalty |A floating-point number between -2.0 and 2.0 that penalizes new tokens based on their frequency in the generated text. A value greater than zero (0) encourages the model to use new tokens. A value less than zero (0) encourages the model to repeat existing tokens. This is applicable for all OpenAI, Mistral, and Llama models.
+
+|maxTokens |The maximum number of tokens to generate per output sequence. The value is different for each model. Review individual model specifications when the value exceeds 2048.
+
+|apiKey |This optional parameter is only required when using the model in the request. You can find this value in your model provider’s settings:
+
+* **OpenAI**: Copy and paste the API key found in your organization’s settings. For more information, see [OpenAI Authentication API keys](https://platform.openai.com/docs/api-reference/authentication).
+* **Azure OpenAI**: Copy and paste the API key found in your Azure portal. See [Authenticate with API key](https://learn.microsoft.com/en-us/azure/api-management/api-management-authenticate-authorize-azure-openai#authenticate-with-api-key).
+* **Anthropic**: Copy and paste the API key found in your [Anthrophic console](https://console.anthropic.com/settings/keys) or by using the [Anthropic API](https://docs.anthropic.com/en/api/admin-api/apikeys/get-api-key).
+* **Google Vertex AI**: Copy and paste the base64-encoded service account key JSON found in your [Google Cloud console](https://cloud.google.com/iam/docs/keys-list-get#list-keys). This service account key must have the [Vertex AI user](https://cloud.google.com/iam/docs/understanding-roles#aiplatform.user) role enabled. To create a new service account key, see [generate service account key](/lw-platform/ai/r7ai90/generative-ai#generate-service-account-key).
+
+|azureDeployment |The optional `"azureDeployment": "[DEPLOYMENT_NAME]"` parameter is the deployment name of the Azure OpenAI model and is only required when a deployed Azure OpenAI model is used in the request.
+
+|azureEndpoint |The optional `"azureEndpoint": "[ENDPOINT]"` parameter is the URL endpoint of the deployed Azure OpenAI model and is only required when a deployed Azure OpenAI model is used in the request.
+
+|googleProjectId |The optional `"googleProjectId": "[GOOGLE_PROJECT_ID]"` parameter is only required when a Google Vertex AI model is used in the request.  
+
+|googleRegion |The optional `"googleRegion": "[GOOGLE_PROJECT_REGION_OF_MODEL_ACCESS]"` parameter is only required when a Google Vertex AI model is used in the request.  The possible region values are:
+
+* us-central1
+* us-west4
+* northamerica-northeast1
+* us-east4
+* us-west1
+* asia-northeast3
+* asia-southeast1
+* asia-northeast
+
+|====
+
+### useCaseConfig parameters
+
+The request also uses the following `useCaseConfig` parameters:
+
+* ["useCaseConfig": "useSystemPrompt": boolean](#use-system-prompt)
+* ["useCaseConfig": "dataType": "string"](#data-type)
+
+**📌 NOTE**\
+If both `useSystemPrompt` and `dataType` are present, the value in `dataType` is used.
+
+#### Use System Prompt
+
+**`"useCaseConfig": "useSystemPrompt": boolean`** 
+
+This parameter can be used:
+
+* If custom prompts are needed, or if the prompt response format needs to be manipulated. 
+* But the prompt length may increase response time.
+
+  Some models, such as the  `mistral-7b-instruct` and `llama-3-8b-instruct`, generate more effective results when system prompts are included in the request. 
+
+  If `"useSystemPrompt": true`, the LLM input is automatically wrapped into a model-specific prompt format with a generic system prompt before passing it to the model or third-party API. 
+
+  If `"useSystemPrompt": false`, the `batch.text` value serves as the prompt for the model. The LLM input must accommodate model-specific requirements because the input is passed as is.
+
+#### Data Type
+
+**`"useCaseConfig": "dataType": "string"`** 
+
+This optional parameter enables model-specific handling to format the text returned in the `/prompt` request.
+
+The values for `dataType` in the request are:
+
+* `"dataType": "text"`
+
+  This value is equivalent to `"useSystemPrompt": true` and is a pre-defined, generic prompt.
+* `"dataType": "raw_prompt"`
+
+  This value is equivalent to `"useSystemPrompt": false` and is passed directly to the model.
+* `"dataType": "json_prompt"`
+
+  This value follows the generics that allow three roles:
+
+  * `system`
+  * `user`
+
+    * Only the last user message is truncated.
+    * If the API does not support system prompts, the user role is substituted for the system role.
+  * `assistant`
+
+    * If the last message role is `assistant`, it is used as a pre-fill for generation and is the first generated token the model uses. The pre-fill is prepended to the model output, which makes models less verbose and helps enforce specific outputs such as YAML.
+    * The Google Vertex AI does not support generation pre-fills, so an exception error is generated.
+
+      This follows the HuggingFace template contraints at [Hugging Face chat templates](https://huggingface.co/docs/transformers/main/en/chat_templating).
+
+    * Additional `json_prompt` information:
+
+      * Consecutive messages for the same role are merged.
+      * You can paste the information for a hosted model into the `json_prompt` value and change the model name in the stage. 
+
+## Examples
+
+### Sample POST request
+
+The following example is a POST prompt request. Replace the values in the `APPLICATION_ID`, `MODEL_ID`, and `ACCESS_TOKEN` fields with your information.
+
+```json
+curl --request POST \
+  --url https://APPLICATION_ID.applications.lucidworks.com/ai/prompt/passthrough/{MODEL_ID} \
+  --header 'Authorization: Bearer ACCESS_TOKEN' \
+  --header 'Content-type: application/json' \
+  --data '{
+    "batch": [
+        {
+            "text": "[{\"role\": \"system\", \"content\": \"You are a helpful utility program instructed to accomplish a product classififcation task. Please, classify the provided product name into one of the following categories:\\nGROCERIES, FURNITURE, UNKNOWN\"}, {\"role\": \"user\", \"content\": \"chocolate milk\"}, {\"role\": \"assistant\", \"content\": \"GROCERIES\"}, {\"role\": \"user\", \"content\": \"chocolate table\"}, {\"role\": \"assistant\", \"content\": \"FURNITURE\"}, {\"role\": \"user\", \"content\": \"stone baked pizza\"}]"
+        }
+    ],
+    "useCaseConfig": {
+        "dataType": "json_prompt"
+    },
+    "modelConfig": {
+        "apiKey": "fake"
+    }
+}'
+```
+
+### Sample Llama3 model response
+
+Based on the request, the following example is the response for the Llama3 `MODEL_ID`:
+
+```json
+{
+    "predictions": [
+        {
+            "tokensUsed": {
+                "promptTokens": 95
+            },
+            "prompt": "<|begin_of_text|><|start_header_id|>system<|end_header_id|>\n\nYou are a helpful utility program instructed to accomplish a product classififcation task. Please, classify the provided product name into one of the following categories:\nGROCERIES, FURNITURE, UNKNOWN<|eot_id|><|start_header_id|>user<|end_header_id|>\n\nchocolate milk<|eot_id|><|start_header_id|>assistant<|end_header_id|>\n\nGROCERIES<|eot_id|><|start_header_id|>user<|end_header_id|>\n\nchocolate table<|eot_id|><|start_header_id|>assistant<|end_header_id|>\n\nFURNITURE<|eot_id|><|start_header_id|>user<|end_header_id|>\n\nstone baked pizza<|eot_id|><|start_header_id|>assistant<|end_header_id|>\n\n"
+        }
+    ]
+}
+```
+
+### Sample Mistral model response
+
+Based on the request, the following example is the response for the Mistral `MODEL_ID`:
+
+```json
+{
+    "predictions": [
+        {
+            "tokensUsed": {
+                "promptTokens": 94
+            },
+            "prompt": "<s> [INST] You are a helpful utility program instructed to accomplish a product classififcation task. Please, classify the provided product name into one of the following categories:\nGROCERIES, FURNITURE, UNKNOWN\n\nchocolate milk [/INST] GROCERIES</s> [INST] chocolate table [/INST] FURNITURE</s> [INST]  stone baked pizza  [/INST]"
+        }
+    ]
+}
+```
+
+### Sample OpenAI model response
+
+Based on the request, the following example is the response for the OpenAI `MODEL_ID`:
+
+```json
+[
+    {
+        "tokensUsed": {
+            "promptTokens": 92
+        },
+        "messages": [
+            {
+                "role": "system",
+                "content": "You are a helpful utility program instructed to accomplish a product classififcation task. Please, classify the provided product name into one of the following categories:\nGROCERIES, FURNITURE, UNKNOWN"
+            },
+            {
+                "role": "user",
+                "content": "chocolate milk"
+            },
+            {
+                "role": "assistant",
+                "content": "GROCERIES"
+            },
+            {
+                "role": "user",
+                "content": "chocolate table"
+            },
+            {
+                "role": "assistant",
+                "content": "FURNITURE"
+            },
+            {
+                "role": "user",
+                "content": "stone baked pizza"
+            }
+        ]
+    }
+]
+```
+
+### Sample Anthropic model response
+
+Based on the request, the following example is the response for the Anthropic `MODEL_ID`:
+
+```json
+[
+    {
+        "tokensUsed": {
+            "promptTokens": 96
+        },
+        "messages": [
+            {
+                "role": "system",
+                "content": "You are a helpful utility program instructed to accomplish a product classififcation task. Please, classify the provided product name into one of the following categories:\nGROCERIES, FURNITURE, UNKNOWN"
+            },
+            {
+                "role": "user",
+                "content": "chocolate milk"
+            },
+            {
+                "role": "assistant",
+                "content": "GROCERIES"
+            },
+            {
+                "role": "user",
+                "content": "chocolate table"
+            },
+            {
+                "role": "assistant",
+                "content": "FURNITURE"
+            },
+            {
+                "role": "user",
+                "content": "stone baked pizza"
+            }
+        ]
+    }
+]
+```

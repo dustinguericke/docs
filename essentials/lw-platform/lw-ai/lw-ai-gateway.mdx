@@ -1,0 +1,39 @@
+---
+permalink: "41gdb7"
+subGroup: "ai"
+layout: default
+title: 'Lucidworks AI Gateway'
+description: 'Needs description'
+icon: 'text-size'
+order: 1
+doctype: concept
+---
+
+Lucidworks AI Gateway is a specialized service that enables secure and authenticated access to Lucidworks AI, allowing Fusion to seamlessly integrate with both pre- and custom-trained AI models hosted on Lucidworks AI.
+
+**📌 NOTE**\
+This feature is only available for Fusion 5.9.5 and up.
+
+Before you can use Lucidworks AI with self-hosted Fusion, you must configure Lucidworks AI Gateway.
+See [Configure A Lucidworks AI Gateway Integration](/how-to/y6euxl/configure-a-lucidworks-ai-gateway-integration) for instructions.
+Managed Fusion clients can work with their Client Success/Technical Account Manager (CSTAM) team for a Lucidworks AI Gateway integration.
+
+## How Lucidworks AI Gateway works
+
+Lucidworks AI Gateway acts as a bridge between Fusion and Lucidworks AI, handling the complexities of authentication and communication.
+By managing credentials and other sensitive information behind the scenes, it ensures that Fusion can interact with Lucidworks AI without exposing the details of the underlying accounts or requiring manual authentication.
+
+In Lucidworks AI, you have one or more integrations that each represent a set of credentials and a security scope.
+When you add an integration to Lucidworks AI Gateway, it allows Fusion to seamlessly connect to Lucidworks AI at any time without additional authentication.
+
+## Key features of Lucidworks AI Gateway
+
+* **Credential Management:**
+The gateway securely manages credentials through Fusion’s secret management system. 
+It ensures that only the necessary account name is exposed, keeping other sensitive details private.
+* **Seamless Model Integration:**
+Fusion services can use the Lucidworks AI Gateway to access both pre-trained and custom-trained AI models, enabling a wide range of AI-driven functionalities within Fusion.
+* **Flexible Configuration:** 
+The gateway allows for multiple integrations to be configured.
+Each account can have its own set of credentials and associated scopes, which define the operations it can perform.
+If certain configuration properties are not provided at the account level, default settings can be used instead.

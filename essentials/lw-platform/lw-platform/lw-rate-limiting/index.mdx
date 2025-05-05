@@ -1,0 +1,24 @@
+---
+subGroup: "platform"
+permalink: "hwznrq"
+layout: default
+title: 'Rate limiting'
+description: 'Needs description'
+icon: 'text-size'
+order: 35
+doctype: concept
+---
+
+Rate limiting is used to help control network traffic and performance based on configuration of the timing and repetition of requests allowed on the network.
+
+Lucidworks Platform employs rate limiting to:
+
+* Provide a reliable service and optimal network performance for client organizations.
+* Protect clients from exceeding contracted consumption quotas which could result in overage charges.
+
+Each of the Lucidworks Platform APIs uses a similar approach:
+
+* Rate limitations are specified in the Lucidworks contract for your organization. Typically, most of the simple operations that do not impact query time are set to a lower rate limit. APIs considered to be in the critical path for query performance use a separate, higher rate limit. 
+* If the request rate to a particular API exceeds the relevant limit, the system generates the [HTTP 429 Too Many Requests](https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/429) error. To resolve the issue, Lucidworks recommends you retry the request by implementing an [exponential backoff pattern](https://en.wikipedia.org/wiki/Exponential_backoff).
+
+For more information, or to ask questions about your account related to rate limiting, contact [Lucidworks Support](https://support.lucidworks.com).

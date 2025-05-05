@@ -1,0 +1,78 @@
+---
+subGroup: "platform"
+permalink: "00j8nx"
+layout: default
+title: 'Users and Provisioning'
+description: 'Needs description'
+icon: 'text-size'
+doctype: concept
+order: 30
+---
+
+Users and Provisioning lets you [create and manage users](#users), including user permissions to workspaces and Lucidworks AI applications. In addition, you can [create authentication that supports sign-on (SSO)](/lw-platform/platform/cpq1c3/single-sign-on-authentication), which restricts user logins to specified email domains.
+
+## Users
+
+The Users screen displays all the users associated with your workspaces. 
+
+To view a list of users, sign in to [Lucidworks Platform](https://platform.lucidworks.com) and click **Settings > Users & Provisioning**. The name, status, workspace role, date user was created, and email of each user displays.
+
+![Users and Provisioning screen](/assets/images/lw-platform/users/lw-users-and-provisioning.png).
+
+The following table describes the information: 
+
+|     |     |
+| --- | --- |
+| Name | First and last name of the user. |
+| Status | Statuses include: * **Active.** User has clicked the **Activate** link in the email and can access applications based on the permissions granted by the workspace owner. * **Awaiting Activation.** User is invited, but has not clicked the **Activate** link in the email. * **Deleted.** User account has been deleted. * **Deprovisioned.** User account has been deactivated and cannot access any applications. * **Recovery.** User account was once deprovisioned, but has been recovered for future use. * **Password-expired.** User must create a new password to reactivate the account. |
+| Workspace Role | Permission level for this user. Options are: Workspace Member, Workspace Owner, and Model Trainer. For more information, see [Workspace roles](/lw-platform/platform/qfmuyb/workspace-roles). |
+| Created | Date the invitation was created. |
+| Email | User’s email address. |
+
+### Invite users
+
+**📌 NOTE**\
+Only workspace owners for the specified workspace can invite users to that workspace. 
+
+1. To invite a user, sign in to [Lucidworks Platform](https://platform.lucidworks.com) and click **Settings > Users & Provisioning**.
+2. Click **+ Invite** and enter the user’s information in the **First name**, **Last name**, and **Email** fields. Required fields are notated with an asterisk (*****). 
+
+   ![Invite user{sh-lg-modal}](/assets/images/lw-platform/users/invite-user.png)
+3. Select the **Workspace Role** for this user. The options are Workspace Owner and Workspace Member. 
+
+   If you are a `Workspace Owner`, you can assign a user role to other users later using the [Edit users](#edit-users) procedure. For more information about the functions each role can perform, see [Workspace roles](/lw-platform/platform/qfmuyb/workspace-roles). 
+4. Enter values in the following fields to assign `Workspace Member` account privileges:
+   * If the user needs to train and deploy custom embedding models, select **Model Trainer**. Do not select if the user will not train and deploy custom embedding models.
+   * Select the user **Application Role** for the Lucidworks AI applications listed. If you don’t add a role  now, the user role defaults to **No Access**. If you are a `Workspace Owner`, you can assign application roles to workspace members later using the [Edit users](#edit-users) procedure. For more information about workspace roles and permissions, see [Workspace roles](/lw-platform/platform/qfmuyb/workspace-roles).
+5. To email the user the invitation, click **Send Invite**. To exit without creating a user, click **Cancel**.
+6. In the Users list, verify the status of the new user status is **Awaiting Activation**.
+
+   **📌 NOTE**\
+   When the user accepts the email invitation, the status displays as Active. If the user does not receive the email invitation in their inbox, ask them to look in the spam folder. If the invitation is not in their inbox or spam folder, verify the email information. If your troubleshooting efforts are unsuccessful, contact [Lucidworks Support](https://support.lucidworks.com).
+
+### Edit users
+
+1. Sign in to [Lucidworks Platform](https://platform.lucidworks.com) and click **Settings > Users & Provisioning**.
+2. Point to the user you want to edit and click the entry. You can also click **View/Edit**. 
+   * If the user has been granted the `Workspace Owner` workspace role, you can select a different **Role** or click **Delete User** to delete the user.
+
+     ![Edit workspace owner](/assets/images/lw-platform/users/edit-user-workspace-owner.png)
+   * If the user has been granted the `Workspace Member` workspace role, you can select a different **Role**, select the **Model Trainer Role**, or change the application **User Role**. You can also click **Delete User** to delete the user.
+
+     ![Edit workspace member](/assets/images/lw-platform/users/edit-user-workspace-member.png)
+
+For more information about user roles and permissions, see [Workspace roles](/lw-platform/platform/qfmuyb/workspace-roles).
+
+**📌 NOTE**\
+You can also [add application user permissions](/lw-platform/platform/scu2o5/products#add-user-permissions) when you create a new Lucidworks AI application. When the application is created, you can [edit application user permissions](/lw-platform/platform/scu2o5/products#edit-user-permissions) by accessing the **Products** screen, pointing to the three dots next to the application, and then clicking **Edit Permissions**.
+
+## Authentication using single-sign on
+
+The Authentication screen lets you configure the Lucidworks Platform feature that supports single sign-on (SSO), which:
+
+* Restricts user logins to specified email domains
+* Uses your organization’s identity provider authentication method instead of Lucidworks' built-in authentication 
+
+Workspace owners can configure SSO via OpenID Connect (OIDC) or Security Assertion Markup Language (SAML).
+
+For more information, see [Single sign-on authentication](/lw-platform/platform/cpq1c3/single-sign-on-authentication).

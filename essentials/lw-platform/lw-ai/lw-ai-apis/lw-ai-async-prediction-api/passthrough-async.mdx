@@ -1,0 +1,132 @@
+---
+subGroup: "ai"
+permalink: "xvnhrc"
+title: 'Pass-through use case'
+description: 'Needs description'
+icon: 'text-size'
+subtitle: 'Lucidworks AI Async Prediction API'
+layout: stoplight
+data: api-machine-learning-platform-async-prediction
+private: true
+doctype: reference
+order: 5
+---
+
+The Pass-through use case of the [Lucidworks AI Async Prediction API](/lw-platform/ai/55ug0f/async-prediction-api) lets you use the service as a proxy to the LLM. The service sends text (no additional prompts or other information) to the LLM and returns a response.
+
+The Pass-through use case contains two requests:
+
+* The `USE_CASE` and `MODEL_ID` fields in the `/async-prediction` for the POST request. The path is `/ai/async-prediction/USE_CASE/MODEL_ID`. A list of supported modes is returned in the [Lucidworks AI Use Case API](/lw-platform/ai/0stpyb/use-case-api). For more information about supported models, see [Generative AI models](/lw-platform/ai/r7ai90/generative-ai#generative-ai-models).
+
+## Common POST request parameters and fields 
+
+### modelConfig
+
+Some parameters of the `/ai/async-prediction/USE_CASE/MODEL_ID` POST request are common to all of the generative AI (GenAI) use cases, including the `modelConfig` parameter. If you do not enter values, the following defaults are used.
+
+**POST example**
+
+This `useSystemPrompt` POST example does not include `modelConfig` parameters, but you can submit requests that include parameters described in [Common POST request parameters and fields](#common-post-request-parameters-and-fields).
+
+```json
+curl --request POST \
+  --url https://APPLICATION_ID.applications.lucidworks.com/ai/async-prediction/passthrough/MODEL_ID \
+  --header 'Authorization: Bearer ACCESS_TOKEN' \
+  --header 'Content-type: application/json' \
+  --data '{
+  "batch": [
+    {
+      "text": "who was the first president of the USA?"
+      }
+    ],
+  "useCaseConfig": {
+    "useSystemPrompt": true
+    }
+  }'
+```
+
+**GET example**
+
+The following is an example response:
+
+```json
+{
+  "predictionId": "fd110486-f168-47c0-a419-1518a4840589",
+  "status": "READY",
+  "predictions": [
+  {
+    "response": "The first President of the United States was George Washington.",
+    "tokensUsed": {
+      "promptTokens": 49,
+      "completionTokens": 11,
+      "totalTokens": 60
+      }
+    }
+  ]
+}
+```
+
+#### Data Type
+
+**`"useCaseConfig": "dataType": "string"`** 
+
+This optional parameter enables model-specific handling in the Async Prediction API to help improve model accuracy. Use the most applicable fields based on available dataTypes and the dataType value that best aligns with the text sent to the Async Prediction API.
+
+**POST example**
+
+This `"dataType": "json_prompt"`` example does not include `modelConfig` parameters, but you can submit requests that include parameters described in [Common parameters and fields](#common-post-request-parameters-and-fields).
+
+```json
+curl --request POST \
+  --url https://APPLICATION_ID.applications.lucidworks.com/ai/async-prediction/passthrough/MODEL_ID \
+  --header 'Authorization: Bearer ACCESS_TOKEN' \
+  --header 'Content-type: application/json' \
+  --data '{
+   "batch": [
+     {
+       "text": "[{\"role\": \"system\", \"content\": \"You are a helpful utility program instructed to accomplish a word correction task. Provide the most likely suggestion to the user without an preamble or elaboration.\"}, {\"role\": \"user\", \"content\": \"misspeled\"}, {\"role\": \"assistant\", \"content\": \"CORRECT:\"}]"
+       }
+   ],
+   "useCaseConfig" :{
+     "dataType" : "json_prompt"
+   }
+}'
+
+```
+
+The following is an example response:
+
+```json
+{
+	"predictionId": "fd110486-f168-47c0-a419-1518a4840589",
+	"status": "SUBMITTED"
+}
+```
+
+**GET example**
+
+```bash
+curl --request GET \
+  --url https://APPLICATION_ID.applications.lucidworks.com/ai/async-prediction/fd110486-f168-47c0-a419-1518a4840589 \
+  --header 'Authorization: Bearer ACCESS_TOKEN'
+```
+
+The following is an example response:
+
+```json
+{
+    "predictionId": "fd110486-f168-47c0-a419-1518a4840589",
+    "status": "READY",
+    "predictions": [
+        {
+            "tokensUsed": {
+                "promptTokens": 51,
+                "completionTokens": 4,
+                "totalTokens": 55
+            },
+            "response": "CORRECT: misspelled"
+        }
+    ]
+}
+
+```

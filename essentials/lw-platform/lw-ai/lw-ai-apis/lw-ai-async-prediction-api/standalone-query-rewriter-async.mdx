@@ -1,0 +1,83 @@
+---
+subGroup: "ai"
+permalink: "87yn4g"
+title: 'Standalone query rewriter use case'
+description: 'Needs description'
+icon: 'text-size'
+subtitle: 'Lucidworks AI Async Prediction API'
+layout: stoplight
+data: api-machine-learning-platform-async-prediction
+private: true
+doctype: reference
+order: 15
+---
+
+The Standalone query rewriter use case of the [Lucidworks AI Async Prediction API](/lw-platform/ai/55ug0f/async-prediction-api) rewrites the text in reference to the context based on the `memoryUuid`.
+
+This use case can be used to rewrite the context from a previous response into a standalone query.
+
+The Standalone query rewriter use case contains two requests:
+
+* The `USE_CASE` and `MODEL_ID` fields in the `/async-prediction` for the POST request. The path is `/ai/async-prediction/USE_CASE/MODEL_ID`. A list of supported modes is returned in the [Lucidworks AI Use Case API](/lw-platform/ai/0stpyb/use-case-api). For more information about supported models, see [Generative AI models](/lw-platform/ai/r7ai90/generative-ai#generative-ai-models).
+
+## Common POST request parameters and fields 
+
+### modelConfig
+
+Some parameters of the `/ai/async-prediction/USE_CASE/MODEL_ID` POST request are common to all of the generative AI (GenAI) use cases, including the `modelConfig` parameter. If you do not enter values, the following defaults are used.
+
+### Unique values for the standalone query rewriter use case
+
+The values available in this use case (that may not be available in other use cases) are:
+
+|====
+
+|Parameter |Value
+
+|"text" |Free-form content contained in the document.
+
+|"useCaseConfig" |"memoryUuid": "string"
+
+|====
+
+### Example POST request
+
+This example does not include `modelConfig` parameters, but you can submit requests that include parameters described in [Common POST request parameters and fields](#common-post-request-parameters-and-fields).
+
+```json
+curl --request POST \
+  --url https://APPLICATION_ID.applications.lucidworks.com/ai/async-prediction/standalone_query_rewriter/MODEL_ID \
+  --header 'Authorization: Bearer ACCESS_TOKEN' \
+  --header 'Content-type: application/json' \
+  --data '{
+  "batch": [
+    {
+      "text": "Is it a framework?"
+      },
+  ],
+    "useCaseConfig": {
+      "memoryUuid": "27a887fe-3d7c-4ef0-9597-e2dfc054c20e"
+    }
+}'
+```
+
+### Example GET request
+
+The following is an example response:
+
+```json
+{
+  "predictionId": "fd110486-f168-47c0-a419-1518a4840589",
+  "status": "READY",
+  "predictions": [
+    {
+      "response": "Is RAG a framework?", 
+      "tokensUsed": {
+       "promptTokens": 245,
+       "completionTokens": 6,
+       "totalTokens": 251
+       },
+    }
+  ]
+}
+```

@@ -1,0 +1,155 @@
+---
+permalink: "t968bf"
+subGroup: "cs"
+layout: default
+title: 'Pages'
+description: 'Needs description'
+icon: 'text-size'
+order: 21
+doctype: concept
+---
+
+Pages let you create and customize screens that align Commerce Studio with your website’s search experience. These pages are a valuable tool to create, test, and refine how users interact with your site.
+
+To test search scenarios using the pages, you can set up and manage rules in [Ranking Rules](/lw-platform/cs/ravw5k/ranking-rules) and [Visual Editor](/lw-platform/cs/l6f36o/visual-editor). Then, you can test your customer’s search experience in both Visual Editor and [Live Site Simulator](/lw-platform/cs/93f8tp/live-site-simulator).
+
+## Key pages to build
+
+The number and types of pages you build depends on your business and use case. 
+In general, it’s helpful to create the following pages:
+
+* **A landing page.** What do customers see when they arrive on your website?
+* **Category pages.** How are your products organized? 
+* **Campaign pages.** Does your website have pages for sales, bestselling items, or special promotions?
+
+Experiment with different versions of the same page.
+For example, create multiple landing pages to try out new product layouts and see how that affects discoverability. 
+
+## Manage pages
+
+To get started working with pages, navigate to the Pages screen. 
+
+### Configure Typeahead
+
+You can configure typeahead settings for all pages.
+
+1. Click **Typeahead Settings > Create Typeahead**.
+2. In the **Query Profile** field, enter the Fusion query profile name to use. This value must match an existing Fusion query profile, which points your search application to the specified static endpoint.
+3. Click the **Layout and Item Fields** tab to add fields.
+4. Click **Add Field**.
+
+![Create Commerce Studio Instance](/assets/images/lw-platform/commerce-studio/lw-cs-create-typeahead.png)
+
+1. In the **Field Name**, enter the field name from your site’s database that will be searched to find possible matches when the customer enters search terms.
+2. Select a **Field Style** from the menu. The options are `price` to display money amounts, `url` to display the URL where the data is located, or `generic` to display text.
+3. Click **Create**.
+
+### Create a page
+
+A page is comprised of Facets, Recommendations, and Results Lists. 
+
+1. Click **Create New Page**.
+2. In the **Name** field, enter a name for the page.
+3. Optional: In the **Description** field, enter user-defined text to describe the page. 
+4. Click **Next**. 
+5. Click **Add New Sections** and select an option from the menu:
+   * **Facets**
+   * **Recommendations**
+   * **Result List**
+
+This example adds **Facets**, but the same fields are required if you add Recommendations or Result List.
+
+![Create facet](/assets/images/lw-platform/commerce-studio/lw-cs-create-facet.png)
+
+1. In the **Name** field, enter a name for the section.
+2. In the **Query Profile** field, enter the Fusion query profile name to use. This value must match an existing Fusion query profile, which points your search application to the specified static endpoint.
+
+To view the steps for a specific page type, click the title tab.
+<div class="tab">
+  <button class="tablinks btn_primary" onclick="openPage(event, 'facetstab')" id="defaultOpen">Facets</button>
+  <button class="tablinks btn_primary" onclick="openPage(event, 'recstab')">Recommendations</button>
+  <button class="tablinks btn_primary" onclick="openPage(event, 'resultstab')">Result List</button>
+</div>
+
+<div class="tabcontent" id="facetstab" style="display: block">
+1. Click the **Facets Field** tab to add facets.
+2. Click **Add Facets**. 
+
+Here is an example adding a product color facet.
+
+![Create facet](/assets/images/lw-platform/commerce-studio/lw-cs-create-facet-fields.png)
+
+1. In the **Facet Field**, enter the field name that will be identified as a facet.
+2. Select the **Facet Type**. The values are:
+   * **Field**, which does not include a range. 
+   * **Range** and then enter **Range Start** value, the **Range End** value, and the **Range Gap** value, which designates the span of the range as a value to be added to the lower boundary.
+3. Click the **Advanced** toggle to specify the following settings for the facet:
+   * In the **Select Type** field, specify if the facet supports a single selection, or multiple selections.
+   * In the **Facet Sort** field, specify the order of the facet field constraints. The values are by count and by the order of the index.
+   * In the **Min Count** field, enter the minimum counts required for a facet field to be included in the response.
+   * In the **Boost Values** field, enter the list of values to boost, in the order you want them included.
+   * In the **Bury Values** field, enter the list of values to bury, in the order you want them included.
+   * In the **Suppress Values** field, enter the list of values to remove from the response.
+4. Click **Add Response Value** to specify the **Field Name** that will contain the response for the facet and its **Field Value** . You can add multiple response values.
+5. Complete one of the following:
+   * If you want to add another section, click **Add New Sections**, select the type of section (Recommendations or Result List), and use the steps outlined for that type to create that section.
+   * If you have added all of the page’s sections, click **Next**. If you want to change the order of the sections, click and hold the section to move, and drag it to the correct place. Click **Create New Page**.
+
+</div>
+
+<div class="tabcontent" id="recstab" style="display: none">
+1. Click the **Layout and Item Fields** tab to add fields.
+2. Click **Add Field**. 
+
+![Create recommendations](/assets/images/lw-platform/commerce-studio/lw-cs-create-recommendation-field.png)
+
+1. Enter the **Field Name** used for the recommendation.
+2. Select a **Field Style** from the menu. The options are `price` to display money amounts, `url` to display the URL where the data is located, or `generic` to display text.
+3. Enter a **Field Display Name.** The title of the field. For example, the Field Display Name for the `product_title_s` field is `Product Name`. If you add the `price_s` field, the Field Display Name can be any text such as `Price`.
+4. Optional: Enable **Inline Analytics** to display metrics on the results returned on the page. 
+5. Complete one of the following:
+   * If you want to add another section, click **Add New Sections**, select the type of section (Facets or Result List), and use the steps outlined for that type to create that section.
+   * If you have added all of the page’s sections, click **Next**. If you want to change the order of the sections, click and hold the section to move, and drag it to the correct place. Click **Create New Page**.
+</div>
+
+<div class="tabcontent" id="resultstab" style="display: none">
+1. Click the **Layout and Item Fields** tab to add fields.
+2. Enter the **Field Name** for the result list. 
+
+![Create result list](/assets/images/lw-platform/commerce-studio/lw-cs-create-result-list.png)
+
+1. Select a **Field Style** from the menu. Two field styles are programmed by default: Image and Title. 
+2. Select **Show Variants** to enter an alternative to the specified field.
+   * Enter the **Field Name** for the variant. 
+   * Select a **Field Style** from the menu for the variant. 
+   * Enter a **Variant SKU ID** for the variant.
+3. Optional: Click **Add Field** to enter additional fields.
+   * Enter the **Field Name** used for the result list.
+   * Select a **Field Style** from the menu. The options are `price` to display money amounts, `url` to display the URL where the data is located, or `generic` to display text.
+   * Enter a **Field Display Name.** The title of the field. For example, the Field Display Name for the `product_title_s` field is `Product Name`. If you add the `price_s` field, the Field Display Name can be any text such as `Price`.
+4. Optional: Enable **Inline Analytics** to display metrics on the results returned on the page. 
+5. Complete one of the following:
+   * If you want to add another section, click **Add New Sections**, select the type of section (Facets or Recommendations), and use the steps outlined for that type to create that section.
+   * If you have added all of the page’s sections, click **Next**. If you want to change the order of the sections, click and hold the section to move, and drag it to the correct place. Click **Create New Page**.
+</div>
+
+### Edit a page
+
+To edit a page, hold the pointer over the entry and click the pencil icon. Enter the changes for the specific page and click **Edit Page**.
+
+**📌 NOTE**\
+To edit the section order of a page, you must edit a field first. 
+
+### Delete a page
+
+1. Select the checkbox of the page to delete. 
+2. Click the trash can icon. 
+
+You can also delete the page if you hold the pointer over the page and click the trash can icon.
+
+To delete multiple pages, select the checkbox for each of the pages to delete and then click the trash can icon.
+
+<dl><dt><strong>🔥 CAUTION</strong></dt><dd>
+
+Pages are deleted permanently. There is no way to undo this action. 
+</dd></dl>

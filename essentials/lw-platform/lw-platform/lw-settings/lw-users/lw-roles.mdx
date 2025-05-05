@@ -1,0 +1,86 @@
+---
+subGroup: "platform"
+permalink: "qfmuyb"
+layout: default
+title: 'Workspace roles'
+description: 'Needs description'
+icon: 'text-size'
+doctype: concept
+order: 73
+---
+
+To perform actions in Lucidworks Platform, you must be granted access and rights controlled by setting entitlements, permissions, and roles.
+
+Certain settings are configured by your Technical Account Manager, such as entitlements that grant access and privileges in a specified workspace. Contact your Lucidworks representative for more information.
+
+## Permissions
+
+A permission defines the specific actions a user or system can perform, often tied to a resource, such as accessing a data source, modifying a configuration, or running an application process.
+
+## Workspace roles
+
+A workspace role grants a set of permissions on a scope, which is based on your customer ID or a specific application. Roles give varying rights to perform configuration or application actions. A user can have different roles from application to application but can only be assigned one workspace role.
+
+### Workspace owners
+
+A workspace owner can create, manage, and delete all applications and users for the specified workspace.
+
+Only workspace owners can perform the following tasks:
+
+* Create and delete an application
+* Invite and remove users from an application
+* Add and remove roles from any user
+
+### Workspace members
+
+Based on rights granted, a workspace member can view or manage the specified application. By default, workspace members have no access to any applications.
+
+The application roles are as follows:
+
+* An **App admin** can perform the following tasks in an application:
+  * Edit all parts of that application
+  * Add, edit, and delete data sources
+  * Edit the settings, including the values embeds and signals
+* An **App viewer** can view the specified application, associated data sources, and its usage dashboard. They cannot edit the application in any way, such as adding data sources or users to the application.
+* An **Analytics viewer** can view analytics information and the signals beacon configuration on the Integrations Embeds screen.
+* **API credentials access** can view general information about Lucidworks AI APIs and client credentials for their organization.
+* If the role is set to **No Access**, the user cannot view or edit the application.
+
+### Model trainers
+
+A model trainer can perform the following tasks in an application:
+
+* Train custom embedding models
+* Deploy custom embedding models
+* View the specified application, associated data sources, and its usage dashboard. They cannot edit the application in any way, such as adding data sources or users to the application.
+
+## Summary
+
+The following table summarizes user roles.
+
+|     |     |     |     |     |     |     |
+| --- | --- | --- | --- | --- | --- | --- |
+| Description | Workspace owner | App admin | App viewer | Analytics viewer | API credentials access | Model trainer  |
+| View specific applications | {check} | {check} | {check} | {nocheck} | {nocheck} | {check} |
+| View all applications | {check} | {nocheck} | {nocheck} | {nocheck} | {nocheck} | {nocheck} |
+| View application usage dashboards | {check} | {check} | {check} | {check} | {nocheck} | {check} |
+| Create new applications | {check} | {nocheck} | {nocheck} | {nocheck} | {nocheck} | {nocheck} |
+| Edit specific applications | {check} | {check} | {nocheck} | {nocheck} | {nocheck} | {nocheck} |
+| Edit all applications | {check} | {nocheck} | {nocheck} | {nocheck} | {nocheck} | {nocheck} |
+| Invite new users | {check} | {nocheck} | {nocheck} | {nocheck} | {nocheck} | {nocheck} |
+| Remove or delete users | {check} | {nocheck} | {nocheck} | {nocheck} | {nocheck} | {nocheck} |
+| Edit user access to all applications | {check} | {nocheck} | {nocheck} | {nocheck} | {nocheck} | {nocheck} |
+| Edit user access to specific applications | {check} | {check} | {nocheck} | {nocheck} | {nocheck} | {nocheck} |
+| Create data sources | {check} | {check} | {nocheck} | {nocheck} | {nocheck} | {nocheck} |
+| View data sources | {check} | {check} | {check} | {nocheck} | {nocheck} | {check}  |
+| View data source jobs | {check} | {check} | {check} | {nocheck} | {nocheck} | {check} |
+| View data source job history | {check} | {check} | {nocheck} | {nocheck} | {check} | {nocheck} |
+| Edit relevancy controls | {check} | {check} | {nocheck} | {nocheck} | {nocheck} | {nocheck} |
+| View relevancy controls | {check} | {check} | {check} | {check} | {nocheck} | {check} |
+| Edit embed access | {check} | {check} | {nocheck} | {nocheck} | {nocheck} | {nocheck} |
+| View embed settings | {check} | {check} | {check} | {nocheck} | {check} | {nocheck} |
+| Train custom embedding models | {check} | {check} | {nocheck} | {nocheck} | {nocheck} | {check} |
+| Deploy custom embedding models | {check} | {check} | {nocheck} | {nocheck} | {nocheck} | {check} |
+
+
+For more information, see [Users and Provisioning](/lw-platform/platform/00j8nx/users-and-provisioning).

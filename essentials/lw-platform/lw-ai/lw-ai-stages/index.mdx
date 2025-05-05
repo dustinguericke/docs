@@ -1,0 +1,32 @@
+---
+subGroup: "ai"
+permalink: "b5uv9z"
+layout: default
+title: 'Fusion stages for AI'
+description: 'Needs description'
+icon: 'text-size'
+subtitle: 'Lucidworks AI'
+order: 42
+doctype: concept
+---
+
+Lucidworks AI provides [pre-trained embedding models](/lw-platform/ai/3vqfxe/pre-trained-embedding-models) and supports [custom embedding models](/lw-platform/ai/k1zkfn/custom-embedding-model-training). 
+
+**📌 NOTE**\
+Make sure you have [configured your Lucidworks AI Gateway integration](/how-to/y6euxl/configure-a-lucidworks-ai-gateway-integration) before you begin.
+Lucidworks AI Gateway provides a secure, authenticated connection between Fusion and your hosted models.
+
+These Fusion pipeline stages provide interfaces for configuring your Lucidworks AI models in Fusion pipelines:
+
+* **Vector search stages**.  See [Configure Lucidworks AI Vector Search](/how-to/6bl4nm/configure-lucidworks-ai-vector-search) for detailed instructions.
+  * [LWAI Vectorize Field Index stage](/managed-fusion/5.9/4h364i/lwai-vectorize-field)
+  * [LWAI Vectorize Query stage](/managed-fusion/5.9/uxpzzw/lwai-vectorize-query)
+* **Generative AI stages**.  See [Generative AI](/lw-platform/ai/r7ai90/generative-ai) for conceptual information about GenAI features.
+  * [LWAI Prediction Index stage](/managed-fusion/5.9/bzik28/lwai-prediction)
+
+    See [Configure the LWAI Prediction Index stage](/how-to/ua7khh/configure-the-lucidworks-ai-prediction-index-stage) for detailed instructions.
+  * [LWAI Prediction Query stage](/managed-fusion/5.9/hnuyky/lwai-prediction)
+
+    See [Configure the LWAI Prediction query stage](/how-to/6w8lxy/configure-the-lucidworks-ai-prediction-query-stage) for detailed instructions.
+
+Solr Vector Search supports semantic search with lexical filtering. Lucidworks recommends that if you plan to use Solr SVS, you first set up Lucidworks AI to vectorize text. For more information about configuration, see [Configure Lucidworks AI vector search](/how-to/6bl4nm/configure-lucidworks-ai-vector-search).

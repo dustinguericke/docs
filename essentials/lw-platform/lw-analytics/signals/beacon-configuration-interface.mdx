@@ -1,0 +1,103 @@
+---
+subGroup: "analytics"
+permalink: "k6vyeq"
+title: 'Beacon configuration interface'
+description: 'Needs description'
+icon: 'text-size'
+layout: default
+order: 50
+doctype: reference
+---
+
+This topic details the `BeaconConfig` interface, including related interfaces, types, and default values.
+
+For more information about the script to paste into the `<head>` tag of your website’s HTML file and the JSON configuration, see [Signals Beacon](/lw-platform/analytics/k649vy/signals-beacon).
+
+## BeaconConfig
+
+This table details the primary configuration interface for the signals beacon.
+
+| Property | Type | Default | Description |
+| --- | --- | --- | --- |
+| type | `SignalAppType` | `Retail` | The beacon supports both Retail signals and legacy site search signals. |
+| attributes | `BeaconAttributes` |  | This attribute specifies a global configuration that will be inherited by each explicit action configuration for the beacon signals. The action values are query, click, cartAdd, and purchase. |
+| fields | `{ [field: string]: BeaconFieldConfig }` | `:scope @id` | The main section for extracting product field values from your site. |
+| query | `BeaconQueryProps` |  | This specifies how beacon signals should be handled when the main product page is searched. |
+| click | `BeaconClickProps` |  | The configuration for beacon signals sent when a product is clicked. |
+| cartAdd | `BeaconCartAddProps` |  | The configuration for beacon signals sent  when a product is added to the shopping cart/bag. |
+| purchase | `BeaconPurchaseProps` |  | The configuration for beacon signals sent  when the user proceeds to the checkout phase on your site. |
+
+## BeaconFieldConfig
+
+This is a type alias for field configuration. The value can be a string, or a `BeaconFieldRichConfig` object.
+
+## BeaconFieldRichConfig
+
+This table details the interface to fine tune field details.
+
+| Property | Type | Default | Description |
+| --- | --- | --- | --- |
+| path | `string` |  | This is the field value path. |
+| exclude | `string` |  | This string is excluded from the raw value. |
+| type | `string` | `string` | This property provides additional typing information that allows for proper transformation of the value. |
+
+## BeaconAttributes
+
+This table details the interface for the global configuration inherited by each action configuration.
+
+| Property | Type | Default | Description |
+| --- | --- | --- | --- |
+| idQueryParam | `string` | `pid` | The URL query parameter used to get the product ID from the product page. |
+| cartId | `string` | `lwRetailCartId` | The local storage key for the consumer page storing the cart UUID. |
+| productPath | `string` | `.lw-product-item` | The CSS selector for targeting product elements. This is the global path inherited by each signal action. |
+| numberTypeFields | `string[]` | `[price, quantity, revenue]` | This specifies the fields that are treated as number type fields. |
+| data | `string` |  | This provides a more advanced way to obtain product details using serialized JSON in an element attribute. |
+
+## BeaconSignalProps
+
+This table details the interface that provides common properties for beacon signals.
+
+| Property | Type | Default | Description |
+| --- | --- | --- | --- |
+| productPath | `string` |  | The custom selector to target product elements specific to particular retail actions. The action values are query, click, cartAdd, and purchase. |
+| fields | `{ [field: string]: BeaconFieldRichConfig }` |  | The main section for extracting product field values from your site. |
+
+## BeaconQueryProps
+
+This table details the interface for configuring beacon signals sent during a product search.
+
+| Property | Type | Default | Description |
+| --- | --- | --- | --- |
+| QueryParam | `string` | `query` | The URL query parameter the beacon uses to monitor query updates. |
+| trigger | `string` |  | The CSS selector for targeting multiple page elements related to product query activities. The beacon analyzes the comma-separated elements, monitors when the 'Enter' key is pressed on the input element as well as clicks on the remaining elements, then sends query signals accordingly. |
+| delayForTrackQueryUpdate | `number` | `1000` | This specifies the delay, in milliseconds, for tracking element updates in the query. |
+
+## BeaconClickProps
+
+This table details the interface for configuring beacon signals when the user clicks a product.
+
+| Property | Type | Default | Description |
+| --- | --- | --- | --- |
+| productPath | `string` |  | The custom selector to target product elements specific to particular retail actions. The action values are query, click, cartAdd, and purchase. |
+| fields | `{ [field: string]: BeaconFieldRichConfig }` |  | The main section for extracting product field values from your site. |
+
+## BeaconCartAddProps
+
+This table details the interface for configuring beacon signals sent when a product is added to the shopping cart/bag.
+
+| Property | Type | Default | Description |
+| --- | --- | --- | --- |
+| productPath | `string` |  | The custom selector to target product elements specific to particular retail actions. The action values are query, click, cartAdd, and purchase. |
+| fields | `{ [field: string]: BeaconFieldRichConfig }` |  | The main section for extracting product field values from your site. |
+| trigger | `string` |  | The CSS selector for targeting multiple page elements related to trigger add-to-cart actions. |
+
+## BeaconPurchaseProps
+
+This table details the interface for configuring beacon signals sent when the user proceeds to the checkout phase of the transaction.
+
+| Property | Type | Default | Description |
+| --- | --- | --- | --- |
+| productPath | `string` |  | The custom selector to target product elements specific to particular retail actions. The action values are query, click, cartAdd, and purchase. |
+| fields | `{ [field: string]: BeaconFieldRichConfig }` |  | The main section for extracting product field values from your site. |
+| trigger | `string` |  | The CSS selector for targeting multiple page elements related to trigger purchase/checkout actions. |
+| revenue | `string` |  | The path to the element that displays the total sum of the items in the cart. |

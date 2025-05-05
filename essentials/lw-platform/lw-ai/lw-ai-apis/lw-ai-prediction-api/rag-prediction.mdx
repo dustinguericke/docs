@@ -1,0 +1,277 @@
+---
+subGroup: "ai"
+permalink: "fi9pn6"
+title: 'Retrieval augmented generation (RAG) use case'
+description: 'Needs description'
+icon: 'text-size'
+subtitle: 'Lucidworks AI Prediction API'
+layout: stoplight
+data: api-machine-learning-platform-predict
+private: true
+doctype: reference
+order: 20
+---
+
+The Retrieval augmented generation (RAG) use case of the [LWAI Prediction API](/lw-platform/ai/8bx4m9/prediction-api) uses candidate documents that are inserted into a LLM’s context to ground the generated response to those documents instead of generating an answer from details stored in the LLM’s trained weights. This helps prevent frequency of LLM hallucinative responses. This type of search adds guardrails so the LLM can search private data collections.
+
+The `rag` search can perform queries against external documents passed in as part of the request.
+
+This use case can be used:
+
+* To generate answers based on the context of the responses collected (corpus)
+* To generate a response based on the context from responses to a previous request
+
+## Prerequisites
+
+* The `USE_CASE` and `MODEL_ID` fields for the use case request. The path is: `/ai/prediction/USE_CASE/MODEL_ID`. A list of supported models is returned in the [Lucidworks AI Use Case API](/lw-platform/ai/0stpyb/use-case-api). For more information about supported models, see [Generative AI models](/lw-platform/ai/r7ai90/generative-ai#generative-ai-models).
+
+## Common parameters and fields 
+
+### modelConfig
+
+Some parameters of the `/ai/prediction/USE_CASE/MODEL_ID` request are common to all of the generative AI (GenAI) use cases, including the `modelConfig` parameter. If you do not enter values, the following defaults are used.
+
+### Example request using external documents
+
+### Unique values for the external documents RAG use case
+
+The values available in this use case (that may not be available in other use cases) are:
+
+|====
+
+|Parameter |Value
+
+|"documents" | This array is passed in the `batch` object. Allowed LLM context length limits the number of documents to 3. The parameter can be used in the query side by clicking the "Include response documents" check box. The array contains the following parameters:
+
+* "body": &lt;contents of doc>
+* "source": &lt;url/id of doc - used in generating SOURCES cite list>
+* "title": &lt;title>
+* "date": &lt;creation date of the document in epoch time format>
+
+|"useCaseConfig" |The supported parameters are:
+
+* "memoryUuid": "string" 
+
+  This parameter is optional, and is used when chat history reference information from a previous GenAI interaction is available.  
+* "extractRelevantContent": boolean 
+
+  This parameter can be used in a query and on documents. The default is false. Set to true to help preserve key information in longer documents that might be lost during the default truncation, but at the cost of more LLM calls and a slower response time. 
+* "answerNotFoundMessage": "string"
+
+  This parameter is optional, and can be passed to change the response if the LLM cannot answer the request. The default is "Not possible to answer given this content."
+
+|====
+
+
+The following is an example request. This example does not include:
+
+* `modelConfig` parameters, but you can submit requests that include parameters described in [Common parameters and fields](#common-parameters-and-fields).
+* `useCaseConfig` parameters, but you can submit requests that include parameters described in [Unique values for the external documents RAG use case](#unique-values-for-the-external-documents-rag-use-case).
+
+```json
+curl --request POST \
+  --url https://APPLICATION_ID.applications.lucidworks.com/ai/prediction/rag/MODEL_ID \
+  --header 'Authorization: Bearer ACCESS_TOKEN' \
+  --header 'Content-type: application/json' \
+  --data '{
+  "batch": [
+    {
+      "text": "Why did I go to Germany?",
+      "documents": [{
+        "body": "I'm off to Germany to go to the Oktoberfest!",
+        "source": "http://example.com/112",
+        "title": "Off to Germany!",
+        "date": 1104537600
+        }
+      ]
+    }
+  ],
+}'
+```
+
+The response includes the:
+
+* Generated answer
+* `SOURCES` line of text that contains the URL of the documents used to generate the answer
+* Metadata about the response:
+  * `memoryUuid` that can be used to retrieve the LLM’s chat history
+  * Count of tokens used to complete the query
+
+The following is an example response:
+
+```json
+{
+  "predictions": [
+     {
+      "response": "ANSWER: \"I went to Germany to visit family.\"\nSOURCES: [\"http://example.com/112\"]",
+      "tokensUsed": {
+        "promptTokens": 202,
+        "completionTokens": 17,
+        "totalTokens": 219
+        },
+      "answer": "I went to Germany to visit family.",
+      "answerFound":  true,
+      "sources": [
+          "http://example.com/112"
+      ],
+      "memoryUuid": "27a887fe-3d7c-4ef0-9597-e2dfc054c20e"
+    }
+  ]
+}
+```
+
+
+This example includes the `useCaseConfig` parameters in the request:
+
+```json
+curl --request POST \
+  --url https://APPLICATION_ID.applications.lucidworks.com/ai/prediction/rag/MODEL_ID \
+  --header 'Authorization: Bearer ACCESS_TOKEN' \
+  --header 'Content-type: application/json' \
+  --data '{
+  "batch": [
+    {
+      "text": "Why did I go to Germany?",
+      "documents": [{
+        "body": "I'm off to Germany to go to the Oktoberfest!",
+        "source": "http://example.com/112",
+        "title": "Off to Germany!",
+        "date": 1104537600
+        }
+      ],
+      "useCaseConfig": {
+        "extractRelevantContent": true,
+        "answerNotFoundMessage": "No answer found."
+      }
+    }
+  ],
+}'
+```
+
+The example response is:
+
+```json
+{
+    "predictions": [
+        {
+            "tokensUsed": {
+                 "promptTokens": 322,
+                 "completionTokens": 28,
+                 "totalTokens": 350
+            },
+            "memoryUuid": "62b887fe-3d7c-4ef0-9597-e2dfc054c20e",
+            "extractedContent": [
+                "I'm off to Germany to go to the Oktoberfest!"
+            ],
+            "answer": "To go to Oktoberfest.",
+            "answerFound": true,
+            "response": "{\"ANSWER\": \"To go to Oktoberfest.\", \"SOURCES\": [\"http://example.com/112\"]}"
+        }
+    ]
+}
+```
+
+If the document initial request did not have the reasonable answer and instead of asking "Why did I go to Germany?", the request included "How is the weather?", the response would be:
+
+```json
+{
+    "predictions": [
+        {
+            "tokensUsed": {
+                 "promptTokens": 322,
+                 "completionTokens": 28,
+                 "totalTokens": 350
+            },
+            "memoryUuid": "62b887fe-3d7c-4ef0-9597-e2dfc054c20e",
+            "extractedContent": [
+                "No relevant information in the document."
+            ],
+            "answer": "No answer found.",
+            "answerFound": false,
+            "warning": "No sources were generated",
+            "response": "{\"ANSWER\": \"Not possible to answer given this content.\", \"SOURCES\": []}"
+        }
+    ]
+}
+```
+
+### Example request using chat history
+
+### Unique values for the chat history RAG use case
+
+The values available in this use case (that may not be available in other use cases) are:
+
+|====
+
+|Parameter |Value
+
+|"documents" | The array contains the following parameters:
+
+* "body": &lt;contents of doc> (required)
+* "source": &lt;url/id of doc - used in generating SOURCES cite list> (required)
+* "title": &lt;title> (optional)
+* "date": &lt;creation date of the document in epoch time format> (optional)
+
+|"useCaseConfig" |The supported parameters are:
+
+* "memoryUuid": "string" 
+
+  This parameter is optional, and is used when previous chat history reference information is available.
+* "answerNotFoundMessage": "string"
+
+  This parameter is optional, and can be passed to change the response if the LLM cannot answer the request. The default is "Not possible to answer given this content."
+
+|====
+
+
+When using the RAG search, the LLM service stores the query and its response in a cache. In addition to the response, it also returns a UUID value in the `memoryUuid` field. If the UUID is passed back in a subsequent request, the LLM uses the cached query and response as part of its context. This lets the LLM be used as a chatbot, where previous queries and responses are used to generate the next response.
+
+The following is an example request. This example does not include:
+
+* `modelConfig` parameters, but you can submit requests that include parameters described in [Common parameters and fields](#common-parameters-and-fields).
+* `useCaseConfig` parameters, but you can submit requests that include parameters described in [Unique values for the chat history RAG use case](#unique-values-for-the-chat-history-rag-use-case).
+
+```json
+curl --request POST \
+  --url  https://APPLICATION_ID.applications.lucidworks.com/ai/prediction/rag/MODEL_ID \
+  --header 'Authorization: Bearer ACCESS_TOKEN' \
+  --header 'Content-type: application/json' \
+  --data '{
+  "batch": [
+    {
+    "text": "What is RAG?",
+    "documents": [{
+      "body":"Retrieval Augmented Generation, known as RAG, a framework promising to optimize generative AI and ensure its responses are up-to-date, relevant to the prompt, and most important",
+      "source":"http://rag.com/115",
+      "title":"What is Retrieval Augmented Generation",
+      "date":"1104537600"
+      }]
+    }
+  ],
+    "useCaseConfig": {
+      "memoryUuid": "27a887fe-3d7c-4ef0-9597-e2dfc054c20e"
+    }
+    }'
+```
+
+The following is an example response:
+
+```json
+{
+  "predictions": [
+    {
+      "response": "ANSWER: \"Retrieval Augmented Generation, known as RAG, is a framework promising to optimize generative AI and ensure its responses are up-to-date, relevant to the prompt, and most important.\"\nSOURCES: [\"http://rag.com/115\"]",
+      "tokensUsed": {
+       "promptTokens": 238,
+       "completionTokens": 54,
+       "totalTokens": 292
+       },
+      "answer": "Retrieval Augmented Generation, known as RAG, is a framework promising to optimize generative AI and ensure its responses are up-to-date, relevant to the prompt, and most important.",
+      "sources": [
+          "http://rag.com/115"
+      ],
+      "memoryUuid": "27a887fe-3d7c-4ef0-9597-e2dfc054c20e"
+      }
+    ]
+  }
+```

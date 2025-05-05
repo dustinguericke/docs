@@ -1,0 +1,180 @@
+---
+subGroup: "ai"
+permalink: "aimylh"
+title: 'Pass-through use case'
+description: 'Needs description'
+icon: 'text-size'
+subtitle: 'Lucidworks AI Prediction API'
+layout: stoplight
+data: api-machine-learning-platform-predict
+private: true
+doctype: reference
+order: 15
+---
+
+The Pass-through use case of the [LWAI Prediction API](/lw-platform/ai/8bx4m9/prediction-api) lets you use the service as a proxy to the LLM. The service sends text (no additional prompts or other information) to the LLM and returns a response.
+
+## Prerequisites
+
+* The `USE_CASE` and `MODEL_ID` fields for the use case request. The path is: `/ai/prediction/USE_CASE/MODEL_ID`. A list of supported models is returned in the [Lucidworks AI Use Case API](/lw-platform/ai/0stpyb/use-case-api). For more information about supported models, see [Generative AI models](/lw-platform/ai/r7ai90/generative-ai#generative-ai-models).
+
+## Common parameters and fields 
+
+### modelConfig
+
+Some parameters of the `/ai/prediction/USE_CASE/MODEL_ID` request are common to all of the generative AI (GenAI) use cases, including the `modelConfig` parameter. If you do not enter values, the following defaults are used.
+
+### Unique values for the pass-through use case
+
+The parameters available in the `passthrough` use case are:
+
+* ["useCaseConfig": "useSystemPrompt": boolean](#use-system-prompt)
+* ["useCaseConfig": "dataType": "string"](#data-type)
+
+**📌 NOTE**\
+If both `useSystemPrompt` and `dataType` are present, the value in `dataType` is used.
+
+#### Use System Prompt
+
+**`"useCaseConfig": "useSystemPrompt": boolean`** 
+
+This parameter can be used:
+
+* If custom prompts are needed, or if the prompt response format needs to be manipulated. 
+* But the prompt length may increase response time.
+
+  Some models, such as the  `mistral-7b-instruct` and `llama-3-8b-instruct`, generate more effective results when system prompts are included in the request. 
+
+  If `"useSystemPrompt": true`, the LLM input is automatically wrapped into a model-specific prompt format with a generic system prompt before passing it to the model or third-party API. 
+
+  If `"useSystemPrompt": false`, the `batch.text` value serves as the prompt for the model. The LLM input must accommodate model-specific requirements because the input is passed as is.
+
+**Examples:** 
+
+* The format for the `mistral-7b-instruct` model must be specific to Mistral:
+
+  <span>https://</span>huggingface.co/mistralai/Mistral-7B-Instruct-v0.2
+* The format for the `llama-3-8b-instruct` model must be specific to Llama:
+
+  <span>https://</span>huggingface.co/blog/llama3#how-to-prompt-llama-3
+* The text input for OpenAI models must be valid JSON to match the OpenAI API specification:
+
+  <span>https://</span>platform.openai.com/docs/api-reference/chat/create
+* The format for the Google Vertex AI models must adhere to the guidelines at:
+
+  <span>https://</span>cloud.google.com/vertex-ai/generative-ai/docs/model-reference/gemini
+
+This `useSystemPrompt` example does not include `modelConfig` parameters, but you can submit requests that include parameters described in [Common parameters and fields](#common-parameters-and-fields).
+
+```json
+curl --request POST \
+  --url https://APPLICATION_ID.applications.lucidworks.com/ai/prediction/passthrough/MODEL_ID \
+  --header 'Authorization: Bearer ACCESS_TOKEN' \
+  --header 'Content-type: application/json' \
+  --data '{
+  "batch": [
+    {
+      "text": "who was the first president of the USA?"
+      }
+    ],
+  "useCaseConfig": {
+    "useSystemPrompt": true
+    }
+  }'
+```
+
+The following is an example response:
+
+```json
+{
+  "predictions": [
+  {
+    "response": "The first President of the United States was George Washington.",
+    "tokensUsed": {
+      "promptTokens": 49,
+      "completionTokens": 11,
+      "totalTokens": 60
+      }
+    }
+  ]
+}
+```
+
+#### Data Type
+
+**`"useCaseConfig": "dataType": "string"`** 
+
+This optional parameter enables model-specific handling in the Prediction API to help improve model accuracy. Use the most applicable fields based on available dataTypes and the dataType value that best aligns with the text sent to the Prediction API.
+
+The values for `dataType` in the Passthrough use case are:
+
+* `"dataType": "text"`
+
+  This value is equivalent to `"useSystemPrompt": true` and is a pre-defined, generic prompt.
+* `"dataType": "raw_prompt"`
+
+  This value is equivalent to `"useSystemPrompt": false` and is passed directly to the model or third-party API.
+* `"dataType": "json_prompt"`
+
+  This value follows the generics that allow three roles:
+
+  * `system`
+  * `user`
+
+    * Only the last user message is truncated.
+    * If the API does not support system prompts, the user role is substituted for the system role.
+  * `assistant`
+
+    * If the last message role is `assistant`, it is used as a pre-fill for generation and is the first generated token the model uses. The pre-fill is prepended to the model output, which makes models less verbose and helps enforce specific outputs such as YAML.
+    * The Google Vertex AI does not support generation pre-fills, so an exception error is generated.
+
+      This follows the HuggingFace template contraints at [Hugging Face chat templates](https://huggingface.co/docs/transformers/main/en/chat_templating).
+
+    * Additional `json_prompt` information:
+
+      * Consecutive messages for the same role are merged.
+      * You can paste the information for a hosted model into the `json_prompt` value and change the model name in the stage. 
+
+**Example:** 
+
+This `"dataType": "json_prompt"`` example does not include `modelConfig` parameters, but you can submit requests that include parameters described in [Common parameters and fields](#common-parameters-and-fields).
+
+```json
+curl --request POST \
+  --url https://APPLICATION_ID.applications.lucidworks.com/ai/prediction/passthrough/MODEL_ID \
+  --header 'Authorization: Bearer ACCESS_TOKEN' \
+  --header 'Content-type: application/json' \
+  --data '{
+   "batch": [
+       {
+         "text": "[{\"role\": \"system\", \"content\": \"You are a helpful utility program instructed to accomplish a word correction task. Provide the most likely suggestion to the user without an preamble or elaboration.\"}, {\"role\": \"user\", \"content\": \"misspeled\"}, {\"role\": \"assistant\", \"content\": \"CORRECT:\"}]"
+       }
+   ],
+   "useCaseConfig" :{
+     "dataType" : "json_prompt"
+   }
+}'
+```
+
+The following is an example response:
+
+```json
+{
+  "predictions": [
+    {
+      "tokensUsed": {
+        "promptTokens": 52,
+        "completionTokens": 4,
+        "totalTokens": 56
+      },
+      "response": "CORRECT: misspelled"
+    }
+  ]
+}
+```
+
+## Verify information sent to GenAI models
+
+The Lucidworks AI Generative AI Prompting Preview API returns Prediction API `passthrough` use case prompts before being sent to any [generative AI (GenAI) model](/lw-platform/ai/r7ai90/generative-ai#generative-ai-models). You can use this information to help debug and ensure input to the generative AI (GenAI) model is valid, and within the model’s processing limits.
+
+For more information, see [Prompting Preview API](/lw-platform/ai/m0x9s2/prompting-preview-api).

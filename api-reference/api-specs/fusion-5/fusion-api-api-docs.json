@@ -1,0 +1,1738 @@
+{
+    "openapi": "3.0.1",
+    "info": {
+        "title": "Fusion Proxy API",
+        "description": "API for the Proxy for Lucidworks Fusion",
+        "contact": {
+            "name": "Lucidworks",
+            "url": "www.lucidworks.com",
+            "email": "support@lucidworks.com"
+        },
+        "license": {
+            "name": "License of API",
+            "url": "https://lucidworks.com/legal/developer-license-agreement/"
+        },
+        "version": "5.12.0"
+    },
+    "externalDocs": {
+        "description": "Lucidworks Documentation",
+        "url": "https://doc.lucidworks.com/"
+    },
+    "servers": [{
+        "url": "FUSION_HOST.com"
+    }],
+    "tags": [{
+        "name": "Realms",
+        "description": "Realms' management"
+    }, {
+        "name": "Users",
+        "description": "Fusion's Users management"
+    }, {
+        "name": "Suggestion",
+        "description": "Suggestion endpoint"
+    }, {
+        "name": "ApiKey",
+        "description": "Api keys management"
+    }, {
+        "name": "OAuth2",
+        "description": "Fusion OAuth2 endpoint"
+    }, {
+        "name": "Roles",
+        "description": "Roles' management"
+    }, {
+        "name": "api",
+        "description": "Basic system and user status information"
+    }],
+    "paths": {
+        "/api/users/{id}": {
+            "get": {
+                "tags": ["Users"],
+                "summary": "Obtain user data",
+                "operationId": "getUser",
+                "parameters": [],
+                "responses": {
+                    "404": {
+                        "description": "User cannot be found",
+                        "content": {
+                            "*/*": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/User_PublicView"
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "put": {
+                "tags": ["Users"],
+                "summary": "Update user",
+                "operationId": "updateUser",
+                "parameters": [],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/UpdateUser_PublicView"
+                            }
+                        }
+                    },
+                    "required": true
+                },
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "*/*": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/User_PublicView"
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "tags": ["Users"],
+                "summary": "Remove existing user",
+                "operationId": "deleteUser",
+                "parameters": [],
+                "responses": {
+                    "404": {
+                        "description": "User cannot be found"
+                    },
+                    "403": {
+                        "description": "User is not allowed to delete itself"
+                    }
+                }
+            },
+            "patch": {
+                "tags": ["Users"],
+                "summary": "Update user password",
+                "description": "Normal users can update only theirs own password, admin users can change any user password",
+                "operationId": "updatePassword",
+                "parameters": [],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/UpdatePassword_PublicView"
+                            }
+                        }
+                    },
+                    "required": true
+                },
+                "responses": {
+                    "404": {
+                        "description": "User cannot be found",
+                        "content": {
+                            "*/*": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/User_PublicView"
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "User is not allowed to make a change",
+                        "content": {
+                            "*/*": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/User_PublicView"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/roles/{id}": {
+            "get": {
+                "tags": ["Roles"],
+                "summary": "Get role",
+                "description": "Obtain role with specific id",
+                "operationId": "getRole",
+                "parameters": [],
+                "responses": {
+                    "404": {
+                        "$ref": "#/components/responses/ErrorResponse"
+                    }
+                }
+            },
+            "put": {
+                "tags": ["Roles"],
+                "summary": "Update existing role",
+                "operationId": "updateRole",
+                "parameters": [],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/Role"
+                            }
+                        }
+                    },
+                    "required": true
+                },
+                "responses": {
+                    "404": {
+                        "$ref": "#/components/responses/ErrorResponse"
+                    }
+                }
+            },
+            "delete": {
+                "tags": ["Roles"],
+                "summary": "Remove role",
+                "description": "Delete a role of provided ID",
+                "operationId": "deleteRole",
+                "parameters": [],
+                "responses": {
+                    "404": {
+                        "$ref": "#/components/responses/ErrorResponse"
+                    }
+                }
+            }
+        },
+        "/api/realm-configs/{id}": {
+            "get": {
+                "tags": ["Realms"],
+                "summary": "Get Realm",
+                "description": "Obtain configuration of existing realm",
+                "operationId": "getRealm",
+                "parameters": [],
+                "responses": {
+                    "404": {
+                        "description": "Realm not found",
+                        "content": {
+                            "*/*": {
+                                "schema": {
+                                    "oneOf": [{
+                                        "$ref": "#/components/schemas/Realm"
+                                    }, {
+                                        "$ref": "#/components/schemas/ApiKeyRealm"
+                                    }, {
+                                        "$ref": "#/components/schemas/JWTRealm"
+                                    }, {
+                                        "$ref": "#/components/schemas/KerberosRealm"
+                                    }, {
+                                        "$ref": "#/components/schemas/LDAPRealm"
+                                    }, {
+                                        "$ref": "#/components/schemas/OidcRealm"
+                                    }, {
+                                        "$ref": "#/components/schemas/SAMLRealm"
+                                    }, {
+                                        "$ref": "#/components/schemas/TrustedHTTPRealm"
+                                    }]
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "put": {
+                "tags": ["Realms"],
+                "summary": "Update an existing realm",
+                "operationId": "updateRealm",
+                "parameters": [],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "oneOf": [{
+                                    "$ref": "#/components/schemas/Realm"
+                                }, {
+                                    "$ref": "#/components/schemas/ApiKeyRealm"
+                                }, {
+                                    "$ref": "#/components/schemas/JWTRealm"
+                                }, {
+                                    "$ref": "#/components/schemas/KerberosRealm"
+                                }, {
+                                    "$ref": "#/components/schemas/LDAPRealm"
+                                }, {
+                                    "$ref": "#/components/schemas/OidcRealm"
+                                }, {
+                                    "$ref": "#/components/schemas/SAMLRealm"
+                                }, {
+                                    "$ref": "#/components/schemas/TrustedHTTPRealm"
+                                }]
+                            }
+                        }
+                    },
+                    "required": true
+                },
+                "responses": {
+                    "404": {
+                        "description": "Realm not found",
+                        "content": {
+                            "*/*": {
+                                "schema": {
+                                    "oneOf": [{
+                                        "$ref": "#/components/schemas/Realm"
+                                    }, {
+                                        "$ref": "#/components/schemas/ApiKeyRealm"
+                                    }, {
+                                        "$ref": "#/components/schemas/JWTRealm"
+                                    }, {
+                                        "$ref": "#/components/schemas/KerberosRealm"
+                                    }, {
+                                        "$ref": "#/components/schemas/LDAPRealm"
+                                    }, {
+                                        "$ref": "#/components/schemas/OidcRealm"
+                                    }, {
+                                        "$ref": "#/components/schemas/SAMLRealm"
+                                    }, {
+                                        "$ref": "#/components/schemas/TrustedHTTPRealm"
+                                    }]
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "tags": ["Realms"],
+                "summary": "Delete Realm",
+                "description": "Remove existing realm",
+                "operationId": "deleteRealm",
+                "parameters": [],
+                "responses": {
+                    "404": {
+                        "description": "Realm not found"
+                    }
+                }
+            }
+        },
+        "/api/realm-configs/default": {
+            "get": {
+                "tags": ["Realms"],
+                "summary": "Returns a potential default realms with a flag which one is currently default",
+                "operationId": "getDefaultRealmList",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "*/*": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/schemas/DefaultRealmListElement"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "put": {
+                "tags": ["Realms"],
+                "summary": "Set Default realm",
+                "operationId": "setDefaultRealm",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/IdObject"
+                            }
+                        }
+                    },
+                    "required": true
+                },
+                "responses": {
+                    "202": {
+                        "description": "Accepted"
+                    }
+                }
+            }
+        },
+        "/api/users": {
+            "get": {
+                "tags": ["Users"],
+                "summary": "Get list of users",
+                "description": "Return the users list of specific name or from specific realm",
+                "operationId": "getUsers",
+                "parameters": [{
+                    "name": "Username to filter. If not specified, then all users will returned.",
+                    "in": "query",
+                    "required": false,
+                    "schema": {
+                        "type": "string"
+                    }
+                }, {
+                    "name": "From which users should be returned. If not specified, then users from all realm will be returned.",
+                    "in": "query",
+                    "required": false,
+                    "schema": {
+                        "type": "string"
+                    }
+                }],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "*/*": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/schemas/User_PublicView"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "post": {
+                "tags": ["Users"],
+                "summary": "Create user",
+                "description": "Create a new user in the system",
+                "operationId": "createUser",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/CreateUser_PublicView"
+                            }
+                        }
+                    },
+                    "required": true
+                },
+                "responses": {
+                    "409": {
+                        "description": "User with a name or id already exists",
+                        "content": {
+                            "*/*": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/User_PublicView"
+                                }
+                            }
+                        }
+                    },
+                    "201": {
+                        "description": "Created",
+                        "content": {
+                            "*/*": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/User_PublicView"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/session": {
+            "get": {
+                "tags": ["api"],
+                "summary": "Information about the current user and his roles",
+                "operationId": "getSession",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "additionalProperties": {
+                                        "type": "object"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "post": {
+                "tags": ["api"],
+                "summary": "Validate provided credentials and create Fusion JWT token",
+                "description": "An operation to login a user and generate a JWT token which is returned in id cookie.",
+                "operationId": "applySession",
+                "responses": {
+                    "201": {
+                        "description": "Created"
+                    }
+                }
+            },
+            "delete": {
+                "tags": ["api"],
+                "summary": "Removes id cookie from browser. Logout current user.",
+                "operationId": "deleteSession",
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                }
+            }
+        },
+        "/api/roles": {
+            "get": {
+                "tags": ["Roles"],
+                "summary": "Return all roles defined in the Fusion or role with a specified name",
+                "operationId": "getRoles",
+                "parameters": [{
+                    "name": "Role name",
+                    "in": "query",
+                    "required": false,
+                    "schema": {
+                        "type": "string"
+                    }
+                }],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "*/*": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/schemas/Role"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "post": {
+                "tags": ["Roles"],
+                "summary": "Create role",
+                "description": "Create a new role in the system",
+                "operationId": "createRole",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/Role"
+                            }
+                        }
+                    },
+                    "required": true
+                },
+                "responses": {
+                    "409": {
+                        "description": "Role with a name or id already exists",
+                        "content": {
+                            "*/*": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Role"
+                                }
+                            }
+                        }
+                    },
+                    "201": {
+                        "description": "Created",
+                        "content": {
+                            "*/*": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Role"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/realm-configs": {
+            "get": {
+                "tags": ["Realms"],
+                "summary": "Obtain multiple realms",
+                "description": "Return all realms unless name filter parameter is specified",
+                "operationId": "getRealms",
+                "parameters": [{
+                    "name": "Realm name to be returned",
+                    "in": "query",
+                    "required": false,
+                    "schema": {
+                        "type": "string"
+                    }
+                }],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "*/*": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "oneOf": [{
+                                            "$ref": "#/components/schemas/Realm"
+                                        }, {
+                                            "$ref": "#/components/schemas/ApiKeyRealm"
+                                        }, {
+                                            "$ref": "#/components/schemas/JWTRealm"
+                                        }, {
+                                            "$ref": "#/components/schemas/KerberosRealm"
+                                        }, {
+                                            "$ref": "#/components/schemas/LDAPRealm"
+                                        }, {
+                                            "$ref": "#/components/schemas/OidcRealm"
+                                        }, {
+                                            "$ref": "#/components/schemas/SAMLRealm"
+                                        }, {
+                                            "$ref": "#/components/schemas/TrustedHTTPRealm"
+                                        }]
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "post": {
+                "tags": ["Realms"],
+                "summary": "Create Realm",
+                "description": "Creates a realm based on provided configuration",
+                "operationId": "createRealm",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "oneOf": [{
+                                    "$ref": "#/components/schemas/Realm"
+                                }, {
+                                    "$ref": "#/components/schemas/ApiKeyRealm"
+                                }, {
+                                    "$ref": "#/components/schemas/JWTRealm"
+                                }, {
+                                    "$ref": "#/components/schemas/KerberosRealm"
+                                }, {
+                                    "$ref": "#/components/schemas/LDAPRealm"
+                                }, {
+                                    "$ref": "#/components/schemas/OidcRealm"
+                                }, {
+                                    "$ref": "#/components/schemas/SAMLRealm"
+                                }, {
+                                    "$ref": "#/components/schemas/TrustedHTTPRealm"
+                                }]
+                            }
+                        }
+                    },
+                    "required": true
+                },
+                "responses": {
+                    "409": {
+                        "description": "Realm with name or id already exists",
+                        "content": {
+                            "*/*": {
+                                "schema": {
+                                    "oneOf": [{
+                                        "$ref": "#/components/schemas/Realm"
+                                    }, {
+                                        "$ref": "#/components/schemas/ApiKeyRealm"
+                                    }, {
+                                        "$ref": "#/components/schemas/JWTRealm"
+                                    }, {
+                                        "$ref": "#/components/schemas/KerberosRealm"
+                                    }, {
+                                        "$ref": "#/components/schemas/LDAPRealm"
+                                    }, {
+                                        "$ref": "#/components/schemas/OidcRealm"
+                                    }, {
+                                        "$ref": "#/components/schemas/SAMLRealm"
+                                    }, {
+                                        "$ref": "#/components/schemas/TrustedHTTPRealm"
+                                    }]
+                                }
+                            }
+                        }
+                    },
+                    "201": {
+                        "description": "Created",
+                        "content": {
+                            "*/*": {
+                                "schema": {
+                                    "oneOf": [{
+                                        "$ref": "#/components/schemas/Realm"
+                                    }, {
+                                        "$ref": "#/components/schemas/ApiKeyRealm"
+                                    }, {
+                                        "$ref": "#/components/schemas/JWTRealm"
+                                    }, {
+                                        "$ref": "#/components/schemas/KerberosRealm"
+                                    }, {
+                                        "$ref": "#/components/schemas/LDAPRealm"
+                                    }, {
+                                        "$ref": "#/components/schemas/OidcRealm"
+                                    }, {
+                                        "$ref": "#/components/schemas/SAMLRealm"
+                                    }, {
+                                        "$ref": "#/components/schemas/TrustedHTTPRealm"
+                                    }]
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/api-key": {
+            "get": {
+                "tags": ["ApiKey"],
+                "summary": "Returns all api keys",
+                "description": "Deleted keys are filtered",
+                "operationId": "getAll",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "*/*": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/schemas/ApiKeyDto"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "post": {
+                "tags": ["ApiKey"],
+                "summary": "Creates new api key based on request body",
+                "operationId": "createApiKey",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/ApiKeyRequest"
+                            }
+                        }
+                    },
+                    "required": true
+                },
+                "responses": {
+                    "500": {
+                        "$ref": "#/components/responses/ErrorResponse"
+                    }
+                }
+            }
+        },
+        "/api": {
+            "get": {
+                "tags": ["api"],
+                "summary": "Information about the available realms and known services",
+                "operationId": "getStatus",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/GatewayStatus"
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "post": {
+                "tags": ["api"],
+                "summary": "Set an initial admin password",
+                "operationId": "createUser_1",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "additionalProperties": {
+                                    "type": "string"
+                                }
+                            }
+                        }
+                    },
+                    "required": true
+                },
+                "responses": {
+                    "409": {
+                        "$ref": "#/components/responses/ErrorResponse"
+                    },
+                    "201": {
+                        "description": "Initial password set"
+                    }
+                }
+            }
+        },
+        "/oauth2/jwk": {
+            "get": {
+                "tags": ["OAuth2"],
+                "summary": "Get Java Web Key",
+                "description": "Returns Java Web key which can be used for Fusion token validation",
+                "operationId": "getJWK",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "*/*": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/JSONObject"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/oauth2/certificate": {
+            "get": {
+                "tags": ["OAuth2"],
+                "summary": "Get Fusion Gateway Certificate",
+                "description": "Returns certificate which can be use to validate signature of JWT or SAML requests",
+                "operationId": "getCert",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "*/*": {
+                                "schema": {
+                                    "type": "string"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/suggestions/collections/{collectionId}/schema/fields": {
+            "get": {
+                "tags": ["Suggestion"],
+                "summary": "Match fields",
+                "operationId": "matchFields",
+                "parameters": [{
+                    "name": "q",
+                    "in": "query",
+                    "required": true,
+                    "schema": {
+                        "type": "string"
+                    }
+                }, {
+                    "name": "limit",
+                    "in": "query",
+                    "required": false,
+                    "schema": {
+                        "type": "integer",
+                        "format": "int32",
+                        "default": 20
+                    }
+                }],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "*/*": {
+                                "schema": {
+                                    "type": "string"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/api-key/{id}": {
+            "get": {
+                "tags": ["ApiKey"],
+                "summary": "Returns api key with specific id",
+                "description": "We return not found error when key is deleted",
+                "operationId": "getById",
+                "parameters": [],
+                "responses": {
+                    "404": {
+                        "$ref": "#/components/responses/ErrorResponse"
+                    }
+                }
+            },
+            "delete": {
+                "tags": ["ApiKey"],
+                "summary": "Removes api key with specific id",
+                "operationId": "deleteById",
+                "parameters": [],
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                }
+            }
+        }
+    },
+    "components": {
+        "schemas": {
+            "GlobPermission_PublicView": {
+                "type": "object",
+                "properties": {
+                    "methods": {
+                        "uniqueItems": true,
+                        "type": "array",
+                        "items": {
+                            "type": "string",
+                            "enum": ["GET", "POST", "PUT", "DELETE", "HEAD", "PATCH", "OPTIONS"]
+                        }
+                    },
+                    "path": {
+                        "type": "string"
+                    },
+                    "params": {
+                        "type": "object",
+                        "additionalProperties": {
+                            "type": "array",
+                            "items": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                }
+            },
+            "UpdateUser_PublicView": {
+                "type": "object",
+                "properties": {
+                    "password": {
+                        "type": "object",
+                        "properties": {
+                            "empty": {
+                                "type": "boolean"
+                            }
+                        }
+                    },
+                    "passwordHash": {
+                        "type": "string"
+                    },
+                    "roleNames": {
+                        "type": "array",
+                        "writeOnly": true,
+                        "items": {
+                            "type": "string"
+                        }
+                    },
+                    "timezone": {
+                        "type": "string"
+                    },
+                    "permissions": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/GlobPermission_PublicView"
+                        }
+                    },
+                    "roles": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    }
+                }
+            },
+            "User_PublicView": {
+                "type": "object",
+                "properties": {
+                    "id": {
+                        "type": "string"
+                    },
+                    "username": {
+                        "type": "string"
+                    },
+                    "realmName": {
+                        "type": "string"
+                    },
+                    "createdAt": {
+                        "type": "string",
+                        "format": "date-time"
+                    },
+                    "updatedAt": {
+                        "type": "string",
+                        "format": "date-time"
+                    },
+                    "roleNames": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    },
+                    "timezone": {
+                        "type": "string"
+                    },
+                    "permissions": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/GlobPermission_PublicView"
+                        }
+                    }
+                }
+            },
+            "GlobPermission": {
+                "type": "object",
+                "properties": {
+                    "methods": {
+                        "uniqueItems": true,
+                        "type": "array",
+                        "items": {
+                            "type": "string",
+                            "enum": ["GET", "POST", "PUT", "DELETE", "HEAD", "PATCH", "OPTIONS"]
+                        }
+                    },
+                    "path": {
+                        "type": "string"
+                    },
+                    "params": {
+                        "type": "object",
+                        "additionalProperties": {
+                            "type": "array",
+                            "items": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                }
+            },
+            "Role": {
+                "required": ["name"],
+                "type": "object",
+                "properties": {
+                    "id": {
+                        "type": "string"
+                    },
+                    "name": {
+                        "type": "string"
+                    },
+                    "createdAt": {
+                        "type": "string",
+                        "format": "date-time"
+                    },
+                    "updatedAt": {
+                        "type": "string",
+                        "format": "date-time"
+                    },
+                    "desc": {
+                        "type": "string"
+                    },
+                    "permissions": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/GlobPermission"
+                        }
+                    },
+                    "uiPermissions": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    }
+                }
+            },
+            "ApiKeyRealm": {
+                "required": ["name"],
+                "type": "object",
+                "allOf": [{
+                    "$ref": "#/components/schemas/Realm"
+                }]
+            },
+            "Bind": {
+                "required": ["dn", "password"],
+                "type": "object",
+                "properties": {
+                    "dn": {
+                        "type": "string"
+                    },
+                    "password": {
+                        "type": "string"
+                    }
+                }
+            },
+            "Code": {
+                "required": ["authorizationUri", "redirectUri", "tokenUri"],
+                "type": "object",
+                "properties": {
+                    "clientSecret": {
+                        "type": "string"
+                    },
+                    "redirectUri": {
+                        "type": "string"
+                    },
+                    "authorizationUri": {
+                        "type": "string"
+                    },
+                    "tokenUri": {
+                        "type": "string"
+                    }
+                }
+            },
+            "Groups": {
+                "type": "object",
+                "properties": {
+                    "roleMapping": {
+                        "type": "array",
+                        "items": {
+                            "type": "array",
+                            "items": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                }
+            },
+            "JWTRealm": {
+                "required": ["config", "name"],
+                "type": "object",
+                "allOf": [{
+                    "$ref": "#/components/schemas/Realm"
+                }, {
+                    "type": "object",
+                    "properties": {
+                        "roleNames": {
+                            "type": "array",
+                            "items": {
+                                "type": "string"
+                            }
+                        },
+                        "config": {
+                            "$ref": "#/components/schemas/JwtRealmConfig"
+                        }
+                    }
+                }]
+            },
+            "JwtGroups": {
+                "type": "object",
+                "properties": {
+                    "groupKey": {
+                        "type": "string"
+                    },
+                    "roleMapping": {
+                        "type": "array",
+                        "items": {
+                            "type": "array",
+                            "items": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                }
+            },
+            "JwtRealmConfig": {
+                "required": ["jwtIssuer"],
+                "type": "object",
+                "properties": {
+                    "autoCreateUsers": {
+                        "type": "boolean"
+                    },
+                    "jwtIssuer": {
+                        "type": "string"
+                    },
+                    "signingKey": {
+                        "type": "string"
+                    },
+                    "jwkSetUri": {
+                        "type": "string"
+                    },
+                    "groups": {
+                        "$ref": "#/components/schemas/JwtGroups"
+                    },
+                    "userIdAttribute": {
+                        "type": "string"
+                    },
+                    "ephemeralUsers": {
+                        "type": "boolean"
+                    }
+                }
+            },
+            "KerberosConfig": {
+                "required": ["keytab", "principal"],
+                "type": "object",
+                "properties": {
+                    "autoCreateUsers": {
+                        "type": "boolean"
+                    },
+                    "principal": {
+                        "type": "string"
+                    },
+                    "keytab": {
+                        "type": "string"
+                    },
+                    "nameRules": {
+                        "type": "string"
+                    }
+                }
+            },
+            "KerberosRealm": {
+                "required": ["name"],
+                "type": "object",
+                "allOf": [{
+                    "$ref": "#/components/schemas/Realm"
+                }, {
+                    "type": "object",
+                    "properties": {
+                        "roleNames": {
+                            "type": "array",
+                            "items": {
+                                "type": "string"
+                            }
+                        },
+                        "config": {
+                            "$ref": "#/components/schemas/KerberosConfig"
+                        }
+                    }
+                }]
+            },
+            "LDAPRealm": {
+                "required": ["config", "name"],
+                "type": "object",
+                "allOf": [{
+                    "$ref": "#/components/schemas/Realm"
+                }, {
+                    "type": "object",
+                    "properties": {
+                        "config": {
+                            "$ref": "#/components/schemas/LdapRealmConfig"
+                        },
+                        "roleNames": {
+                            "type": "array",
+                            "items": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                }]
+            },
+            "LdapGroups": {
+                "required": ["search"],
+                "type": "object",
+                "properties": {
+                    "search": {
+                        "$ref": "#/components/schemas/Search"
+                    },
+                    "roleMapping": {
+                        "type": "array",
+                        "items": {
+                            "type": "array",
+                            "items": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                }
+            },
+            "LdapLogin": {
+                "type": "object",
+                "properties": {
+                    "bindDnTemplate": {
+                        "type": "string"
+                    },
+                    "kerberos": {
+                        "$ref": "#/components/schemas/KerberosConfig"
+                    },
+                    "searchBind": {
+                        "$ref": "#/components/schemas/SearchBind"
+                    }
+                }
+            },
+            "LdapRealmConfig": {
+                "required": ["host", "login", "port"],
+                "type": "object",
+                "properties": {
+                    "autoCreateUsers": {
+                        "type": "boolean"
+                    },
+                    "host": {
+                        "type": "string"
+                    },
+                    "ssl": {
+                        "type": "boolean"
+                    },
+                    "port": {
+                        "type": "integer",
+                        "format": "int32"
+                    },
+                    "ephemeralUsers": {
+                        "type": "boolean"
+                    },
+                    "login": {
+                        "$ref": "#/components/schemas/LdapLogin"
+                    },
+                    "groups": {
+                        "$ref": "#/components/schemas/LdapGroups"
+                    },
+                    "bind": {
+                        "$ref": "#/components/schemas/Bind"
+                    }
+                }
+            },
+            "OidcRealm": {
+                "required": ["config", "name"],
+                "type": "object",
+                "allOf": [{
+                    "$ref": "#/components/schemas/Realm"
+                }, {
+                    "type": "object",
+                    "properties": {
+                        "config": {
+                            "$ref": "#/components/schemas/OidcRealmConfig"
+                        },
+                        "roleNames": {
+                            "type": "array",
+                            "items": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                }]
+            },
+            "OidcRealmConfig": {
+                "required": ["clientId", "code", "jwkSetUri", "scope"],
+                "type": "object",
+                "properties": {
+                    "autoCreateUsers": {
+                        "type": "boolean"
+                    },
+                    "groups": {
+                        "$ref": "#/components/schemas/Groups"
+                    },
+                    "code": {
+                        "$ref": "#/components/schemas/Code"
+                    },
+                    "clientId": {
+                        "type": "string"
+                    },
+                    "jwkSetUri": {
+                        "type": "string"
+                    },
+                    "userIdAttribute": {
+                        "type": "string"
+                    },
+                    "rolesAttribute": {
+                        "type": "string"
+                    },
+                    "scope": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    },
+                    "ephemeralUsers": {
+                        "type": "boolean"
+                    },
+                    "logoutUrl": {
+                        "type": "string"
+                    },
+                    "proxy": {
+                        "$ref": "#/components/schemas/Proxy"
+                    }
+                }
+            },
+            "Proxy": {
+                "type": "object",
+                "properties": {
+                    "host": {
+                        "type": "string"
+                    },
+                    "port": {
+                        "type": "integer",
+                        "format": "int32"
+                    },
+                    "user": {
+                        "type": "string"
+                    },
+                    "password": {
+                        "type": "string"
+                    }
+                }
+            },
+            "Realm": {
+                "required": ["name", "realmType"],
+                "type": "object",
+                "properties": {
+                    "id": {
+                        "type": "string"
+                    },
+                    "name": {
+                        "type": "string"
+                    },
+                    "enabled": {
+                        "type": "boolean"
+                    },
+                    "createdAt": {
+                        "type": "string",
+                        "format": "date-time"
+                    },
+                    "updatedAt": {
+                        "type": "string",
+                        "format": "date-time"
+                    },
+                    "realmType": {
+                        "type": "string"
+                    }
+                },
+                "discriminator": {
+                    "propertyName": "realmType"
+                }
+            },
+            "SAMLRealm": {
+                "required": ["config", "name"],
+                "type": "object",
+                "allOf": [{
+                    "$ref": "#/components/schemas/Realm"
+                }, {
+                    "type": "object",
+                    "properties": {
+                        "roleNames": {
+                            "type": "array",
+                            "items": {
+                                "type": "string"
+                            }
+                        },
+                        "config": {
+                            "$ref": "#/components/schemas/SamlConfig"
+                        }
+                    }
+                }]
+            },
+            "SamlConfig": {
+                "required": ["certificateFingerprint", "idpUrl", "issuer"],
+                "type": "object",
+                "properties": {
+                    "autoCreateUsers": {
+                        "type": "boolean"
+                    },
+                    "idpUrl": {
+                        "type": "string"
+                    },
+                    "issuer": {
+                        "type": "string"
+                    },
+                    "appIssuer": {
+                        "type": "string"
+                    },
+                    "certificateFingerprint": {
+                        "type": "string"
+                    },
+                    "userIdAttribute": {
+                        "type": "string"
+                    },
+                    "redirectUrl": {
+                        "type": "string"
+                    },
+                    "groups": {
+                        "$ref": "#/components/schemas/SamlGroups"
+                    },
+                    "ephemeralUsers": {
+                        "type": "boolean"
+                    },
+                    "logoutUrl": {
+                        "type": "string"
+                    }
+                }
+            },
+            "SamlGroups": {
+                "type": "object",
+                "properties": {
+                    "groupNameAttribute": {
+                        "type": "string"
+                    },
+                    "roleMapping": {
+                        "type": "array",
+                        "items": {
+                            "type": "array",
+                            "items": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                }
+            },
+            "Search": {
+                "required": ["baseDn", "filterTemplate", "groupNameAttribute"],
+                "type": "object",
+                "properties": {
+                    "baseDn": {
+                        "type": "string"
+                    },
+                    "groupNameAttribute": {
+                        "type": "string"
+                    },
+                    "filterTemplate": {
+                        "type": "string"
+                    },
+                    "subtree": {
+                        "type": "boolean"
+                    }
+                }
+            },
+            "SearchBind": {
+                "required": ["baseDn", "filterTemplate"],
+                "type": "object",
+                "properties": {
+                    "baseDn": {
+                        "type": "string"
+                    },
+                    "filterTemplate": {
+                        "type": "string"
+                    }
+                }
+            },
+            "TrustedConfig": {
+                "required": ["identityKey"],
+                "type": "object",
+                "properties": {
+                    "autoCreateUsers": {
+                        "type": "boolean"
+                    },
+                    "identityKey": {
+                        "type": "string"
+                    },
+                    "allowedIps": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    },
+                    "trustedProxyHeaders": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    },
+                    "groups": {
+                        "$ref": "#/components/schemas/TrustedGroups"
+                    },
+                    "ephemeralUsers": {
+                        "type": "boolean"
+                    }
+                }
+            },
+            "TrustedGroups": {
+                "required": ["key"],
+                "type": "object",
+                "properties": {
+                    "key": {
+                        "type": "string"
+                    },
+                    "roleMapping": {
+                        "type": "array",
+                        "items": {
+                            "type": "array",
+                            "items": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "delimiter": {
+                        "type": "string"
+                    }
+                }
+            },
+            "TrustedHTTPRealm": {
+                "required": ["name"],
+                "type": "object",
+                "allOf": [{
+                    "$ref": "#/components/schemas/Realm"
+                }, {
+                    "type": "object",
+                    "properties": {
+                        "roleNames": {
+                            "type": "array",
+                            "items": {
+                                "type": "string"
+                            }
+                        },
+                        "config": {
+                            "$ref": "#/components/schemas/TrustedConfig"
+                        }
+                    }
+                }]
+            },
+            "IdObject": {
+                "required": ["id"],
+                "type": "object",
+                "properties": {
+                    "id": {
+                        "type": "string"
+                    }
+                }
+            },
+            "JSONObject": {
+                "type": "object",
+                "properties": {
+                    "empty": {
+                        "type": "boolean"
+                    }
+                },
+                "additionalProperties": {
+                    "type": "object"
+                }
+            },
+            "CreateUser_PublicView": {
+                "required": ["realm", "username"],
+                "type": "object",
+                "properties": {
+                    "id": {
+                        "type": "string"
+                    },
+                    "username": {
+                        "type": "string"
+                    },
+                    "realmName": {
+                        "type": "string",
+                        "writeOnly": true
+                    },
+                    "password": {
+                        "type": "object",
+                        "properties": {
+                            "empty": {
+                                "type": "boolean"
+                            }
+                        }
+                    },
+                    "passwordHash": {
+                        "type": "string"
+                    },
+                    "roleNames": {
+                        "type": "array",
+                        "writeOnly": true,
+                        "items": {
+                            "type": "string"
+                        }
+                    },
+                    "timezone": {
+                        "type": "string"
+                    },
+                    "permissions": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/GlobPermission_PublicView"
+                        }
+                    },
+                    "realm": {
+                        "type": "string"
+                    },
+                    "roles": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    }
+                }
+            },
+            "ApiKeyRequest": {
+                "required": ["id", "name"],
+                "type": "object",
+                "properties": {
+                    "name": {
+                        "type": "string"
+                    },
+                    "id": {
+                        "type": "string"
+                    },
+                    "roles": {
+                        "type": "array",
+                        "writeOnly": true,
+                        "items": {
+                            "type": "string"
+                        }
+                    }
+                }
+            },
+            "UpdatePassword_PublicView": {
+                "required": ["password", "passwordConfirm"],
+                "type": "object",
+                "properties": {
+                    "currentPassword": {
+                        "type": "object",
+                        "properties": {
+                            "empty": {
+                                "type": "boolean"
+                            }
+                        }
+                    },
+                    "password": {
+                        "type": "object",
+                        "properties": {
+                            "empty": {
+                                "type": "boolean"
+                            }
+                        }
+                    },
+                    "passwordConfirm": {
+                        "type": "object",
+                        "properties": {
+                            "empty": {
+                                "type": "boolean"
+                            }
+                        }
+                    },
+                    "id": {
+                        "type": "string"
+                    }
+                }
+            },
+            "DefaultRealmListElement": {
+                "type": "object",
+                "properties": {
+                    "id": {
+                        "type": "string"
+                    },
+                    "name": {
+                        "type": "string"
+                    },
+                    "default": {
+                        "type": "boolean"
+                    }
+                }
+            },
+            "ApiKeyDto": {
+                "type": "object",
+                "properties": {
+                    "name": {
+                        "type": "string"
+                    },
+                    "id": {
+                        "type": "string"
+                    },
+                    "createdAt": {
+                        "type": "string",
+                        "format": "date-time"
+                    },
+                    "key": {
+                        "type": "string"
+                    },
+                    "roles": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    },
+                    "disabled": {
+                        "type": "boolean"
+                    }
+                }
+            },
+            "GatewayStatus": {
+                "type": "object",
+                "properties": {
+                    "nativeRealmInstalled": {
+                        "type": "string",
+                        "format": "date-time",
+                        "writeOnly": true
+                    },
+                    "enabledRealms": {
+                        "type": "array",
+                        "items": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "object"
+                            }
+                        }
+                    },
+                    "version": {
+                        "type": "string"
+                    },
+                    "status": {
+                        "type": "object",
+                        "additionalProperties": {
+                            "type": "object"
+                        }
+                    },
+                    "initMeta": {
+                        "type": "object",
+                        "additionalProperties": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        }
+    }
+}

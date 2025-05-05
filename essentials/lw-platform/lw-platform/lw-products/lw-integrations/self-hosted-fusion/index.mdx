@@ -1,0 +1,112 @@
+---
+subGroup: "platform"
+permalink: "qqr4sm"
+layout: default
+title: 'Self-hosted Fusion integration with Lucidworks AI'
+description: 'Needs description'
+icon: 'text-size'
+subtitle: 'Lucidworks AI'
+doctype: concept
+order: 100
+---
+
+<dl><dt><strong>💡 TIP</strong></dt><dd>
+
+This topic is specific to integrating self-hosted Fusion with Lucidworks AI. 
+
+* To configure a general integration for Lucidworks Platform with Fusion, follow the procedures in [Fusion integrations](/lw-platform/platform/04gi1q/fusion-integrations). 
+* To configure an integration that uses the Lucidworks Configuration Promotion tool, follow the procedures in the [Configuration Promotion tool integration with Fusion](/lw-platform/platform/qjns2v/configuration-promotion-integration) topic. 
+* To configure an integration that uses Lucidworks Commerce Studio, follow the procedures in the [Commerce Studio integration with Fusion](/lw-platform/platform/zpqyc5/commerce-studio-integration) topic.
+</dd></dl>
+
+## Access self-hosted Fusion integrations
+
+When you sign in to https://platform.lucidworks.com, click the Lucidworks AI app associated with the integration, and then click **Integrations > Self-hosted Fusion**, the screen displays the integrations created to connect Fusion to Lucidworks AI functions.
+
+![Lucidworks AI integrations self-hosted screen](/assets/images/lw-platform/integrations/lw-ai-integrations-self-hosted.png)
+
+The following table describes the information for each integration instance.
+
+|====
+|Field |Description
+
+|Name |The name of the integration instance. 
+
+|Tags |Optional freeform text that identifies the integration instance.
+
+|Client ID | The unique client value that is part of the information required to obtain OAuth 2.0 authorization. For a self-hosted Fusion client integration, this value is unique to the specific integration. For more information, see [Credentials](/lw-platform/platform/oqzogo/apis-and-credentials#credentials).
+
+|Created on |The date and time the integration was created.
+
+|====
+
+### View and edit integration details
+
+If you click an integration instance from the list, the details screen displays.
+
+![Lucidworks AI integration details screen](assets/images/lw-platform/integrations/lw-ai-integrations-self-hosted-detail1.png)
+![Lucidworks AI integration details screen](assets/images/lw-platform/integrations/lw-ai-integrations-self-hosted-detail2.png) 
+
+|====
+|Field |Description 
+
+|Name |The name of the integration instance. 
+
+|Tags |Optional freeform text that identifies the integration instance.
+
+|App ID |The unique Lucidworks AI application identifier generated when the application is created.
+
+|Client ID |Your organization’s unique identifier. For a self-hosted Fusion client integration, this value is unique to the specific integration. For more information, see [Credentials](/lw-platform/platform/oqzogo/apis-and-credentials#credentials).
+
+|Client Secret |The private client value that is part of the information required to obtain OAuth 2.0 authorization. You must keep this value secret. Do not use it in public clients such as client-side applications. For more information, see [Credentials](/lw-platform/platform/oqzogo/apis-and-credentials#credentials).
+
+|Copy |Copies the YAML code to the clipboard. You can paste the code in the file on your system.
+
+|Download |Downloads the YAML code to the `account.yaml` file on your computer.
+
+|Fusion version |Select the Fusion release running on your system to display the related YAML code.
+
+|YAML code |The specific information about the integration instance that you must copy into your `account.yaml` file to configure the integration.
+
+|====
+
+## Create a Fusion integration to Lucidworks AI
+
+Self-hosted Fusion clients can create integrations that connect Fusion to use Lucidworks AI functions.
+
+### Prerequisites
+
+Your Lucidworks technical account manager (TAM) creates the workspace and grants appropriate personnel in your organization the admin privileges to that workspace. 
+
+Integration maintenance must be completed by the personnel in your organization who have been granted privileges to access confidential client information and perform system administration tasks. Both the workspace owner role and the app admin role can manage integrations.
+
+In addition, the TAM creates the initial Lucidworks AI application for your organization.
+
+### Configure a Fusion integration
+
+1. When the workspace is created and the appropriate personnel in your organization have been assigned the workspace owner role, verify designated personnel can sign in to https://platform.lucidworks.com.
+2. Click the Lucidworks AI app where you want to add an integration.
+3. Click **Integrations > Self-hosted Fusion > + Add new integration**.
+4. On the New integration screen in the Name field, enter a unique name for your integration.
+5. In the Tags field, enter optional freeform text to identify the integration.
+6. Click **Save**. To exit the screen without saving changes, click **Cancel**.
+7. In the New integration screen, click **Download** to download the YAML code. You can also copy and paste the information to replace the contents of an existing `account.yaml` file. This file is needed in the next procedure to configure the Lucidworks AI gateway through Helm.
+8. Click **Done** to close the screen.
+
+### Configure Lucidworks AI gateway through Helm
+
+1. Run the following command in Kubernetes to configure the Lucidworks AI gateway through Helm:
+
+   ```yaml
+   helm install <RELEASE-NAME> oci://us-docker.pkg.dev/fusion-beta/fusion-beta-charts/fusion-beta --version 5.11.0-beta1 --namespace <NAMESPACE> --set global.zkReplicaCount=3 --values <VALUES-FILE> --values <INTEGRATION-CONFIG-FILE>
+   ```
+
+   **❗ IMPORTANT**\
+   If Fusion is being installed into a Kubernetes cluster where Fusion is already running in another namespace, you must add `--set seldon-core-operator.crd.create=false` to the Helm command to prevent attempted creation of a duplicate Seldon Custom Resource Definition (CRD).
+
+   | Variable | Definition |
+   | --- | --- |
+   | &lt;RELEASE-NAME> | The freeform text name of the Fusion deployment. If you do not wish to enter a specific name, enter `--GENERATE-NAME`. |
+   | &lt;NAMESPACE> | The name of the Kubernetes namespace where you are installing the Fusion deployment. |
+   | &lt;VALUES-FILE> | The Helm values used in the Fusion deployment. Use one of the following methods to determine the values: * Use the scripts in the [Fusion cloud native](https://github.com/lucidworks/fusion-cloud-native) repository to generate values. * Copy the values from one of your existing environments by completing one of the following: ** If the values file used to configure that environment is readily available, use those values. ** Run `helm -n <NAMESPACE> get values <RELEASE-NAME>` in the existing environment to obtain the values. You must then copy and paste into a new values file. Then complete necessary edits after the `USER-SUPPLIED VALUES:` line to create new values for the deployment. ** To use the default Fusion values, do not use the `--values` argument. |
+   | &lt;INTEGRATION-CONFIG-FILE> | This is the `account.yaml` additional values file that was generated in the Lucidworks Platform Integrations > Self-Hosted Fusion screen, and that you saved in the directory from which you run the helm command.  |

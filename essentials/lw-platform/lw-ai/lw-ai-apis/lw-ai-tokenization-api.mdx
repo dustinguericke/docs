@@ -1,0 +1,142 @@
+---
+subGroup: "ai"
+permalink: "mpgw6g"
+title: 'Tokenization API'
+description: 'Needs description'
+icon: 'text-size'
+subtitle: 'Lucidworks AI Prediction API'
+layout: stoplight
+data: api-machine-learning-platform-tokenization
+private: true
+doctype: reference
+order: 68
+---
+
+The Lucidworks AI Tokenization API returns [Prediction API `embedding` use case](/lw-platform/ai/dyl5lt/embedding-use-cases) tokens before being sent to any [pre-trained embedding model](/lw-platform/ai/3vqfxe/pre-trained-embedding-models) or [custom embedding model](/lw-platform/ai/k1zkfn/custom-embedding-model-training).
+
+This API is used to help debug `embedding` model tokens to ensure the input to the pre-trained or custom embedding model is valid, and within the model’s processing limits.
+
+**📌 NOTE**\
+Before the tokens are passed to the embedding model, it may be formatted, truncated, expanded, or modified in other ways to meet that model’s requirements so the API call is successful.
+
+These preprocessing steps are integral to deliver optimized tokens that generate coherent and relevant responses. By examining the tokenization after preprocessing, you can better understand how your input is being interpreted by the embedding models, which can help you refine your queries for more accurate and useful outputs.
+
+The input parameter keys and values are the same used in the [Prediction API `embedding` use cases](/lw-platform/ai/dyl5lt/embedding-use-cases).
+
+## Prerequisites
+
+* The embedding model name in the `MODEL_ID` field for the request. The path is: `/ai/tokenization/MODEL_ID`. For more information about supported models, see [Embedding use cases](/lw-platform/ai/dyl5lt/embedding-use-cases).
+
+## Common parameters and fields 
+
+### useCaseConfig
+
+### modelConfig
+
+Some parameters of the `/ai/tokenization/MODEL_ID` request are common to all of the `embedding` use cases, including the `modelConfig` parameter. 
+
+#### Vector quantization
+
+The syntax example is:
+
+```json
+"modelConfig": {
+        "vectorQuantizationMethod": "max-scale"
+    }
+```
+
+#### Matryoshka vector dimension reduction
+
+The syntax example is:
+
+```json
+"modelConfig": {
+        "dimReductionSize": 256
+    }
+```
+
+## Examples
+
+### Sample POST request
+
+The following example is a POST tokenization request. Replace the values in the `APPLICATION_ID`, `MODEL_ID`, and `ACCESS_TOKEN` fields with your information.
+
+```json
+curl --request POST \
+--location 'https://{APPLICATION_ID}.applications.lucidworks.com/ai/tokenization/{MODEL_ID}' \
+--header 'charset: utf-8' \
+--header 'Cache-Control: no-cache' \
+--header 'Content-Type: application/json' \
+--header 'Authorization: Bearer ACCESS_TOKEN' \
+--data '{
+    "batch": [
+        {
+            "text": "Mr. and Mrs. Dursley and O'\''Malley, of number four, Privet Drive, were proud to say that they were perfectly normal, thank you very much."
+        }
+    ],
+    "useCaseConfig": {
+        "dataType": "query"
+    },
+    "modelConfig": {
+        "vectorQuantizationMethod": "max-scale"
+    }
+}'
+```
+
+### Sample response
+
+Based on the request, the following example is the response for any of the embedding models:
+
+```json
+{
+    "generatedTokens": [
+        {
+            "tokens": [
+                "[CLS]",
+                "query",
+                ":",
+                "mr",
+                ".",
+                "and",
+                "mrs",
+                ".",
+                "du",
+                "##rs",
+                "##ley",
+                "and",
+                "o",
+                "'",
+                "malley",
+                ",",
+                "of",
+                "number",
+                "four",
+                ",",
+                "pri",
+                "##vet",
+                "drive",
+                ",",
+                "were",
+                "proud",
+                "to",
+                "say",
+                "that",
+                "they",
+                "were",
+                "perfectly",
+                "normal",
+                ",",
+                "thank",
+                "you",
+                "very",
+                "much",
+                ".",
+                "[SEP]"
+            ],
+            "tokensUsed": {
+                "inputTokens": 40
+            }
+        }
+    ]
+}
+```

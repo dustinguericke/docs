@@ -1,0 +1,300 @@
+---
+subGroup: "ai"
+permalink: "dyl5lt"
+title: 'Embedding use cases'
+description: 'Needs description'
+icon: 'text-size'
+subtitle: 'Lucidworks AI Prediction API'
+layout: stoplight
+data: api-machine-learning-platform-predict
+private: true
+doctype: reference
+order: 5
+---
+
+The Embedding use cases of the [LWAI Prediction API](/lw-platform/ai/8bx4m9/prediction-api) include various encoder use cases and the custom model prediction. The use cases are:
+
+* English language model text encoder
+* Multilingual language model text encoder
+* Custom model
+
+## Prerequisites
+
+* The `USE_CASE` and `MODEL_ID` fields for the use case request. The path is: `/ai/prediction/USE_CASE/MODEL_ID`. A list of supported models is returned in the [Lucidworks AI Use Case API](/lw-platform/ai/0stpyb/use-case-api).
+
+## Unique values for the embeddings use cases
+The parameter available in all of the embedding use cases is:
+
+**`"useCaseConfig": "dataType": "string"`** 
+
+This optional parameter enables model-specific handling in the Prediction API to help improve model accuracy. Use the most applicable fields based on available dataTypes and the dataType value that best aligns with the text sent to the Prediction API.
+
+The string values to use for embedding models are:
+
+* `"dataType": "query"` for the query. For query-to-query pairing, best practice is to use `dataType=query` on both API calls.
+* `"dataType": "passage"` for fields searched at query time.
+
+  For example, if questions and answers from a FAQ are indexed, the value for questions is `"dataType": "query"` and the value for the answers is `"dataType": "passage"`. 
+
+The syntax example is:
+
+```json
+"useCaseConfig":
+  {
+    "dataType": "query"
+  }
+```
+
+### Vector quantization
+Quantization is implemented by converting float vectors into integer vectors, allowing for byte vector search using 8-bit integers. 
+Float vectors, while very precise, are often a bit of a burden to compute and store, especially as they grow in dimensionality. 
+One solution to this issue is to convert the vector floats into integers after inference, making byte vectors which are lower consumers of memory space and faster to compute with minimal loss in accuracy or quality.
+
+Byte vectors are available through all of the Lucidworks LWAI hosted embedding models, including custom trained models.
+
+Vector quantization methods are implemented through the `modelConfig` parameter, `vectorQuantizationMethod`. The methods are named `min-max` and `max-scale`.
+
+* The `min-max` method creates tensors of embeddings and converts them to uint8 by normalizing them to the range [0, 255].
+* The `max-scale` method finds the maximum absolute value along each embedding, normalizes the embeddings by scaling them to a range of -127 to 127, and returns the quantized embeddings as an 8-bit integer tensor. 
+
+During testing, it was found that the `max-scale` method has no loss at the ten-thousandths place during evaluation against non-quantized vectors. 
+However, other methods lose precision when evaluated against non-quantized vectors, with `min-max` losing the most precision.
+
+#### Example request
+
+```json
+curl --request POST \
+  --url https://APPLICATION_ID.applications.lucidworks.com/ai/prediction/embedding/{MODEL_ID} \
+  --header 'Content-Type: application/json' \
+  --header 'Authorization: Bearer ACCESS_TOKEN'
+  --data '{
+    "batch": [
+      {
+        "text": "I need to pick up some fresh produce like apples, bananas, and spinach, as well as dairy products including milk, eggs, and cheddar cheese. I'\''ll also need to get some pantry staples such as pasta, rice, and canned tomatoes. Additionally, I should grab a loaf of whole-grain bread, some chicken breasts, ground beef, and a box of cereal for breakfast. Don'\''t forget to add a bottle of olive oil, a jar of peanut butter, and some snacks like granola bars and yogurt. Finally, I need to remember to buy cleaning supplies like dish soap and paper towels, along with a carton of almond milk and a few avocados for the week."
+      }
+    ],
+    "useCaseConfig": {
+      "dataType": "passage"
+    },
+    "modelConfig": {
+      "vectorQuantizationMethod": "max-scale"
+    }
+  }'
+```
+
+The following is an example response:
+
+```json
+{
+    "predictions": [
+        {
+            "tokensUsed": {
+                "inputTokens": 148
+            },
+            "vector": [ -23,-5,23,-15,25,13,27,26,-27,-18,-7,-32,23,8,28,-22,17,16,-42,7,6,0,-14,-13,30,15,-4,-4,-32,-87,-3,-12,19,-11,-1,-11,0,19,-12,12,27,3,11,-25,-15,-21,-16,5,47,-20,10,-1,-6,0,8,22,24,-2,20,26,18,12,-76,67,16,-1,-10,13,7,26,-32,11,18,35,10,-11,13,-14,-7,11,-7,-10,-8,0,-15,-13,-7,-16,27,-11,-11,-14,-3,12,-35,-23,0,-9,-33,106,-19,8,27,-11,5,-37,-9,-11,-11,14,-5,-7,26,-36,25,10,49,1,-7,4,1,15,22,8,3,-41,7,29,2,24,22,-15,-1,-7,11,14,12,-12,24,-8,-23,-31,-2,-83,-1,63,1,36,-20,-4,-5,27,5,-15,5,12,28,6,-6,8,-32,-15,-24,12,3,-41,-13,13,-1,-10,32,7,-22,10,66,-2,-7,21,-4,0,29,-19,-33,13,33,-35,-6,-6,11,8,-2,-4,-23,-14,-31,-12,-19,-2,17,-12,-4,-24,0,11,24,3,-10,-17,53,16,-5,35,42,2,-40,11,29,9,20,28,49,-40,-25,-109,16,12,6,15,-6,9,-21,-2,22,35,-18,-9,19,-11,21,12,-7,-9,13,-16,-8,4,-20,31,-8,83,30,13,-34,12,5,-6,-57,-2,4,0,-30,-23,-24,-19,13,-20,-27,-26,-24,-14,14,-5,2,13,-10,6,-13,-1,-11,-21,0,-20,10,-13,-10,2,-3,13,-3,0,-26,1,-5,-5,2,3,-16,12,-2,11,-6,-9,-31,10,-14,13,16,28,14,20,-8,26,-10,16,5,-16,-9,28,-4,-127,52,11,11,6,-3,12,15,-19,16,31,-2,25,-20,3,14,18,0,1,-33,10,-8,78,1,-5,9,14,9,5,13,33,0,22,-19,7,7,-12,9,2,2,-27,-2,-35,-17,26,-62,-8,-45,8,4,-13,-1,-13,3,17,-1,-16,7,-12,0,11,-14,-13,18,5 ]
+        }
+    ]
+}
+```
+
+### Matryoshka vector dimension reduction
+Vector dimension reduction is the process of making the default vector size of a model smaller. The purpose of this reduction is to lessen the burden of storing large vectors while still achieving the good quality of a larger model. 
+The technique is called [Matryoshka Representation Learning (MRL)](https://sbert.net/examples/training/matryoshka/README.html) and lets you reduce vector size while maintaining good quality.
+
+For information about the pre-trained embedding models that use the Matryoshka Representation Learning technique, see:
+
+* [snowflake-arctic-embed-m-v1.5 model](/lw-platform/ai/3vqfxe/pre-trained-embedding-models#snowflake-arctic-embed-m-v1-5)
+* [snowflake-arctic-embed-l-v2.0 model](/lw-platform/ai/3vqfxe/pre-trained-embedding-models#snowflake-arctic-embed-l-v2-0)
+
+**📌 NOTE**\
+You can reduce vectors for any model using the `modelConfig` `dimReductionSize`, which allows any integer above 0, but less than or equal to the vector dimension of the model. 
+
+#### Example configuration and responses
+
+```json
+"modelConfig": {
+        "dimReductionSize": 256
+    }
+```
+
+If you send a vector dimension larger than the model, a 400 Bad Request error is returned with the following message:
+
+```json
+{
+    "message": "The Matryoshka dimensionality reduction size is greater than the model's vector size. Please provide a valid reduction size."
+}
+```
+
+If the model does not natively support reduced vector size, a warning message is returned:
+
+```json
+{
+    "predictions": [
+        {
+            "tokensUsed": {
+                "inputTokens": 40
+            },
+            "vector": [ -0.039299455, 0.33177176, 0.13610777, -0.004845184, -0.3394944, 0.34524646, 0.3076837, -0.3135057, -0.24342005, 0.067009725, 0.3919114, -0.091709316, 0.027848499, 0.29557163, -0.35828146, -0.01322772],
+            "warning": "Matryoshka dimensionality reduction is not supported for this model. As such, the quality of the reduced embeddings could be significantly affected."
+        }
+    ]
+}
+```
+
+## English language model text encoder
+
+The English language encoder takes in plain English text and returns a 768-dimensional vector encoding of that text. This model powers this semantic search.
+
+The API truncates incoming text to approximately 256 words before the model encodes it and returns a vector. An example usage pattern is to encode all the texts and descriptions in a website and then use this encoder on query text, supporting natural language queries such as "1990s children’s fiction".
+
+Each API request includes one batch containing up to 32 text strings.
+
+### Example request
+
+```json
+curl --request POST \
+  --url https://APPLICATION_ID.applications.lucidworks.com/ai/prediction/embedding/text-encoder \
+  --header 'Authorization: Bearer ACCESS_TOKEN' \
+  --header 'Content-Type: application/json' \
+  --data '{
+  "batch": [
+    {
+      "text": "city streets",
+      "text": "city gateways"
+    }
+  ],
+  "useCaseConfig":
+    {
+      "dataType": "query"
+    }
+}'
+```
+
+The following is an example response:
+
+```json
+{
+	"predictions": [
+		{
+			"vector": [
+				0.0028902769554406404,
+				-0.04393249750137329,
+				0.015302237123250961
+				
+			],
+            "vector": [
+                0.0028902769554406404,
+                -0.04393249750137329,
+                0.015302237123250961
+              
+          ]
+  	    }
+	]
+}
+```
+
+## Multilingual language model text encoder
+
+The multilingual encoder takes in plain text and returns a 384-dimensional vector encoding of that text. The API truncates incoming text to approximately 256 words before the model encodes it and returns a vector.
+
+Each API request includes one batch containing up to 32 text strings.
+
+The text strings in a batch do not have to be in the same language. You can also use words from multiple languages with each `text` value. Because long text strings are truncated to approximately 256 words, the order and length of the value affects the return results.
+
+### Example request
+
+```json
+curl --request POST \
+  --url https://APPLICATION_ID.applications.lucidworks.com/ai/prediction/embedding/multilingual-e5-base \
+  --header 'Authorization: Bearer ACCESS_TOKEN' \
+  --header 'Content-Type: application/json' \
+  --data '{
+  "batch": [
+    {
+      "text": "city streets",
+      "text": "city gateways"
+    }
+  ],
+  "useCaseConfig":
+    {
+      "dataType": "query"
+    }
+}'
+```
+
+The following is an example response:
+
+```json
+{
+	"predictions": [
+		{
+			"vector": [
+				0.0028902769554406404,
+				-0.04393249750137329,
+				0.015302237123250961
+				
+			],
+            "vector": [
+                0.0028902769554406404,
+                -0.04393249750137329,
+                0.015302237123250961
+              
+          ]
+  	    }
+	]
+}
+```
+
+## Custom model prediction example
+
+If a custom model is trained and deployed using the [Lucidworks AI Models API](/lw-platform/ai/e63rmi/models-api), the 'DEPLOYMENT_ID' in the Models API is the same value as the `MODEL_ID` you enter in the custom model to return a prediction.
+
+The following is an example request. 
+
+```json
+curl --request POST \
+  --url https://APPLICATION_ID.applications.lucidworks.com/ai/prediction/embedding/MODEL_ID \
+  --header 'Authorization: Bearer ACCESS_TOKEN' \
+  --header 'Content-Type: application/json' \
+  --data '{
+  "batch": [
+    {
+      "text": "city streets",
+      "text": "city gateways"
+    }
+  ],
+  "useCaseConfig":
+    {
+      "dataType": "query"
+    }
+}'
+```
+
+The following is an example response:
+
+```json
+{
+	"predictions": [
+		{
+			"vector": [
+				0.0028902769554406404,
+				-0.04393249750137329,
+				0.015302237123250961
+				
+			],
+            "vector": [
+                0.0028902769554406404,
+                -0.04393249750137329,
+                0.015302237123250961
+              
+          ]
+  	    }
+	]
+}
+```
+
+## Verify information sent to embedding models 
+
+The Lucidworks AI Tokenization API returns Prediction API `embedding` use case tokens before being sent to any [pre-trained embedding model](/lw-platform/ai/3vqfxe/pre-trained-embedding-models) or [custom embedding model](/lw-platform/ai/k1zkfn/custom-embedding-model-training). You can use this information to help debug and ensure the input to the pre-trained or custom embedding model is valid, and within the model’s processing limits.
+
+For more information, see [Tokenization API](/lw-platform/ai/mpgw6g/tokenization-api).

@@ -1,0 +1,43 @@
+---
+subGroup: "platform"
+permalink: "oqzogo"
+layout: default
+title: 'APIs and Credentials'
+description: 'Needs description'
+icon: 'text-size'
+subtitle: 'Lucidworks AI'
+doctype: concept
+order: 99
+---
+
+The API tab in the integrations section provides information about Lucidworks AI APIs and client credential information.
+
+To view API and client credential information:
+
+1. Sign in to [Lucidworks Platform](https://platform.lucidworks.com).
+2. Click the Lucidworks AI app you want to review, and then click **Integrations > API**.
+
+## APIs
+
+Lucidworks AI provides the following APIs:
+
+* **Authentication API.** This API authenticates a user to perform actions in APIs related to integrations. The Authentication API contains one endpoint, which generates an access token to use in future integrations API requests. For more information, see [Authentication API](/lw-platform/ai/oa96k5/authentication-api).
+* **Lucidworks AI Use Case API.** This API returns a list of each use case and its associated models. The `/usecase` endpoint requires an authentication token with scope `machinelearning.predict`, which is the same scope used in the Prediction API. For more information, see [Lucidworks AI Use Case API](/lw-platform/ai/0stpyb/use-case-api). 
+* **Lucidworks AI Prediction API.** This API is used send synchronous API calls that run predictions from pre-trained or custom embedding models. The prediction endpoints require an authentication token with scope `machinelearning.predict`. For more information, see [Lucidworks AI Prediction API](/lw-platform/ai/8bx4m9/prediction-api).
+* **Lucidworks AI Prompting Preview API.** This API returns Prediction API `passthrough` use case prompts before being sent to any generative AI (GenAI) model. You can use it to help debug `passthrough` use case prompts to ensure the input to the GenAI model is valid and within the model’s processing limits. For more information, see [Lucidworks AI Prompting Preview API](/lw-platform/ai/m0x9s2/prompting-preview-api).
+* **Lucidworks AI Tokenization API.** This API returns Prediction API `embedding` use case tokens before being sent to any pre-trained embedding model or custom embedding model. You can use it to help debug `embedding` model tokens to ensure the input to the pre-trained or custom embedding model is valid and within the model’s processing limits. For more information, see [Lucidworks AI Tokenization API](/lw-platform/ai/mpgw6g/tokenization-api).
+* **Lucidworks AI Async Prediction API.** This API is used to send asynchronous API calls that run predictions on specific models. The async prediction endpoints require an authentication token with scope `machinelearning.predict`. For more information, see [Lucidworks AI Async Prediction API](/lw-platform/ai/55ug0f/async-prediction-api). 
+* **Lucidworks AI Models API.** This API is used to discover available pre-trained and custom models, as well as train and deploy those models. The endpoints require an authentication token with scope `machinelearning.model`. For more information, see [Lucidworks AI Models API](/lw-platform/ai/e63rmi/models-api).
+* **Lucidworks AI Async Chunking API.** This API asynchronously separates large pieces of text into smaller pieces, called chunks. The API then returns the chunks and their associated vectors. The async chunking endpoints require an authentication token with scope `machinelearning.predict`. For more information, see [Lucidworks AI Async Chunking API](/lw-platform/ai/fpqd94/lw-ai-async-chunking-api.asciidoc).
+
+## Credentials
+
+**❗ IMPORTANT**\
+This section contains information exclusive to your organization and you need to ensure only authorized individuals can access this data. 
+
+The values are used to obtain authentication tokens and values sent in API queries:
+
+* **Customer ID.** The unique value that identifies your organization. This value is generated when the workspace is created, and is unique to that workspace. It cannot be reset or changed.
+* **Application ID.** The unique value that identifies a specific application. Each application has a different value.
+* **Client ID.** The unique client value that is part of the information required to obtain OAuth 2.0 authorization. For a self-hosted Fusion client integration, this value is unique to the specific integration.
+* **Client Secret.** The private client value that is part of the information required to obtain OAuth 2.0 authorization. You must keep this value secret. Do not use it in public clients such as client-side applications.

@@ -1,0 +1,28 @@
+---
+subGroup: "ai"
+permalink: "uxpzzw"
+layout: pipeline_stage-server
+title: 'Lucidworks AI Vectorize Query'
+description: 'Needs description'
+icon: 'text-size'
+subtitle: 'Lucidworks AI'
+data: query_stage_schema
+stage-name: beta-vectorize-query-via-lucidworks-ai
+order: 88
+skipBefore: "5.9"
+doctype: reference
+---
+
+Lucidworks AI Vectorize Query is a Fusion query pipeline stage that generates a vector based on the current query string (q parameter).
+
+To use this stage, non-admin Fusion users must be granted the `POST:/LWAI-ACCOUNT-NAME/**` permission in Fusion, which is the Lucidworks AI API Account Name defined in the Lucidworks AI Gateway service when this stage is configured.
+
+More detailed information to configure this stage is in [Configure Lucidworks AI vector search](/how-to/6bl4nm/configure-lucidworks-ai-vector-search).
+
+**❗ IMPORTANT**\
+This query stage must be placed _before_ the **[Solr Query stage](/fusion/{latest-fusion}/265/solr-query-stage)**.
+
+## Configuration
+
+**💡 TIP**\
+When entering configuration values in the UI, use _unescaped_ characters, such as `\t` for the tab character. When entering configuration values in the API, use _escaped_ characters, such as `\\t` for the tab character.

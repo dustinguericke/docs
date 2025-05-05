@@ -1,0 +1,139 @@
+---
+subGroup: "ai"
+permalink: "55ug0f"
+title: 'Async Prediction API'
+description: 'Needs description'
+icon: 'text-size'
+subtitle: 'Lucidworks AI'
+layout: stoplight
+data: api-machine-learning-platform-async-prediction
+private: true
+doctype: reference
+order: 70
+---
+
+The Lucidworks AI Async Prediction API is used to send asynchronous API calls that run predictions on specific models. 
+
+The Lucidworks AI Async Prediction API contains two requests:
+
+* POST request - submits a prediction task for a specific `useCase` and `modelId`. The API responds with the following information:
+  * `predictionId`. A unique UUID for the submitted prediction task that can be used later to retrieve the results. 
+  * `status`. The current state of the prediction task. 
+   
+* GET request - uses the `predictionId` you submit from a previously-submitted POST request and returns the results associated with that previous request.
+
+The LWAI Async Prediction API supports models hosted by Lucidworks and specific third-party models. The [Lucidworks AI Use Case API](/lw-platform/ai/0stpyb/use-case-api) returns a list of all supported models. For more information about supported models, see [Generative AI models](/lw-platform/ai/r7ai90/generative-ai#generative-ai-models).
+
+You can enter the values returned in the Lucidworks AI Use Case API for the `USE_CASE` and `MODEL_ID` fields in the `/async-prediction` use case POST requests. 
+
+The generic path for the Async Prediction API is [`/ai/async-prediction/USE_CASE/MODEL_ID`](#async-prediction-use-case-by-modelid).
+
+## Prerequisites
+
+To use this API, you need: 
+
+* The unique `APPLICATION_ID` for your Lucidworks AI application. For more information, see [credentials to use APIs](/lw-platform/platform/oqzogo/apis-and-credentials#credentials).
+* A bearer token generated with a scope value of `machinelearning.predict`. For more information, see [Authentication API](/lw-platform/ai/oa96k5/authentication-api).
+* Other required fields specified in each individual use case.
+
+## Common POST request parameters and fields 
+
+### modelConfig
+
+Some parameters of the `/ai/async-prediction/USE_CASE/MODEL_ID` POST request are common to all of the generative AI (GenAI) use cases, including the `modelConfig` parameter. If you do not enter values, the following defaults are used.
+
+## Async prediction use case by modelid
+
+The `/ai/async-prediction/USE_CASE/MODEL_ID` request submits a prediction task for a specific `useCase` and `modelId`. Upon submission, a successful response includes a unique `predictionId` and a `status`. The `predictionId` can be used later in the GET request to retrieve the results.
+
+**❗ IMPORTANT**\
+Unique fields and values in the request are described in each [use case](#async-prediction-api-use-cases).
+
+## POST response parameters and fields 
+
+The response to the POST `/ai/async-prediction/USE_CASE/MODEL_ID` requests are as follows:
+
+|====
+
+|Field |Description
+
+|predictionId | The universal unique identifier (UUID) returned in the POST request. This UUID is required in the GET request to retrieve results. For example, fd110486-f168-47c0-a419-1518a4840589.
+
+|status |The current status of the prediction. Values are:
+
+* SUBMITTED - The POST request was successful and the response has returned the `predictionId` and `status`. The `predictionId` is used in the GET request.
+* ERROR - An error was generated when the request was sent.
+* READY - The results associated with the `predictionId` are available and ready to be retrieved.
+
+|====
+
+### Example POST request
+
+```json
+curl --request POST \
+  --url https://APPLICATION_ID.applications.lucidworks.com/ai/async-prediction/USE_CASE/MODEL_ID \
+  --header 'Accept: application/json' \
+  --header 'Content-Type: application/json' \
+  --header 'Authorization: Bearer ACCESS_TOKEN'
+  --data '{
+  "batch": [
+    {
+      "text": "Content for the model to analyze."
+    }
+  ],
+  "useCaseConfig": [
+    {
+      "useSystemPrompt": true
+    }
+  ],
+  "modelConfig": [
+    {
+      "temperature": 0.8,
+      "topP": 1,
+      "presencePenalty": 2,
+      "frequencyPenalty": 1,
+      "maxTokens": 1
+    }
+  ]
+}'
+```
+
+The following is an example of a successful response:
+
+```json
+{
+	"predictionId": "fd110486-f168-47c0-a419-1518a4840589",
+	"status": "SUBMITTED"
+}
+```
+
+The following is an example of an error response:
+
+```json
+{
+	"predictionId": "fd110486-f168-47c0-a419-1518a4840589",
+	"status": "ERROR",
+	"message": "System prompt exceeded the maximum number of allowed input tokens: 81 vs -1091798"
+}
+```
+
+### Example GET request
+
+```bash
+curl --request GET
+--url https://APPLICATION_ID.applications.lucidworks.com/ai/async-prediction/PREDICTION_ID
+--header 'Authorization: Bearer Auth '
+```
+
+The response varies based on the specific use case and the fields included in the request. 
+
+## Async Prediction API use cases
+
+The use cases available in the Lucidworks AI Async Prediction API are detailed in the following topics:
+
+* [Pass-through use case](/lw-platform/ai/xvnhrc/pass-through-use-case)
+* [Retrieval augmented generation (RAG) use case](/lw-platform/ai/6u8kow/retrieval-augmented-generation-rag-use-case)
+* [Standalone query rewriter use case](/lw-platform/ai/87yn4g/standalone-query-rewriter-use-case)
+* [Summarization use case](/lw-platform/ai/jj0bed/summarization-use-case)
+* [Keyword extraction use case](/lw-platform/ai/937meo/keyword-extraction-use-case) 
+* [Named entity recognition (NER) use case](/lw-platform/ai/48b92g/named-entity-recognition-use-case)

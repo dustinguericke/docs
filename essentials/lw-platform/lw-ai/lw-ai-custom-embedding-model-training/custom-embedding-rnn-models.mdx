@@ -1,0 +1,127 @@
+---
+subGroup: "ai"
+permalink: "b18rw1"
+layout: default
+title: 'RNN models'
+description: 'Needs description'
+icon: 'text-size'
+subtitle: 'Lucidworks AI custom embedding model training'
+order: 54
+doctype: reference
+---
+
+Lucidworks AI supports general and ecommerce recurrent neural network (RNN) models. Lucidworks recommends you use RNN models for ecommerce use cases.
+
+The following table contains the default information for the general and ecommerce RNN models. The suggested default information is pertinent to most use cases.
+
+|     |     |
+| --- | --- |
+| General RNN model  | Ecommerce RNN model |
+| The general model is typically used by knowledge management sites that contain information, such as news or documentation. | The ecommerce model is typically used by sites that provide products for purchase. |
+| English pre-trained word tokenization and embeddings. The default text processor is `word_en`. For more information, see [Text processor](#text-processor). | English pre-trained word tokenization and embeddings seed the model. The default text processor is `word_en`. For more information, see [Text processor](#text-processor). Word embeddings are fine-tuned during training: * ecommerce index data and queries may contain misspellings, so fine-tuning the token embeddings layer along with training the RNN layers usually provides significantly better results. * Fine-tuning also improves quality when the query is less like natural language. However, this requires larger amounts of training data to prevent overfitting because the embeddings layer is the largest in the network.<br> If there is not enough ecommerce training data or the model overfits, you can use the general RNN model, or disable fine-tuning for token embeddings. For more information, see [Advanced model parameters](/lw-platform/ai/tnwswb/custom-configuration#advanced-model-parameters).  |
+| One bi-directional gated recurrent unit (GRU) RNN layer with 128 units. Due to the bi-directional nature, the output vector is 256 dimensions. The other available value is long short-term memory (LSTM). You must specify number of units for each RNN layer used. For example, if you have two layers specified ["gru", "gru"] you must specify two values for number of units like [128, 64]. | One bi-directional gated recurrent unit (GRU) RNN layer with 128 units. Due to the bi-directional nature, the output vector is 256 dimensions. The other available value is long short-term memory (LSTM). You must specify number of units for each RNN layer used. For example, if you have two layers specified ["gru", "gru"] you must specify two values for number of units like [128, 64]. |
+| Batch size is set automatically based on the dataset size. | Batch size is set automatically based on the dataset size. |
+| 64 training epochs | 64 training epochs |
+| **8** monitor patience epochs that training passes before it stops if there is no validation metric improvement during the epochs. The best model state based on the monitor validation metric is used as the final model. | **16** monitor patience epochs that training passes before it stops if there is no validation metric improvement during the epochs. The best model state based on the monitor validation metric is used as the final model. |
+| `mrr@3` metric is monitored for the general dataset config. | `ndcg@5` metric is monitored for the ecommerce dataset config, which can use `weight` to provide signal aggregation information. If your ecommerce data does not have a `weight` value set, or if the value is `1.0`, binary NDCG is calculated. |
+
+## Text processor
+
+This determines which type of tokenization and embedding is used as the base for the recurrent neural network (RNN) model. For example, word or byte-pair encoding (BPE). 
+
+The [word text processor](#word-text-processor) defaults to English, and uses word-based tokenization and English pre-trained word embeddings. The maximum word vocabulary result is 100,000.
+
+The [BPE text processors](#bpe-text-processors) use the same tokenization, but different vocabulary sizes:
+
+* `bpe_*_small` embeddings have 10,000 vocabulary tokens
+* `bpe_*_large` embeddings have 100,000 vocabulary tokens
+* `bpe_multi` multilingual embeddings have 320,000 vocabulary tokens
+  
+The options for text processors are:
+* English
+  * `word_en` (default)
+  * `bpe_en_small`
+  * `bpe_en_large`
+  * `all_minilm_l6`
+  * `e5_small_v2`
+  * `e5_base_v2`
+  * `e5_large_v2`
+  * `gte_small`
+  * `gte_base`
+  * `gte_large`
+  * `snowflake_arctic_embed_xs`
+* Multilingual
+  * `bpe_multi`
+  * `multilingual_e5_small`
+  * `multilingual_e5_base`
+  * `multilingual_e5_large` 
+* Bulgarian
+  * `bpe_bg_small`
+  * `bpe_bg_large`
+* German
+  * `bpe_de_small`
+  * `bpe_de_large`
+* Spanish
+  * `bpe_es_small`
+  * `bpe_es_large`
+* French
+  * `bpe_fr_small`
+  * `bpe_fr_large`
+* Italian
+  * `bpe_it_small`
+  * `bpe_it_large`
+* Japanese
+  * `bpe_ja_small`
+  * `bpe_ja_large`
+* Korean
+  * `bpe_ko_small`
+  * `bpe_ko_large`
+* Dutch
+  * `bpe_nl_small`
+  * `bpe_nl_large`
+* Romanian
+  * `bpe_ro_small`
+  * `bpe_ro_large`
+* Chinese
+  * `bpe_zh_small`
+  * `bpe_zh_large`
+* Custom
+  * `word_custom`
+  * `bpe_custom`
+
+### Word text processor
+
+If you use the defaults or explicitly set the `word_en` text processor, the training process uses pre-trained English word embeddings. It builds vocabulary based on your training data and selects word embeddings that correspond to it. 
+
+Preprocessing completes the following changes:
+
+* Text is set to all lowercase characters. 
+* Numbers are split into single digits. For example, `"12345"` is set to `["1", "2", "3", "4", "5"]`. 
+* Corrects as many misspelled words as possible.
+* Identifies words that are identified as Out-Of-Vocabulary (OOV) and matches to as many known words as possible. The resulting vocabulary is restricted to a maximum of 100,000 words. 
+
+### BPE text processors
+
+To use pre-trained byte pair encoding (BPE) tokenization and embeddings, set the text processor to one of the `bpe_*` values based on the language you want to train.
+
+The BPE versions use the same tokenization, but different vocabulary sizes:
+
+* `bpe_*_small` embeddings have 10,000 vocabulary tokens
+* `bpe_*_large` embeddings have 100,000 vocabulary tokens
+* `bpe_multi` multilingual embeddings have 320,000 vocabulary tokens
+
+**❗ IMPORTANT**\
+Pre-trained BPE tokenization replaces all numbers with a zero (`0`) token. These pre-trained models cannot be changed. If your data contains semantically-meaningful numbers, consider using custom trained BPE embeddings. For more information, see [custom text processors](#custom-text-processors).
+
+### Custom text processors
+
+If your content includes unusual, very domain-specific vocabulary or you need to train a model for a non-supported language, you can train custom word or BPE embeddings.
+
+This training is language-agnostic, but Lucidworks recommends you use custom BPE training for non-Latin languages or in multilingual scenarios.
+
+To train custom token embeddings, set `textProcessor` to one of the following:
+
+* `word_custom` trains word embeddings with up to 100,000 vocabulary size
+* `bpe_custom` trains BPE embeddings with up to 10,000 vocabulary size
+
+  The `bpe_custom` text processor also learns a custom tokenization function over your data. The value of 10,000 is sufficient for most use cases.

@@ -1,0 +1,4863 @@
+{
+  "openapi": "3.0.1",
+  "x-stoplight": {
+    "id": "037a260227aca"
+  },
+  "info": {
+    "title": "Fusion Templating API",
+    "description": "This API lets you perform create, read, update, and delete (CRUD) operations on Fusion application published and unpublished templates and zones.",
+    "termsOfService": "https://lucidworks.com/legal/developer-license-agreement/",
+    "contact": {
+      "name": "Lucidworks",
+      "url": "https://lucidworks.com",
+      "email": "support@lucidworks.com"
+    },
+    "license": {
+      "name": "License of API",
+      "url": "https://lucidworks.com/legal/developer-license-agreement/"
+    },
+    "version": "5.12.0"
+  },
+  "servers": [
+    {
+      "url": "https://{FUSION_HOST.com}/api/templating",
+      "description": "Fusion",
+      "variables": {
+        "FUSION_HOST.com": {
+          "default": ""
+        }
+      }
+    }
+  ],
+  "tags": [
+    {
+      "name": "page-metadata-controller",
+      "description": "Endpoints with this tag modify page metadata."
+    },
+    {
+      "name": "render-controller",
+      "description": "Endpoints with this tag use the GET and POST operations to retrieve, render, create, read, update, and delete Fusion application templates that are published or in staging (unpublished)."
+    },
+    {
+      "name": "template-settings-controller",
+      "description": "Endpoints with this tag use the GET, POST, PUT, and DELETE operations to create, read, update, and delete configuration information for the Fusion Templating service."
+    },
+    {
+      "name": "templates-controller",
+      "description": "Endpoints with this tag use the GET, POST, PUT, and DELETE operations to create, read, update, and delete Fusion application template information."
+    },
+    {
+      "name": "trigger-controller",
+      "description": "Endpoints with this tag use the GET and POST operations to retrieve, create, read, and update the Fusion application templates that are published or in staging (unpublished) without rendering."
+    },
+    {
+      "name": "zones-controller",
+      "description": "Endpoints with this tag use the GET, POST, PUT, and DELETE operations to retrieve, create, read, update, and delete zone information (Fusion query profiles)."
+    }
+  ],
+  "paths": {
+    "/render/{app}": {
+      "get": {
+        "tags": [
+          "render-controller"
+        ],
+        "summary": "Get template information using your-app-name",
+        "description": "Retrieve template information for the specified Fusion application. Query parameters let you specify the type of template and if it is published or unpublished (staging).",
+        "operationId": "get-render-by-applicationName",
+        "parameters": [
+          {
+            "name": "app",
+            "in": "path",
+            "description": "Fusion application name that contains the templates.",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "params",
+            "in": "query",
+            "description": "Query parameters",
+            "required": true,
+            "schema": {}
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/renderResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {}
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {}
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {}
+          }
+        },
+        "x-stoplight": {
+          "id": "qr1xdfgaeh2pv"
+        },
+        "requestBody": {
+          "description": "",
+          "content": {}
+        },
+        "x-codegen-request-body-name": "getRenderApplicationNameRequest"
+      },
+      "post": {
+        "tags": [
+          "render-controller"
+        ],
+        "summary": "Post template information using your-app-name",
+        "description": "Add template information for the specified Fusion application.",
+        "operationId": "post-render-by-applicationName",
+        "parameters": [
+          {
+            "name": "app",
+            "in": "path",
+            "description": "Fusion application name that contains the templates.",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/x-www-form-urlencoded": {
+              "schema": {
+                "$ref": "#/components/schemas/postRenderRequest",
+                "type": "object"
+              }
+            }
+          },
+          "description": "Submit updates, create, or delete template information for the specified Fusion application."
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/renderResponse"
+                }
+              }
+            }
+          },
+          "201": {
+            "description": "Created",
+            "content": {}
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {}
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {}
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {}
+          }
+        },
+        "x-stoplight": {
+          "id": "2cdk2pk3szub5"
+        },
+        "x-codegen-request-body-name": "postRenderApplicationNameRequest"
+      },
+      "parameters": [
+        {
+          "schema": {
+            "type": "boolean",
+            "default": false
+          },
+          "in": "query",
+          "name": "showInactive",
+          "description": "The legacy parameter that is the same as the staging parameter. This field indicates if the request is set to retrieve published or unpublished (staging) templates. The default of `false` retrieves published templates. If set to `true`, the request retrieves unpublished (staging) templates.",
+          "required": true
+        },
+        {
+          "schema": {
+            "type": "boolean",
+            "default": false
+          },
+          "in": "query",
+          "name": "staging",
+          "description": "This field indicates if the request is set to retrieve published or unpublished (staging) templates. The default of `false` retrieves published templates. If set to `true`, the request retrieves unpublished (staging) templates.",
+          "required": true
+        },
+        {
+          "schema": {
+            "type": "string"
+          },
+          "name": "app",
+          "in": "path",
+          "required": true,
+          "description": "Fusion application name that contains the templates."
+        }
+      ]
+    },
+    "/renderDSL/{app}": {
+      "post": {
+        "tags": [
+          "render-controller"
+        ],
+        "summary": "Post DSL template information using your-app-name",
+        "description": "Add DSL template information for the specified Fusion application. The DSL request and other request parameters are sent to the query profile from the zone associated with the template.",
+        "operationId": "post-renderDsl-by-applicationName",
+        "parameters": [
+          {
+            "name": "requestParams",
+            "in": "query",
+            "description": "Additional request parameters, will be passed through to the query profile when rendering a zone. If there is a 'tags' parameter it will be merged with any tags configured in the zones.",
+            "schema": {},
+            "required": true
+          },
+          {
+            "name": "staging",
+            "in": "query",
+            "description": "This field indicates if the request is set to retrieve published or unpublished (staging) templates. The default of `false` retrieves published templates. If set to `true`, the request retrieves unpublished (staging) templates.",
+            "schema": {
+              "type": "boolean",
+              "default": false
+            }
+          },
+          {
+            "name": "templateTypes",
+            "in": "query",
+            "description": "Comma-separated list of template types, indicating which possible types of templates to trigger (e.g. landing, item-detail...)",
+            "style": "form",
+            "explode": true,
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          }
+        ],
+        "requestBody": {
+          "description": "DSL request, used to determine navigation state and will be passed through to the indicated query profiles when rendering each zone.",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/DslRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/renderResponse"
+                }
+              }
+            }
+          },
+          "201": {
+            "description": "Created",
+            "content": {}
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {}
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {}
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {}
+          }
+        },
+        "x-codegen-request-body-name": "postRenderDslApplicationNameRequest",
+        "x-stoplight": {
+          "id": "ilfbfxbyvd2my"
+        }
+      },
+      "parameters": [
+        {
+          "schema": {
+            "type": "string"
+          },
+          "name": "app",
+          "in": "path",
+          "required": true,
+          "description": "Fusion application name that contains the templates."
+        }
+      ]
+    },
+    "/renderId/{templateId}": {
+      "get": {
+        "tags": [
+          "render-controller"
+        ],
+        "summary": "Get template information using specific templateId",
+        "operationId": "get-renderId-by-templateId",
+        "parameters": [
+          {
+            "name": "params",
+            "in": "query",
+            "description": "Query parameters, will be passed through to the query profiles when rendering each zone.",
+            "required": true,
+            "schema": {}
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/renderResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {}
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {}
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {}
+          }
+        },
+        "x-stoplight": {
+          "id": "4l00007eyd18t"
+        },
+        "description": "Retrieve template information for the specified `templateId`. Query parameters let you specify the type of template and if it is published or unpublished (staging).",
+        "x-codegen-request-body-name": "getRenderIdTemplateIdRequest"
+      },
+      "post": {
+        "tags": [
+          "render-controller"
+        ],
+        "summary": "Post Fusion template updates using specific templateId",
+        "operationId": "post-renderId-by-templateId",
+        "requestBody": {
+          "content": {
+            "application/x-www-form-urlencoded": {
+              "schema": {
+                "$ref": "#/components/schemas/postRenderIdRequest",
+                "type": "object"
+              }
+            }
+          },
+          "required": true,
+          "description": "Submit updates, create, or delete template information for the specified template ID."
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/renderResponse"
+                }
+              }
+            }
+          },
+          "201": {
+            "description": "Created",
+            "content": {}
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {}
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {}
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {}
+          }
+        },
+        "x-codegen-request-body-name": "postRenderIdTemplateIdRequest",
+        "x-stoplight": {
+          "id": "drl05g42qfrlq"
+        },
+        "description": "Add template information for the specified template ID."
+      },
+      "parameters": [
+        {
+          "schema": {
+            "type": "string",
+            "format": "uuid",
+            "example": "441eb3be-7de6-470a-8141-e416a15c7db1"
+          },
+          "name": "templateId",
+          "in": "path",
+          "required": true,
+          "description": "The universal unique identifier (UUID) of the template."
+        },
+        {
+          "schema": {
+            "type": "boolean",
+            "default": false
+          },
+          "in": "query",
+          "name": "showInactive",
+          "required": true,
+          "description": "The legacy parameter that is the same as the staging parameter. This field indicates if the request is set to retrieve published or unpublished (staging) templates. The default of `false` retrieves published templates. If set to `true`, the request retrieves unpublished (staging) templates."
+        },
+        {
+          "schema": {
+            "type": "boolean",
+            "default": false
+          },
+          "in": "query",
+          "name": "staging",
+          "description": "This field indicates if the request is set to retrieve published or unpublished (staging) templates. The default of `false` retrieves published templates. If set to `true`, the request retrieves unpublished (staging) templates.",
+          "required": true
+        }
+      ]
+    },
+    "/renderIdDSL/{templateId}": {
+      "post": {
+        "tags": [
+          "render-controller"
+        ],
+        "summary": "Get the template with the specified id, passing the provided DSL request to each query profile invoked during rendering.",
+        "operationId": "post-renderIdDsl-by-templateId",
+        "parameters": [
+          {
+            "name": "params",
+            "in": "query",
+            "description": "Query parameters",
+            "required": true,
+            "schema": {}
+          },
+          {
+            "name": "templateId",
+            "in": "path",
+            "description": "Template ID",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "description": "DSL request, will be passed through to the indicated query profiles when rendering each zone.",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/DslRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/renderResponse"
+                }
+              }
+            }
+          },
+          "201": {
+            "description": "Created",
+            "content": {}
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {}
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {}
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {}
+          }
+        },
+        "x-codegen-request-body-name": "postRenderIdDslTemplateIdRequest",
+        "description": "Retrieve and render the template with the specified id, passing the provided DSL request to each query profile invoked during rendering.",
+        "x-stoplight": {
+          "id": "642d9c1zd0f1k"
+        }
+      }
+    },
+    "/settings": {
+      "get": {
+        "tags": [
+          "template-settings-controller"
+        ],
+        "summary": "Get templates with optional (hierarchical) fields",
+        "operationId": "get-settings-templates-optional-fields",
+        "parameters": [
+          {
+            "name": "allRequestParams",
+            "in": "query",
+            "description": "allRequestParams",
+            "required": true,
+            "schema": {}
+          },
+          {
+            "name": "context",
+            "in": "query",
+            "description": "The context parameter retrieves templates for the specified application. The parameter format is `app:your-app-name`. Only the first application listed in the context is displayed even if a comma-delimited list is entered in the parameter. ",
+            "schema": {
+              "type": "string",
+              "example": "app:your-app-name"
+            }
+          },
+          {
+            "name": "hideStaging",
+            "in": "query",
+            "description": "This field indicates if the request is set to retrieve published or unpublished (staging) templates. The default of `false` retrieves published templates. If set to `true`, the request retrieves unpublished (staging) templates.",
+            "schema": {
+              "type": "boolean",
+              "default": false
+            }
+          },
+          {
+            "name": "showDirtyOnly",
+            "in": "query",
+            "description": "This field indicates if the request is set to retrieve published or unpublished (staging) templates. The default of `false` retrieves published templates. If set to `true`, the request retrieves unpublished (staging) templates.",
+            "schema": {
+              "type": "boolean",
+              "default": false
+            }
+          },
+          {
+            "name": "showPublished",
+            "in": "query",
+            "description": "This field indicates if the request is set to retrieve published or unpublished (staging) templates. If set to `true`, only published templates are retrieved. If set to `false`, the request retrieves unpublished (staging) templates.",
+            "schema": {
+              "type": "boolean"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/templateSettingsRequest"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {}
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {}
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {}
+          }
+        },
+        "description": "Retrieve templates with optional (hierarchical) fields to filter results. \n\nEach template can have a staging (unpublished) and a published version. A staging version with unpublished changes is considered to be dirty.",
+        "x-codegen-request-body-name": "getSettingsRequest",
+        "x-stoplight": {
+          "id": "u2pmt8erfd1sf"
+        }
+      },
+      "post": {
+        "tags": [
+          "template-settings-controller"
+        ],
+        "summary": "Post optional (hierarchical) fields to specified your-app-name",
+        "operationId": "post-settings-application-optional-fields",
+        "parameters": [
+          {
+            "name": "context",
+            "in": "query",
+            "description": "The context parameter retrieves templates for the specified application. The parameter format is `app:your-app-name`. Only the first application listed in the context is displayed even if a comma-delimited list is entered in the parameter. ",
+            "schema": {
+              "type": "string",
+              "example": "app:your-app-name"
+            }
+          }
+        ],
+        "requestBody": {
+          "description": "A new entity serialized to JSON",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/templateSettingsRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/templateSettingsResponse"
+                }
+              }
+            }
+          },
+          "201": {
+            "description": "Created",
+            "content": {}
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {}
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {}
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {}
+          }
+        },
+        "x-codegen-request-body-name": "postSettingsRequest",
+        "description": "Add optional (hierarchical) fields for the specified application using `your-app-name`.",
+        "x-stoplight": {
+          "id": "5pop0stzc93ay"
+        }
+      }
+    },
+    "/settings/_import": {
+      "post": {
+        "tags": [
+          "template-settings-controller"
+        ],
+        "summary": "Post import template settings from existing application",
+        "operationId": "post-settings-import",
+        "parameters": [
+          {
+            "name": "context",
+            "in": "query",
+            "description": "The context parameter retrieves templates for the specified application. The parameter format is `app:your-app-name`. Only the first application listed in the context is displayed even if a comma-delimited list is entered in the parameter.",
+            "schema": {
+              "type": "string",
+              "example": "app:your-app-name"
+            }
+          }
+        ],
+        "requestBody": {
+          "description": "Internal use only. Import templates from an existing Fusion application. Use this only for imports and upgrades.",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/templateSettingsRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/templateSettingsResponse"
+                }
+              }
+            }
+          },
+          "201": {
+            "description": "Created",
+            "content": {}
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {}
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {}
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {}
+          }
+        },
+        "x-codegen-request-body-name": "postSettingsImportRequest",
+        "x-internal": true,
+        "deprecated": false,
+        "description": "Internal use only. Import template setting from an existing application.",
+        "x-stoplight": {
+          "id": "rt5lviywo5jdl"
+        }
+      }
+    },
+    "/settings/_schema": {
+      "get": {
+        "tags": [
+          "template-settings-controller"
+        ],
+        "summary": "Get settings schema",
+        "operationId": "get-settings-schema",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/settingsSchemaResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {}
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {}
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {}
+          }
+        },
+        "x-codegen-request-body-name": "getSettingsSchemaRequest",
+        "description": "Retrieve the configuration schema for settings.",
+        "x-stoplight": {
+          "id": "ruh9q50dy8cgb"
+        }
+      }
+    },
+    "/settings/status": {
+      "get": {
+        "tags": [
+          "template-settings-controller"
+        ],
+        "summary": "Get endpoint status",
+        "operationId": "get-settings-status",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/settingsStatusResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {}
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {}
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {}
+          }
+        },
+        "x-codegen-request-body-name": "getSettingsStatusRequest",
+        "description": "Retrieve the endpoint status for settings.",
+        "x-stoplight": {
+          "id": "j7nw31z9hsy0l"
+        }
+      }
+    },
+    "/settings/{id}": {
+      "get": {
+        "tags": [
+          "template-settings-controller"
+        ],
+        "summary": "Get settings using appId",
+        "operationId": "get-settings-by-applicationId",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/templateSettingsResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {}
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {}
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {}
+          }
+        },
+        "x-codegen-request-body-name": "getSettingsId",
+        "x-stoplight": {
+          "id": "n2k5hkkdeg12b"
+        },
+        "description": "Retrieve the settings for a specific application using `appId`. Query parameters let you specify `your-app-name`."
+      },
+      "put": {
+        "tags": [
+          "template-settings-controller"
+        ],
+        "summary": "Put settings using appId",
+        "operationId": "put-settings-by-applicationId",
+        "parameters": [],
+        "requestBody": {
+          "description": "",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/templateSettingsRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/templateSettingsResponse"
+                }
+              }
+            }
+          },
+          "201": {
+            "description": "Created",
+            "content": {}
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {}
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {}
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {}
+          }
+        },
+        "x-codegen-request-body-name": "putSettingsId",
+        "x-stoplight": {
+          "id": "a9fbqdaq7vgmh"
+        },
+        "description": "Submit updates to the settings of an application using a specific `appId`."
+      },
+      "delete": {
+        "tags": [
+          "template-settings-controller"
+        ],
+        "summary": "Delete settings using appId",
+        "operationId": "delete-settings-by-applicationId",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/templateSettingsResponse"
+                }
+              }
+            }
+          },
+          "204": {
+            "description": "No Content",
+            "content": {}
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {}
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {}
+          }
+        },
+        "x-codegen-request-body-name": "deleteSettingsId",
+        "x-stoplight": {
+          "id": "1cgj6ggv1rzrg"
+        },
+        "description": "Delete the settings for a specific application using `appId`."
+      },
+      "parameters": [
+        {
+          "schema": {
+            "type": "string",
+            "example": "your-app-name:version"
+          },
+          "name": "id",
+          "in": "path",
+          "required": true,
+          "description": "The version of the application that is sending the results. Because the application configuration can be changed, the version used for the query is helpful information if troubleshooting or investigation is necessary. The format is: \"your-app-name:version\"."
+        },
+        {
+          "schema": {
+            "type": "string",
+            "example": "your-app-name"
+          },
+          "in": "query",
+          "name": "context",
+          "description": "The context parameter retrieves templates for the specified application. The parameter format is `app:your-app-name`. Only the first application listed in the context is displayed even if a comma-delimited list is entered in the parameter."
+        }
+      ]
+    },
+    "/settings/{id}/_force": {
+      "delete": {
+        "tags": [
+          "template-settings-controller"
+        ],
+        "summary": "Force delete specific application immediately using appId",
+        "operationId": "force-delete-settings-by-applicationId",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/templateSettingsResponse"
+                }
+              }
+            }
+          },
+          "204": {
+            "description": "No Content",
+            "content": {}
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {}
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {}
+          }
+        },
+        "x-codegen-request-body-name": "deleteSettingsIdForce",
+        "x-stoplight": {
+          "id": "r5svm3t2wxmxh"
+        },
+        "description": "Deletes the specified application version (using `appId`) immediately, without marking it for deletion, and without any other side effects. This operation does not perform any additional logic such as removing a deleted zone from templates that contained it, or deleting orphaned zones.\n\nCAUTION: Use this only for application deletion. Unexpected errors and behaviors may occur if used in other situations."
+      },
+      "parameters": [
+        {
+          "schema": {
+            "type": "string"
+          },
+          "name": "id",
+          "in": "path",
+          "required": true,
+          "description": "The version of the application that is sending the results. Because the application configuration can be changed, the version used for the query is helpful information if troubleshooting or investigation is necessary. The format is: \"your-app-name:version\"."
+        },
+        {
+          "schema": {
+            "type": "string",
+            "example": "app:your-app-name"
+          },
+          "in": "query",
+          "name": "context",
+          "description": "The context parameter retrieves templates for the specified application. The parameter format is `app:your-app-name`. Only the first application listed in the context is displayed even if a comma-delimited list is entered in the parameter."
+        }
+      ]
+    },
+    "/templates": {
+      "get": {
+        "tags": [
+          "templates-controller"
+        ],
+        "summary": "Get template information",
+        "operationId": "get-template-information",
+        "parameters": [
+          {
+            "name": "context",
+            "in": "query",
+            "description": "The context parameter retrieves templates for the specified application. The parameter format is `app:your-app-name`. Only the first application listed in the context is displayed even if a comma-delimited list is entered in the parameter. ",
+            "schema": {
+              "type": "string",
+              "example": "your-app-name"
+            }
+          },
+          {
+            "name": "hideStaging",
+            "in": "query",
+            "description": "This field indicates if the request is set to retrieve published or unpublished (staging) templates. The default of `false` retrieves published templates. If set to `true`, the request retrieves unpublished (staging) templates.",
+            "schema": {
+              "type": "boolean",
+              "default": false
+            }
+          },
+          {
+            "name": "showDirtyOnly",
+            "in": "query",
+            "description": "This field indicates if the request is set to retrieve published or unpublished (staging) templates. The default of `false` retrieves published templates. If set to `true`, the request retrieves unpublished (staging) templates.",
+            "schema": {
+              "type": "boolean",
+              "default": false
+            }
+          },
+          {
+            "name": "showPublished",
+            "in": "query",
+            "description": "This field indicates if the request is set to retrieve published or unpublished (staging) templates. If set to `true`, only published templates are retrieved. If set to `false`, the request retrieves unpublished (staging) templates.",
+            "schema": {
+              "type": "boolean",
+              "default": false
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/templateResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {}
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {}
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {}
+          }
+        },
+        "x-codegen-request-body-name": "getTemplateInformation",
+        "description": "Retrieve template information. Query parameters let you specify the type of template and if it is published or unpublished (staging).",
+        "x-stoplight": {
+          "id": "gogksvpa18b29"
+        }
+      },
+      "post": {
+        "tags": [
+          "templates-controller"
+        ],
+        "summary": "Post template",
+        "operationId": "post-template",
+        "parameters": [
+          {
+            "name": "context",
+            "in": "query",
+            "description": "The context parameter retrieves templates for the specified application. The parameter format is `app:your-app-name`. Only the first application listed in the context is displayed even if a comma-delimited list is entered in the parameter. ",
+            "schema": {
+              "type": "string",
+              "example": "app:your-app-name"
+            }
+          }
+        ],
+        "requestBody": {
+          "description": "",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/templateRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/templateResponse"
+                }
+              }
+            }
+          },
+          "201": {
+            "description": "Created",
+            "content": {}
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {}
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {}
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {}
+          }
+        },
+        "x-codegen-request-body-name": "postTemplate",
+        "description": "Add a new template for the specified Fusion application.",
+        "x-stoplight": {
+          "id": "d4pwkh66m3b4k"
+        }
+      }
+    },
+    "/templates/_import": {
+      "post": {
+        "tags": [
+          "templates-controller"
+        ],
+        "summary": "Post import templates",
+        "operationId": "post-templates-import",
+        "parameters": [
+          {
+            "name": "context",
+            "in": "query",
+            "description": "The context parameter retrieves templates for the specified application. The parameter format is `app:your-app-name`. Only the first application listed in the context is displayed even if a comma-delimited list is entered in the parameter. ",
+            "schema": {
+              "type": "string",
+              "example": "app:your-app-name"
+            }
+          }
+        ],
+        "requestBody": {
+          "description": "",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/templateRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/templateResponse"
+                }
+              }
+            }
+          },
+          "201": {
+            "description": "Created",
+            "content": {}
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {}
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {}
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {}
+          }
+        },
+        "x-codegen-request-body-name": "postTemplatesImportRequest",
+        "description": "Internal use only. Import templates from an existing Fusion application. Use this only for imports and upgrades.",
+        "x-internal": true,
+        "x-stoplight": {
+          "id": "pjbpkyzmur6v8"
+        }
+      }
+    },
+    "/templates/_schema": {
+      "get": {
+        "tags": [
+          "template-settings-controller"
+        ],
+        "summary": "Get templates schema",
+        "operationId": "get-templates-schema",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/templatesSchemaResponse"
+                },
+                "examples": {}
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {}
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {}
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {}
+          }
+        },
+        "security": [],
+        "x-codegen-request-body-name": "postTemplatesImportRequest",
+        "description": "Retrieve the detailed structure of the contents of a template. ",
+        "x-stoplight": {
+          "id": "pmu47m8f372lf"
+        }
+      }
+    },
+    "/templates/publish/{id}": {
+      "post": {
+        "tags": [
+          "templates-controller"
+        ],
+        "summary": "Publish specified template using templateId",
+        "operationId": "post-publish-template-by-templateId",
+        "parameters": [
+          {
+            "name": "context",
+            "in": "query",
+            "description": "The context parameter retrieves templates for the specified application. The parameter format is `app:your-app-name`. Only the first application listed in the context is displayed even if a comma-delimited list is entered in the parameter.",
+            "schema": {
+              "type": "string",
+              "example": "app:your-app-name"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/templateResponse"
+                }
+              }
+            }
+          },
+          "204": {
+            "description": "No Content. This response is returned if the template was marked for deletion because the request deletes the templates that are marked for deletion."
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {}
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {}
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {}
+          }
+        },
+        "description": "Publish the current staging version of the template and all of its zones (even if the template is not dirty). The template then displays in the published view of the templating service. \n\nIf the template is marked for deletion, this request deletes the template and any corresponding orphaned zones. ",
+        "x-stoplight": {
+          "id": "ab8r3c4j2q1pm"
+        },
+        "x-codegen-request-body-name": "postTemplatesPublish"
+      },
+      "parameters": [
+        {
+          "schema": {
+            "type": "string"
+          },
+          "name": "id",
+          "in": "path",
+          "required": true,
+          "description": "The universal unique identifier (UUID) of the template."
+        }
+      ]
+    },
+    "/templates/status": {
+      "get": {
+        "tags": [
+          "templates-controller"
+        ],
+        "summary": "Get status of the templates",
+        "operationId": "get-templates-status",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/templatesStatusResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {}
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {}
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {}
+          }
+        },
+        "x-codegen-request-body-name": "getTemplatesStatus",
+        "description": "Retrieve current status of the templates.",
+        "x-stoplight": {
+          "id": "q6f77550msm9h"
+        }
+      }
+    },
+    "/templates/urlContext/{app}": {
+      "get": {
+        "tags": [
+          "templates-controller"
+        ],
+        "summary": "Get used urlContext for specified application using your-app-name",
+        "operationId": "get-urlContext-by-applicationName",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "uniqueItems": true,
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {}
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {}
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {}
+          }
+        },
+        "x-codegen-request-body-name": "getTemplatesUrlContextApplicationName",
+        "description": "Get a list of `urlContext` used in the templates for the specified Fusion application using `your-app-name`.",
+        "x-stoplight": {
+          "id": "0sudn2epdqli6"
+        }
+      },
+      "parameters": [
+        {
+          "schema": {
+            "type": "string"
+          },
+          "name": "app",
+          "in": "path",
+          "required": true,
+          "description": "Fusion application name that contains the templates."
+        }
+      ]
+    },
+    "/templates/{id}": {
+      "get": {
+        "tags": [
+          "templates-controller"
+        ],
+        "summary": "Get template information by templateId",
+        "operationId": "get-templates-by-templateId",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/templateResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {}
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {}
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {}
+          }
+        },
+        "x-codegen-request-body-name": "getTemplatesId",
+        "x-stoplight": {
+          "id": "0j1llxtohzycy"
+        },
+        "description": "Get template information for a specific template using `templateId`."
+      },
+      "put": {
+        "tags": [
+          "templates-controller"
+        ],
+        "summary": "Put template information using specific templateId",
+        "operationId": "put-templates-by-templateId",
+        "parameters": [],
+        "requestBody": {
+          "description": "",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/templateRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/templateResponse"
+                }
+              }
+            }
+          },
+          "201": {
+            "description": "Created",
+            "content": {}
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {}
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {}
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {}
+          }
+        },
+        "x-codegen-request-body-name": "putTemplatesId",
+        "x-stoplight": {
+          "id": "4ruhyj3vv8zm4"
+        },
+        "description": "Submit updates to a specific template using `templateId` . \n\n* Successful changes make the template dirty, and the changes can be published using the `/templates/publish/{templateId}` endpoint. \n\n* If any zones:\n\n    * Are removed from the template and no longer exist in any template, they will be considered as orphans and deleted. \n\n    * Referenced in the updated template do not exist, the `PUT` operation fails."
+      },
+      "delete": {
+        "tags": [
+          "templates-controller"
+        ],
+        "summary": "Mark the specified template for deletion using templateId",
+        "operationId": "delete-templates-by-templateId",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/templateResponse"
+                }
+              }
+            }
+          },
+          "204": {
+            "description": "No Content",
+            "content": {}
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {}
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {}
+          }
+        },
+        "x-codegen-request-body-name": "deleteTemplatesId",
+        "x-stoplight": {
+          "id": "khk4r4y98ycq2"
+        },
+        "description": "Mark the template for deletion. The template will actually be deleted when the `/templates/publish/{templateId}` endpoint request is successfully submitted. The template can be marked for deletion and deleted even if the template was never published prior to deletion."
+      },
+      "parameters": [
+        {
+          "schema": {
+            "type": "string"
+          },
+          "name": "id",
+          "in": "path",
+          "required": true,
+          "description": "The universal unique identifier (UUID) of the template."
+        },
+        {
+          "schema": {
+            "type": "string",
+            "example": "app:your-app-name"
+          },
+          "in": "query",
+          "name": "context",
+          "description": "The context parameter retrieves templates for the specified application. The parameter format is `app:your-app-name`. Only the first application listed in the context is displayed even if a comma-delimited list is entered in the parameter. "
+        }
+      ]
+    },
+    "/templates/{id}/_force": {
+      "delete": {
+        "tags": [
+          "templates-controller"
+        ],
+        "summary": "Force delete the specific template using templateId",
+        "operationId": "force-delete-template-by-templateId",
+        "parameters": [],
+        "responses": {
+          "204": {
+            "description": "No Content - This message is returned when the operation is successful, but there is no content to return.",
+            "content": {}
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {}
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {}
+          }
+        },
+        "x-codegen-request-body-name": "deleteTemplatesIdForce",
+        "description": "Deletes the specified template (using `templateId`) immediately, without marking it for deletion, and without any other side effects. This operation does not perform any additional logic such as removing a deleted zone from templates that contained it, or deleting orphaned zones. \n\nCAUTION: Use this only for template deletion. Unexpected errors and behaviors may occur if used in other situations.",
+        "x-stoplight": {
+          "id": "xkvvmha15c1ao"
+        }
+      },
+      "parameters": [
+        {
+          "schema": {
+            "type": "string"
+          },
+          "name": "id",
+          "in": "path",
+          "required": true,
+          "description": "The universal unique identifier (UUID) of the template."
+        },
+        {
+          "schema": {
+            "type": "string",
+            "example": "app:your-app-name"
+          },
+          "in": "query",
+          "name": "context",
+          "description": "The context parameter retrieves templates for the specified application. The parameter format is `app:your-app-name`. Only the first application listed in the context is displayed even if a comma-delimited list is entered in the parameter. "
+        }
+      ]
+    },
+    "/templates/{id}/metadata": {
+      "post": {
+        "tags": [
+          "page-metadata-controller"
+        ],
+        "summary": "Post zone page metadata using templateId",
+        "operationId": "post-template-zone-metadata",
+        "parameters": [],
+        "requestBody": {
+          "description": "",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PageMetadata"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/templateResponse"
+                }
+              }
+            }
+          },
+          "201": {
+            "description": "Created",
+            "content": {}
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {}
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {}
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {}
+          }
+        },
+        "x-codegen-request-body-name": "postTemplatesIdMetadata",
+        "x-stoplight": {
+          "id": "lf9mwz1k5qpw0"
+        },
+        "description": "Submit updates to zone page metadata for a specific template using `templateId`. Successful changes make the template dirty, and the changes can be published using the `/templates/publish/{templateId}` endpoint."
+      },
+      "parameters": [
+        {
+          "schema": {
+            "type": "string"
+          },
+          "name": "id",
+          "in": "path",
+          "required": true,
+          "description": "The universal unique identifier (UUID) of the template."
+        },
+        {
+          "schema": {
+            "type": "string",
+            "example": "app:your-app-name"
+          },
+          "in": "query",
+          "name": "context",
+          "description": "The context parameter retrieves templates for the specified application. The parameter format is `app:your-app-name`. Only the first application listed in the context is displayed even if a comma-delimited list is entered in the parameter. "
+        }
+      ]
+    },
+    "/trigger/{app}": {
+      "get": {
+        "tags": [
+          "trigger-controller"
+        ],
+        "summary": "Get triggered template using your-app-name",
+        "description": "Retrieve the template that should trigger for the specified Fusion application name using `your-app-name`. Query parameters let you specify status (published or unpublished(staging)) of the templates of the zone. ",
+        "operationId": "get-trigger-by-applicationName",
+        "parameters": [
+          {
+            "name": "params",
+            "in": "query",
+            "description": "Query parameters",
+            "required": true,
+            "schema": {}
+          },
+          {
+            "name": "showInactive",
+            "in": "query",
+            "description": "The legacy parameter that is the same as the staging parameter. This field indicates if the request is set to retrieve published or unpublished (staging) templates. The default of `false` retrieves published templates. If set to `true`, the request retrieves unpublished (staging) templates.",
+            "schema": {
+              "type": "boolean",
+              "default": false
+            }
+          },
+          {
+            "name": "staging",
+            "in": "query",
+            "description": "This field indicates if the request is set to retrieve published or unpublished (staging) templates. The default of `false` retrieves published templates. If set to `true`, the request retrieves unpublished (staging) templates.",
+            "schema": {
+              "type": "boolean",
+              "default": false
+            }
+          },
+          {
+            "name": "templateTypes",
+            "in": "query",
+            "description": "The comma-separated list of template types to retrieve. Options include item-detail, landing, and typeahead. The default is `landing`.",
+            "style": "form",
+            "explode": true,
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/triggerResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {}
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {}
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {}
+          }
+        },
+        "x-codegen-request-body-name": "getTriggerApplicationName",
+        "x-stoplight": {
+          "id": "2o6no32cdirq9"
+        }
+      },
+      "post": {
+        "tags": [
+          "trigger-controller"
+        ],
+        "summary": "Post trigger information using your-app-name",
+        "description": "Submit updates to template trigger information by `your-app-name`.",
+        "operationId": "post-trigger-by-applicationName",
+        "parameters": [],
+        "requestBody": {
+          "content": {
+            "application/x-www-form-urlencoded": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "templateTypes": {
+                    "type": "array",
+                    "description": "The comma-separated list of template types to retrieve. Options include item-detail, landing, and typeahead. The default is `landing`.",
+                    "items": {
+                      "type": "string",
+                      "example": "landing"
+                    }
+                  },
+                  "showInactive": {
+                    "type": "boolean",
+                    "description": "The legacy parameter that is the same as the staging parameter. This field indicates if the request is set to retrieve published or unpublished (staging) templates. The default of `false` retrieves published templates. If set to `true`, the request retrieves unpublished (staging) templates.",
+                    "default": false
+                  },
+                  "staging": {
+                    "type": "boolean",
+                    "description": "This field indicates if the request is set to retrieve published or unpublished (staging) templates. The default of `false` retrieves published templates. If set to `true`, the request retrieves unpublished (staging) templates.",
+                    "default": false
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/triggerResponse"
+                }
+              }
+            }
+          },
+          "201": {
+            "description": "Created",
+            "content": {}
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {}
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {}
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {}
+          }
+        },
+        "x-codegen-request-body-name": "postTriggerApplicationName",
+        "x-stoplight": {
+          "id": "qj7o9ssmhhdxi"
+        }
+      },
+      "parameters": [
+        {
+          "schema": {
+            "type": "string"
+          },
+          "name": "app",
+          "in": "path",
+          "required": true,
+          "description": "The Fusion application name."
+        }
+      ]
+    },
+    "/triggerDSL/{app}": {
+      "post": {
+        "tags": [
+          "trigger-controller"
+        ],
+        "summary": "Retrieve the template for the given navigation state. By default will only trigger published versions of templates, specify staging=true to instead trigger staging versions of templates.",
+        "description": "navigation state is determined by the userQuery (for the search terms) and the filters from the DSL request (for the filter values).",
+        "operationId": "post-triggerDSL-by-applicationId",
+        "parameters": [
+          {
+            "name": "app",
+            "in": "path",
+            "description": "Application ID",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "requestParams",
+            "in": "query",
+            "description": "Request parameters (for fqs)",
+            "required": true,
+            "schema": {}
+          },
+          {
+            "name": "staging",
+            "in": "query",
+            "description": "This field indicates if the request is set to retrieve published or unpublished (staging) templates. The default of `false` retrieves published templates. If set to `true`, the request retrieves unpublished (staging) templates.",
+            "schema": {
+              "type": "boolean",
+              "default": false
+            }
+          },
+          {
+            "name": "templateTypes",
+            "in": "query",
+            "description": "Comma-separated list of template types, indicating which possible types of templates to trigger (e.g. landing, item-detail...)",
+            "style": "form",
+            "explode": true,
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          }
+        ],
+        "requestBody": {
+          "description": "DSL request",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/DslRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/triggerResponse"
+                }
+              }
+            }
+          },
+          "201": {
+            "description": "Created",
+            "content": {}
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {}
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {}
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {}
+          }
+        },
+        "x-codegen-request-body-name": "postTriggerDslApplicationId",
+        "x-stoplight": {
+          "id": "t4pgcx71i4oeo"
+        }
+      }
+    },
+    "/zones": {
+      "get": {
+        "tags": [
+          "zones-controller"
+        ],
+        "summary": "Get zone information",
+        "operationId": "get-zones",
+        "parameters": [
+          {
+            "name": "context",
+            "in": "query",
+            "description": "The context parameter retrieves templates for the specified application. The parameter format is `app:your-app-name`. Only the first application listed in the context is displayed even if a comma-delimited list is entered in the parameter. ",
+            "schema": {
+              "type": "string",
+              "example": "app:your-app-name"
+            }
+          },
+          {
+            "name": "hideStaging",
+            "in": "query",
+            "description": "This field indicates if the request is set to retrieve published or unpublished (staging) templates. The default of `false` retrieves published templates. If set to `true`, the request retrieves unpublished (staging) templates.",
+            "schema": {
+              "type": "boolean"
+            }
+          },
+          {
+            "name": "showDirtyOnly",
+            "in": "query",
+            "description": "This field indicates if the request is set to retrieve published or unpublished (staging) templates. The default of `false` retrieves published templates. If set to `true`, the request retrieves unpublished (staging) templates.",
+            "schema": {
+              "type": "boolean"
+            }
+          },
+          {
+            "name": "showPublished",
+            "in": "query",
+            "description": "This field indicates if the request is set to retrieve published or unpublished (staging) templates. If set to `true`, only published templates are retrieved. If set to `false`, the request retrieves unpublished (staging) templates.",
+            "schema": {
+              "type": "boolean"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/zone"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {}
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {}
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {}
+          }
+        },
+        "x-codegen-request-body-name": "getZones",
+        "description": "Retrieve zone information. Query parameters let you specify `your-app-name` and whether published or unpublished (staging) template information is retrieved.",
+        "x-stoplight": {
+          "id": "fu5zq7jovw64u"
+        }
+      },
+      "post": {
+        "tags": [
+          "zones-controller"
+        ],
+        "summary": "Post zone",
+        "operationId": "post-zone",
+        "parameters": [
+          {
+            "name": "context",
+            "in": "query",
+            "description": "The context parameter retrieves templates for the specified application. The parameter format is `app:your-app-name`. Only the first application listed in the context is displayed even if a comma-delimited list is entered in the parameter. ",
+            "schema": {
+              "type": "string",
+              "example": "app:your-app-name"
+            }
+          }
+        ],
+        "requestBody": {
+          "description": "",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/zone"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/zone"
+                }
+              }
+            }
+          },
+          "201": {
+            "description": "Created",
+            "content": {}
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {}
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {}
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {}
+          }
+        },
+        "x-codegen-request-body-name": "postZones",
+        "description": "Add a new zone to specify the rules for a query profile.",
+        "x-stoplight": {
+          "id": "1qspjeq54691u"
+        }
+      }
+    },
+    "/zones/_import": {
+      "post": {
+        "tags": [
+          "zones-controller"
+        ],
+        "summary": "Post import zones from existing application",
+        "operationId": "post-zones-import",
+        "parameters": [
+          {
+            "name": "context",
+            "in": "query",
+            "description": "The context parameter retrieves templates for the specified application. The parameter format is `app:your-app-name`. Only the first application listed in the context is displayed even if a comma-delimited list is entered in the parameter. ",
+            "schema": {
+              "type": "string",
+              "example": "app:your-app-name"
+            }
+          }
+        ],
+        "requestBody": {
+          "description": "",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/zone"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/zone"
+                }
+              }
+            }
+          },
+          "201": {
+            "description": "Created",
+            "content": {}
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {}
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {}
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {}
+          }
+        },
+        "x-codegen-request-body-name": "postZonesImport",
+        "description": "Internal use only. Import templates from an existing Fusion application. Use this only for imports and upgrades.",
+        "x-stoplight": {
+          "id": "fxz1xkx1u8lzx"
+        }
+      }
+    },
+    "/zones/_schema": {
+      "get": {
+        "tags": [
+          "zones-controller"
+        ],
+        "summary": "Get zones schema",
+        "operationId": "get-zones-schema",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/zonesSchemaResponse"
+                },
+                "examples": {}
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {}
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {}
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {}
+          }
+        },
+        "x-codegen-request-body-name": "getZonesSchema",
+        "description": "Retrieve the detailed structure of the contents of a zone.",
+        "x-stoplight": {
+          "id": "tv245pgifhmn7"
+        }
+      }
+    },
+    "/zones/_schema/{type}": {
+      "get": {
+        "tags": [
+          "zones-controller"
+        ],
+        "summary": "Get zone schema using TYPE",
+        "operationId": "get-zones-schema-by-type",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/zonesSchemaResponse"
+                },
+                "examples": {}
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {}
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {}
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {}
+          }
+        },
+        "x-codegen-request-body-name": "getZonesSchemaType",
+        "x-stoplight": {
+          "id": "yqk3trevut4yi"
+        },
+        "description": "Retrieve the detailed structure of the contents of a zone using ZONE_TYPE or TEMPLATE_TYPE."
+      },
+      "parameters": [
+        {
+          "schema": {
+            "type": "string"
+          },
+          "name": "type",
+          "in": "path",
+          "required": true,
+          "description": "The type of object returned in the response. The zone type or template type can be used to return zone schema. An example value of zone type is \"Templating Zone\". An example value of template type is \"landing\". "
+        }
+      ]
+    },
+    "/zones/status": {
+      "get": {
+        "tags": [
+          "zones-controller"
+        ],
+        "summary": "Get status of the zones",
+        "operationId": "get-zones-status",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/zonesStatusResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {}
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {}
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {}
+          }
+        },
+        "x-codegen-request-body-name": "getZonesStatus",
+        "description": "Retrieve current status of the zones.",
+        "x-stoplight": {
+          "id": "l4z80sumt29ok"
+        }
+      }
+    },
+    "/zones/uiTreatments": {
+      "get": {
+        "tags": [
+          "zones-controller"
+        ],
+        "summary": "Get zone UI Treatment field values",
+        "operationId": "get-zones-uiTreatments",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "isUiTreatment": {
+                        "type": "boolean",
+                        "x-stoplight": {
+                          "id": "itpq5qe3g9gk2"
+                        },
+                        "description": "This field specifies if UI Treatment fields have been defined.",
+                        "default": false
+                      },
+                      "message": {
+                        "type": "string",
+                        "x-stoplight": {
+                          "id": "556v89edrqjvv"
+                        },
+                        "description": "The response message.",
+                        "example": "Text included in the response for this zone. If the user interface (UI) is configured to use the zone, the text in this field can be used to influence how the zone is displayed or processed in the UI."
+                      },
+                      "uiTreatment": {
+                        "type": "string",
+                        "x-stoplight": {
+                          "id": "9ig6ahyay39xb"
+                        },
+                        "description": "The name of the field that contains `uiTreatment` values defined for the zone. ",
+                        "example": "uiTreatment field name"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {}
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {}
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {}
+          }
+        },
+        "x-codegen-request-body-name": "getZonesUiTreatments",
+        "description": "Lists all of the values used in the UI Treatment fields of zones.",
+        "x-stoplight": {
+          "id": "1oexlxsvf1pi1"
+        }
+      }
+    },
+    "/zones/{id}": {
+      "get": {
+        "tags": [
+          "zones-controller"
+        ],
+        "summary": "Get zone information using zoneId",
+        "operationId": "get-zone-by-zoneId",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/zone"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {}
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {}
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {}
+          }
+        },
+        "x-codegen-request-body-name": "getZonesId",
+        "x-stoplight": {
+          "id": "pbpc40f361t81"
+        },
+        "description": "Retrieve zone information using zoneId."
+      },
+      "put": {
+        "tags": [
+          "zones-controller"
+        ],
+        "summary": "Put zone information using zoneId",
+        "operationId": "put-zones-by-zoneId",
+        "parameters": [],
+        "requestBody": {
+          "description": "",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/zone"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/zone"
+                }
+              }
+            }
+          },
+          "201": {
+            "description": "Created",
+            "content": {}
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {}
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {}
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {}
+          }
+        },
+        "x-codegen-request-body-name": "putZonesId",
+        "x-stoplight": {
+          "id": "f031hfehb464n"
+        },
+        "description": "Submit updates to a specific zone using `zoneId` . \n\n* Successful changes make the zone dirty, and the changes can be published using the `/templates/publish/{templateId}` endpoint associated with that zone. \n"
+      },
+      "delete": {
+        "tags": [
+          "zones-controller"
+        ],
+        "summary": "Delete a zone by using zoneId",
+        "operationId": "delete-zone-by-zoneId",
+        "parameters": [],
+        "responses": {
+          "204": {
+            "description": "No Content - This message is returned when the operation is successful, but there is no content to return.",
+            "content": {}
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {}
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {}
+          }
+        },
+        "x-codegen-request-body-name": "deleteZonesId",
+        "x-stoplight": {
+          "id": "uwlwvjfi0lg9a"
+        },
+        "description": "Delete the zone by zoneId. When the zone is successfully deleted, the operation removes the zone from any templates that contain it.\n\nIf the zone removal fails, a `500` error message is generated.\n\n"
+      },
+      "parameters": [
+        {
+          "schema": {
+            "type": "string"
+          },
+          "name": "id",
+          "in": "path",
+          "required": true,
+          "description": "The universal unique identifier (UUID) of the zone."
+        },
+        {
+          "schema": {
+            "type": "string",
+            "example": "app:your-app-name"
+          },
+          "in": "query",
+          "name": "context",
+          "description": "The context parameter retrieves templates for the specified application. The parameter format is `app:your-app-name`. Only the first application listed in the context is displayed even if a comma-delimited list is entered in the parameter."
+        }
+      ]
+    },
+    "/zones/{id}/_force": {
+      "delete": {
+        "tags": [
+          "zones-controller"
+        ],
+        "summary": "Force delete the specific zone using zoneId",
+        "operationId": "force-delete-zone-by-zoneId",
+        "parameters": [],
+        "responses": {
+          "204": {
+            "description": "No Content - This message is returned when the operation is successful, but there is no content to return.",
+            "content": {}
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {}
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {}
+          }
+        },
+        "x-codegen-request-body-name": "deleteZonesIdForce",
+        "description": "Deletes the specified zone (using `zoneId`) immediately, without marking it for deletion, and without any other side effects. This operation does not perform any additional logic such as removing a deleted zone from templates that contained it, or deleting orphaned zones. \n\nCAUTION: Use this only for zone deletion. Unexpected errors and behaviors may occur if used in other situations.",
+        "x-stoplight": {
+          "id": "asizv1r49b827"
+        }
+      },
+      "parameters": [
+        {
+          "schema": {
+            "type": "string"
+          },
+          "name": "id",
+          "in": "path",
+          "required": true,
+          "description": "The universal unique identifier (UUID) of the zone."
+        },
+        {
+          "schema": {
+            "type": "string",
+            "example": "app:your-app-name"
+          },
+          "in": "query",
+          "name": "context",
+          "description": "The context parameter retrieves templates for the specified application. The parameter format is `app:your-app-name`. Only the first application listed in the context is displayed even if a comma-delimited list is entered in the parameter."
+        }
+      ]
+    }
+  },
+  "components": {
+    "schemas": {
+      "BoostByValue": {
+        "title": "BoostByValue",
+        "type": "object",
+        "properties": {
+          "boosts": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/KeyAndBoost"
+            }
+          },
+          "field": {
+            "type": "string"
+          }
+        },
+        "x-stoplight": {
+          "id": "nrck2ixy1nbxx"
+        }
+      },
+      "BoostQuery": {
+        "title": "BoostQuery",
+        "type": "object",
+        "properties": {
+          "boost": {
+            "type": "number",
+            "format": "double"
+          },
+          "query": {
+            "$ref": "#/components/schemas/Query"
+          },
+          "type": {
+            "type": "string"
+          }
+        },
+        "x-stoplight": {
+          "id": "kvorjutf2l279"
+        }
+      },
+      "DslRequest": {
+        "title": "DslRequest",
+        "type": "object",
+        "properties": {
+          "context": {
+            "type": "object",
+            "properties": {}
+          },
+          "facets": {
+            "$ref": "#/components/schemas/Facets"
+          },
+          "params": {
+            "type": "object",
+            "properties": {}
+          },
+          "queryDefinition": {
+            "$ref": "#/components/schemas/QueryDefinition"
+          },
+          "results": {
+            "$ref": "#/components/schemas/Results"
+          }
+        },
+        "x-stoplight": {
+          "id": "qx4q8p2j2vmh8"
+        }
+      },
+      "FacetDomain": {
+        "title": "FacetDomain",
+        "type": "object",
+        "properties": {
+          "additionalFilters": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Query"
+            }
+          },
+          "excludedFiltersByName": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        },
+        "x-stoplight": {
+          "id": "ufxdk8lv1hh97"
+        }
+      },
+      "FacetField": {
+        "title": "FacetField",
+        "type": "object",
+        "properties": {
+          "domain": {
+            "$ref": "#/components/schemas/FacetDomain"
+          },
+          "ensuredValues": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "field": {
+            "type": "string"
+          },
+          "limit": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "minCount": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "missing": {
+            "type": "boolean"
+          },
+          "offset": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "prefix": {
+            "type": "string"
+          },
+          "sort": {
+            "type": "string",
+            "enum": [
+              "count",
+              "index"
+            ]
+          }
+        },
+        "x-stoplight": {
+          "id": "5p6x82nzscw48"
+        }
+      },
+      "FacetRange": {
+        "title": "FacetRange",
+        "type": "object",
+        "properties": {
+          "domain": {
+            "$ref": "#/components/schemas/FacetDomain"
+          },
+          "end": {
+            "type": "string"
+          },
+          "field": {
+            "type": "string"
+          },
+          "gap": {
+            "type": "string"
+          },
+          "hardEnd": {
+            "type": "boolean"
+          },
+          "include": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "enum": [
+                "all",
+                "edge",
+                "lower",
+                "outer",
+                "upper"
+              ]
+            }
+          },
+          "minCount": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "other": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "enum": [
+                "after",
+                "all",
+                "before",
+                "between",
+                "non"
+              ]
+            }
+          },
+          "start": {
+            "type": "string"
+          }
+        },
+        "x-stoplight": {
+          "id": "m3t96yjzlsa8m"
+        }
+      },
+      "Facets": {
+        "title": "Facets",
+        "type": "object",
+        "properties": {
+          "fields": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/FacetField"
+            }
+          },
+          "groupFacets": {
+            "type": "boolean"
+          },
+          "groupingMethod": {
+            "type": "string",
+            "enum": [
+              "header_doc",
+              "unique"
+            ]
+          },
+          "ranges": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/FacetRange"
+            }
+          }
+        },
+        "x-stoplight": {
+          "id": "5zb4qosae914t"
+        }
+      },
+      "Group": {
+        "title": "Group",
+        "type": "object",
+        "properties": {
+          "field": {
+            "type": "string"
+          },
+          "leaderStrategy": {
+            "$ref": "#/components/schemas/GroupLeaderStrategy"
+          },
+          "size": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "sort": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/SortElement"
+            }
+          }
+        },
+        "x-stoplight": {
+          "id": "p76e8iyw8vzjb"
+        }
+      },
+      "GroupLeaderStrategy": {
+        "title": "GroupLeaderStrategy",
+        "type": "object",
+        "properties": {
+          "type": {
+            "type": "string"
+          }
+        },
+        "x-stoplight": {
+          "id": "iucusioyfm2fi"
+        }
+      },
+      "Highlight": {
+        "title": "Highlight",
+        "type": "object",
+        "properties": {
+          "count": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "defaultHighlight": {
+            "type": "boolean"
+          },
+          "fields": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "length": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "post": {
+            "type": "string"
+          },
+          "pre": {
+            "type": "string"
+          }
+        },
+        "x-stoplight": {
+          "id": "d1w9kdfh85tk4"
+        }
+      },
+      "KeyAndBoost": {
+        "title": "KeyAndBoost",
+        "type": "object",
+        "properties": {
+          "boost": {
+            "type": "number",
+            "format": "double"
+          },
+          "key": {
+            "type": "string"
+          }
+        },
+        "x-stoplight": {
+          "id": "2vyokrrnbo2nk"
+        }
+      },
+      "KeyAndValue": {
+        "title": "KeyAndValue",
+        "type": "object",
+        "properties": {
+          "inheritable": {
+            "type": "boolean",
+            "description": "This field specifies if the `key:value` pair can be inherited or overridden based on the parent/child relationship. If `true`, the `key:value` pair can be inherited."
+          },
+          "key": {
+            "type": "string",
+            "description": "The name of the property for the trigger.",
+            "example": "key1"
+          },
+          "value": {
+            "type": "string",
+            "description": "The value of the property of the trigger.",
+            "example": "value1"
+          }
+        },
+        "x-stoplight": {
+          "id": "8vlfjjk96dt0n"
+        }
+      },
+      "KeyValueListTrigger": {
+        "title": "KeyValueListTrigger",
+        "type": "object",
+        "properties": {
+          "exact": {
+            "type": "boolean",
+            "description": "This field specifies if the template status (published or staging) must match this trigger's criteria. If `true`, the status must be an exact match. No extra filters are allowed, and no search terms are allowed if this trigger does not define them. This is not the same as `exact` match mode, which specifically defines the search term matching logic."
+          },
+          "filters": {
+            "type": "array",
+            "description": "Filters (fq) values required in the query for this trigger to match. Additional filters may be present in the query (and still satisfy this trigger) unless 'exact: true' is specified for this trigger. In that case, the filters in the query must match the filters in this trigger exactly.",
+            "items": {
+              "$ref": "#/components/schemas/KeyAndValue"
+            }
+          }
+        },
+        "description": "The individual trigger criteria for `key:value` pair filters. All the conditions indicated in the trigger must be met for the trigger to be a match on the status of published or unpublished (staging).",
+        "x-stoplight": {
+          "id": "qlevxlzz10rzz"
+        }
+      },
+      "Metadata": {
+        "title": "Metadata",
+        "type": "object",
+        "description": "",
+        "properties": {
+          "imageUrl": {
+            "type": "string",
+            "description": "The URL location of the image associated with the metadata.",
+            "example": "https://example.com/image_file"
+          },
+          "pageDescription": {
+            "type": "string",
+            "description": "The description of the page that contains data that can be crawled.",
+            "example": "This page contains data that is searched."
+          },
+          "pageKeywords": {
+            "type": "array",
+            "description": "Words that best describe the page and its contents. These are compared to what the user enters in the search and used to calculate relevance. The more closely the keywords match the search criteria, the higher the relevance ranking.",
+            "items": {
+              "type": "string",
+              "example": "keyword1, keyword2"
+            }
+          },
+          "pageTitle": {
+            "type": "string",
+            "description": "The name of the page that is searched."
+          },
+          "pageUrl": {
+            "type": "string",
+            "description": "The URL location of the page, so the page can be found when the search occurs.",
+            "example": "https://example.com/page_location"
+          }
+        },
+        "x-stoplight": {
+          "id": "whh02g9joeq2u"
+        }
+      },
+      "NamedFilter": {
+        "title": "NamedFilter",
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "query": {
+            "$ref": "#/components/schemas/Query"
+          }
+        },
+        "x-stoplight": {
+          "id": "o5otfs5za3ozv"
+        }
+      },
+      "PageMetadata": {
+        "title": "PageMetadata",
+        "type": "object",
+        "description": "The page metadata contains the map of metadata elements and trigger.",
+        "properties": {
+          "exactMatch": {
+            "type": "boolean",
+            "description": "This field specifies if the metadata must match. If `true`, the metadata must match. If `false`, the metadata does not have to be an exact match.",
+            "default": false
+          },
+          "metadata": {
+            "$ref": "#/components/schemas/Metadata"
+          },
+          "trigger": {
+            "$ref": "#/components/schemas/KeyValueListTrigger"
+          }
+        },
+        "x-stoplight": {
+          "id": "ltpwrz2mgkikm"
+        }
+      },
+      "Query": {
+        "title": "Query",
+        "type": "object",
+        "properties": {
+          "type": {
+            "type": "string"
+          }
+        },
+        "x-stoplight": {
+          "id": "sqow6lcj7y8i2"
+        }
+      },
+      "QueryDefinition": {
+        "title": "QueryDefinition",
+        "type": "object",
+        "properties": {
+          "boostsByQuery": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/BoostQuery"
+            }
+          },
+          "boostsByValues": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/BoostByValue"
+            }
+          },
+          "filters": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Query"
+            }
+          },
+          "groupedFilters": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Query"
+            }
+          },
+          "groupedQuery": {
+            "$ref": "#/components/schemas/Query"
+          },
+          "main": {
+            "$ref": "#/components/schemas/Query"
+          },
+          "namedFilters": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/NamedFilter"
+            }
+          },
+          "userQuery": {
+            "type": "string"
+          }
+        },
+        "x-stoplight": {
+          "id": "wn51x8klmlhj9"
+        }
+      },
+      "renderResponse": {
+        "title": "renderResponse",
+        "type": "object",
+        "x-stoplight": {
+          "id": "7af37370fa7d5"
+        },
+        "properties": {
+          "templateId": {
+            "type": "string",
+            "description": "The universal unique identifier (UUID) of the triggered template containing the rendered zones.",
+            "format": "uuid",
+            "example": "441eb3be-7de6-470a-8141-e416a15c7db1"
+          },
+          "rendered": {
+            "type": "array",
+            "x-stoplight": {
+              "id": "832wv0f60m1mh"
+            },
+            "items": {
+              "type": "object",
+              "x-stoplight": {
+                "id": "zfrga0ufvh5vq"
+              },
+              "properties": {
+                "zone": {
+                  "type": "object",
+                  "description": "Identifies the specific query profile to search. ",
+                  "x-stoplight": {
+                    "id": "ssrrp6pbi72c7"
+                  },
+                  "properties": {
+                    "name": {
+                      "type": "string",
+                      "description": "Name of the zone that contains the specified query profiles to search in the query.",
+                      "example": "Results List",
+                      "x-stoplight": {
+                        "id": "rnpnrepb8731d"
+                      }
+                    },
+                    "id": {
+                      "type": "string",
+                      "description": "The universal unique identifier (UUID) of the zone.",
+                      "example": "6a092bd4-5098-466c-94aa-40bf68294303",
+                      "x-stoplight": {
+                        "id": "2rgul5pquaaw3"
+                      },
+                      "format": "uuid"
+                    },
+                    "type": {
+                      "type": "string",
+                      "description": "Read-only value that classifies the zone in the Fusion Predictive Merchandiser UI. This value does not affect the triggering/rendering logic. ",
+                      "example": "result-list",
+                      "x-stoplight": {
+                        "id": "sbgz2sbc5fwy0"
+                      }
+                    },
+                    "queryProfile": {
+                      "type": "string",
+                      "description": "The query profile for this zone, that designates the endpoint that is searched.",
+                      "example": "query-profile-name",
+                      "x-stoplight": {
+                        "id": "aztjxrc9n8x4o"
+                      }
+                    },
+                    "omitFilters": {
+                      "type": "boolean",
+                      "description": "Specifies whether to include filters `fq` parameters in the search. If set to `Off`, all query parameters in the original request are passed on to the defined query profile when a template is being rendered. If set to `On`, all filters (`fq` parameters) from the original request are omitted from the query to the query profile. For example, if you have a category landing page where the category is used to filter the displayed items, this setting can allow a zone to display items outside of that category (by omitting the category filter).",
+                      "default": false,
+                      "x-stoplight": {
+                        "id": "79v2dm9sn1rd4"
+                      }
+                    },
+                    "dirty": {
+                      "type": "boolean",
+                      "description": "The status of the template. If `false`, the template is published. If `true`, this is the staging version of this template and it contains changes that have not yet been published.",
+                      "default": false,
+                      "x-stoplight": {
+                        "id": "45piwr1vuj8yg"
+                      }
+                    },
+                    "neverPublished": {
+                      "type": "boolean",
+                      "description": "The status of the template in the zone. If `false`, the template has been published at some point. If `true`, this template has never been published.",
+                      "default": false,
+                      "x-stoplight": {
+                        "id": "y7cibjk5w2a55"
+                      }
+                    },
+                    "metadata": {
+                      "type": "object",
+                      "description": "Additional data associated with the zone.",
+                      "x-stoplight": {
+                        "id": "b5fuszwdpvk0t"
+                      },
+                      "properties": {
+                        "image": {
+                          "type": "string",
+                          "description": "ID for the image associated with the zone.",
+                          "example": "image-id",
+                          "x-stoplight": {
+                            "id": "mqg5cposvelzu"
+                          }
+                        },
+                        "secondary": {
+                          "type": "string",
+                          "description": "Additional text data for the zone.",
+                          "x-stoplight": {
+                            "id": "d0jmqgei70ozd"
+                          },
+                          "example": "_text_"
+                        },
+                        "primary": {
+                          "type": "string",
+                          "description": "The unique ID for the primary metadata associated with the zone.",
+                          "x-stoplight": {
+                            "id": "qfcyby4wod3y7"
+                          },
+                          "example": "primary-metadata-id"
+                        },
+                        "layout": {
+                          "type": "string",
+                          "x-stoplight": {
+                            "id": "5qlc5kjaar45e"
+                          },
+                          "description": "The type of layout for the template. Values include grid and list.",
+                          "example": "grid"
+                        }
+                      }
+                    }
+                  }
+                },
+                "inTemplates": {
+                  "type": "array",
+                  "x-stoplight": {
+                    "id": "5e1xuhjnxh8hd"
+                  },
+                  "description": "IDs of the staging and/or published templates in which this zone appears. The IDs are not displayed in any particular order. The `staging` and `published` boolean fields specify if that type of template ID is returned in this field.",
+                  "items": {
+                    "type": "string",
+                    "example": "e123f4bc-5e7e-46dd-9be8-71a4f73e511a, 8084969c-bd23-40f7-9acf-c68d6798bec2, 441eb3be-7de6-470a-8141-e416a15c7db1, fb148491-b39e-46d1-af33-44cd964d8ee0"
+                  }
+                },
+                "staging": {
+                  "type": "boolean",
+                  "description": "Specifies if IDs are returned for staging templates associated with this zone.",
+                  "x-stoplight": {
+                    "id": "m75r4xak133zn"
+                  },
+                  "default": false
+                },
+                "published": {
+                  "type": "boolean",
+                  "description": "Specifies if IDs are returned for published templates associated with this zone.",
+                  "x-stoplight": {
+                    "id": "hf2e1fm8h22vc"
+                  },
+                  "default": false
+                },
+                "layout": {
+                  "type": "string",
+                  "x-stoplight": {
+                    "id": "uj342ew0i9sh7"
+                  },
+                  "description": "The type of layout for the template. Values include grid and list.",
+                  "example": "grid"
+                }
+              }
+            }
+          },
+          "render": {
+            "type": "object",
+            "x-stoplight": {
+              "id": "cd0hlc67e97mh"
+            },
+            "properties": {
+              "response": {
+                "type": "object",
+                "x-stoplight": {
+                  "id": "p6ysdu28x70a1"
+                },
+                "properties": {
+                  "docs": {
+                    "type": "array",
+                    "x-stoplight": {
+                      "id": "zzc8f5ncfva67"
+                    },
+                    "description": "The document information for each document returned in the query. For example:\n\n\"docs\": [\n{\n        \"title_t\": \"document1 title\",        \n        \"score\": 3.4237761\n      },\n      {\n        \"title_t\": \"document2 title\",\n        \"score\": 3.2169461\n      }\n    ]",
+                    "items": {
+                      "x-stoplight": {
+                        "id": "fbb4fudbiundj"
+                      },
+                      "type": "string"
+                    }
+                  },
+                  "numFound": {
+                    "type": "integer",
+                    "x-stoplight": {
+                      "id": "tr96m0ocj72x6"
+                    },
+                    "description": "The number of documents returned in the query. This field can contain an exact number or an estimate. If the `numFoundExact` field is set to `true`, the value in the `numFound` field is an exact number. If the `numFoundExact` field is set to `false`, the value in the `numFound` field is an estimate and the number of documents returned is equal to or greater than the value in this field."
+                  },
+                  "start": {
+                    "type": "integer",
+                    "x-stoplight": {
+                      "id": "xh12kzcij2t65"
+                    },
+                    "description": "The number of the document in the results to display first. It is offset from `document zero (0)`, which is the first document in the file. For example, a value of `3` means that the fourth document in the result set is the first one displayed. The first three documents in the result set are not displayed. A value of `0` means there is no offset, and the first document in the result set is displayed first."
+                  },
+                  "maxScore": {
+                    "type": "number",
+                    "x-stoplight": {
+                      "id": "vfu31hcosp5vm"
+                    },
+                    "description": "The score of the top document (most relevant document based on the query criteria) returned in the response."
+                  },
+                  "numFoundExact": {
+                    "type": "boolean",
+                    "x-stoplight": {
+                      "id": "2pfn2hpqrm7qu"
+                    },
+                    "description": "This field specifies if the `numFound` field is an exact number or an estimate. If `true`, the value in the `numFound` field is the exact number of documents returned by the query. If `false`, the value in the `numFound` field is an estimate, and the number of documents returned is equal to or greater than the value in that field."
+                  }
+                }
+              }
+            }
+          },
+          "responseHeader": {
+            "type": "object",
+            "x-stoplight": {
+              "id": "ghum9ja27lwao"
+            },
+            "properties": {
+              "zkConnected": {
+                "type": "boolean",
+                "x-stoplight": {
+                  "id": "6s4p9ypssh2cm"
+                },
+                "description": "This field specifies if the node was connected to Zookeeper when the request was processed. If `true`, the node was connected to Zookeeper at the time the request was processed. If `false`, the node was not connected to Zookeeper at the time the request was processed."
+              },
+              "QTime": {
+                "type": "integer",
+                "x-stoplight": {
+                  "id": "s6ftbbor5tz2x"
+                },
+                "description": "The number of milliseconds for Solr to process the request. It calculates the time between when the request arrives and when the request is completed by the handler."
+              },
+              "totalTime": {
+                "type": "integer",
+                "x-stoplight": {
+                  "id": "t2k6xst30kqgs"
+                },
+                "description": "The number of milliseconds between when the request was received and the response was returned."
+              },
+              "params": {
+                "type": "object",
+                "x-stoplight": {
+                  "id": "mmu6d73aaykye"
+                },
+                "properties": {
+                  "_stateVer_": {
+                    "type": "string",
+                    "x-stoplight": {
+                      "id": "5emdby031gsct"
+                    },
+                    "description": "The version of the application that is sending the results. Because the application configuration can be changed, the version used for the query is helpful information if troubleshooting or investigation is necessary. The format is: \"your-app-name:version\".",
+                    "example": "your-app-name:version"
+                  },
+                  "lw.pipelineId": {
+                    "type": "string",
+                    "x-stoplight": {
+                      "id": "benmqs1gmbh7o"
+                    },
+                    "description": "The identifier of the Lucidworks pipeline used in the query."
+                  },
+                  "start": {
+                    "type": "integer",
+                    "x-stoplight": {
+                      "id": "xfw9l1vvglq9d"
+                    },
+                    "description": "The number of the document in the results to display first. It is offset from `document zero (0)`, which is the first document in the file. For example, a value of `3` means that the fourth document in the result set is the first one displayed. The first three documents in the result set are not displayed. A value of `0` means there is no offset, and the first document in the result set is displayed first.",
+                    "default": 0,
+                    "example": 3
+                  },
+                  "params": {
+                    "type": "string",
+                    "x-stoplight": {
+                      "id": "8jil9ljzrp0qn"
+                    },
+                    "description": "Any parameters submitted in the request. For example, if the request parameter is: `dictionary[string,array[string]]`, the value in the response is:\n\n\"dictionary[\\\"key1\\\" : \\\"value1\\\", \\\"key2\\\" : [\\\"one\\\", \\\"two\\\", \\\"a\\\", \\\"B\\\", \\\"bubbles\\\"], \\\"key3\\\" : [\\\"five bubbles\\\", \\\"sunny\\\"], \\\"key4\\\" : \\\"value4\\\"\"\n\n",
+                    "example": "\"dictionary[\\\"key1\\\" : \\\"value1\\\", \\\"key2\\\" : [\\\"one\\\", \\\"two\\\", \\\"a\\\", \\\"B\\\", \\\"bubbles\\\"], \\\"key3\\\" : [\\\"five bubbles\\\", \\\"sunny\\\"], \\\"key4\\\" : \\\"value4\\\"\","
+                  },
+                  "rows": {
+                    "type": "integer",
+                    "x-stoplight": {
+                      "id": "2qad4djdddwwt"
+                    },
+                    "description": "The number of documents to return at a time for the query. For example, if the value is `10`, the number of documents returned at a time is 10.",
+                    "default": 10,
+                    "example": 10
+                  },
+                  "version": {
+                    "type": "string",
+                    "x-stoplight": {
+                      "id": "0w80clznidb5t"
+                    },
+                    "description": "Specifies the XML protocol version used in the response.",
+                    "example": "2.2"
+                  },
+                  "queryProfileID": {
+                    "type": "string",
+                    "x-stoplight": {
+                      "id": "p6yhbpjkds4oc"
+                    },
+                    "description": "The unique identifier for the query proile designated for the template.",
+                    "example": "query-profile"
+                  },
+                  "isFusionQuery": {
+                    "type": "boolean",
+                    "x-stoplight": {
+                      "id": "tks73f01nviru"
+                    },
+                    "description": "This field indicates if the query originated from Fusion. Fusion's Solr query stage hardcodes a default value of `true`. It can be changed manually to `false` if the query originates from another source, such as directly from Solr. If the value is blank, the system interprets it as `false`.",
+                    "default": true
+                  },
+                  "defType": {
+                    "type": "string",
+                    "x-stoplight": {
+                      "id": "f8yesoljpkx8m"
+                    },
+                    "description": "The query parser Solr uses to process the `q` main query parameter in the request. For example, `eDisMax` or `lucene`.",
+                    "example": "eDisMax"
+                  },
+                  "templateTypes": {
+                    "type": "string",
+                    "x-stoplight": {
+                      "id": "o3rmtfehmrga6"
+                    },
+                    "description": "The type of template associated with the response. Examples include landing and item-detail.",
+                    "example": "landing"
+                  },
+                  "showInactive": {
+                    "type": "boolean",
+                    "x-stoplight": {
+                      "id": "w5s7jdi91spng"
+                    },
+                    "description": "The legacy parameter that is the same as the staging parameter. This field indicates if the request is set to retrieve published or unpublished (staging) templates. The default of `false` retrieves published templates. If set to `true`, the request retrieves unpublished (staging) templates."
+                  },
+                  "shards.preference": {
+                    "type": "string",
+                    "x-stoplight": {
+                      "id": "2mi6b6b9bjz5w"
+                    },
+                    "description": "An optional parameter for a distributed query that specifes the order of precedence to sort the available replicas in each shard."
+                  },
+                  "wt": {
+                    "type": "string",
+                    "x-stoplight": {
+                      "id": "xhowda2cdrq51"
+                    },
+                    "description": "Specifies the response writer Solr uses to format the query response. Values include json, csv, and xml.",
+                    "example": "json"
+                  },
+                  "staging": {
+                    "type": "boolean",
+                    "x-stoplight": {
+                      "id": "9bwz6qhzi5y0m"
+                    },
+                    "description": "This field indicates if the request is set to retrieve published or unpublished (staging) templates. The default of `false` retrieves published templates. If set to `true`, the request retrieves unpublished (staging) templates."
+                  },
+                  "fusionQueryId": {
+                    "type": "string",
+                    "x-stoplight": {
+                      "id": "ln3i5htuue8y4"
+                    },
+                    "example": "fusion-query-id",
+                    "description": "The unique identifier for the Fusion query associated with the results."
+                  }
+                }
+              }
+            }
+          },
+          "status": {
+            "type": "number",
+            "x-stoplight": {
+              "id": "20c98pq01ik75"
+            },
+            "description": "The status of the response. A value of `0` indicates success.",
+            "example": 0
+          }
+        }
+      },
+      "Results": {
+        "title": "Results",
+        "type": "object",
+        "properties": {
+          "cursor": {
+            "type": "string"
+          },
+          "fields": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "group": {
+            "$ref": "#/components/schemas/Group"
+          },
+          "highlight": {
+            "$ref": "#/components/schemas/Highlight"
+          },
+          "includeRawResponse": {
+            "type": "boolean"
+          },
+          "returnScore": {
+            "type": "boolean"
+          },
+          "size": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "sort": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/SortElement"
+            }
+          },
+          "start": {
+            "type": "integer",
+            "format": "int64"
+          }
+        },
+        "x-stoplight": {
+          "id": "510xxa8iev1ly"
+        }
+      },
+      "SortElement": {
+        "title": "SortElement",
+        "type": "object",
+        "properties": {
+          "order": {
+            "type": "string",
+            "enum": [
+              "asc",
+              "desc"
+            ]
+          },
+          "query": {
+            "$ref": "#/components/schemas/Query"
+          },
+          "type": {
+            "type": "string",
+            "enum": [
+              "expression",
+              "field",
+              "query",
+              "relevancy"
+            ]
+          },
+          "value": {
+            "type": "string"
+          }
+        },
+        "x-stoplight": {
+          "id": "rntopyhn8wjd3"
+        }
+      },
+      "templateRequest": {
+        "title": "Template Request",
+        "x-stoplight": {
+          "id": "28683f5c62c70"
+        },
+        "type": "object",
+        "required": [
+          "app",
+          "id"
+        ],
+        "properties": {
+          "all": {
+            "type": "boolean",
+            "description": "This field indicates if the request includes published or unpublished (staging) templates. The default of `false` includes only published templates. If set to `true`, the request includes published and unpublished (staging) templates.",
+            "default": false
+          },
+          "app": {
+            "type": "string",
+            "description": "The Fusion application associated with this template.",
+            "example": "your-app-name"
+          },
+          "dirty": {
+            "type": "boolean",
+            "description": "The status of the template. If `false`, the template is published. If `true`, this is the staging version of this template and it contains changes that have not yet been published.",
+            "default": true
+          },
+          "dirtyZoneIds": {
+            "type": "array",
+            "description": "The comma-delimited list of universal unique identifiers (UUIDs) of the zones (query profiles) that are associated with the template and have unpublished changes. This only applies to zones and is different from the status of the template. Even if the associated template is dirty (contains some type of changes that have not yet been published), the zones and their respective changes are separate.\n",
+            "items": {
+              "type": "string",
+              "example": "a3e0e22-9e6a-45h9-a2e7-5hjk72b9a3ea, 5avc1e65-162d-5b8e-92f0-6a962e0f43c5"
+            }
+          },
+          "endTime": {
+            "type": "string",
+            "description": "The template cannot be used after this date and time. The format is Epoch time format.",
+            "format": "date-time",
+            "example": "2024-08-24T14:15:22Z"
+          },
+          "entityDirty": {
+            "type": "boolean",
+            "description": "The status of the entity. If `false`, the entity is published. If `true`, this is the staging version of this entity and it contains changes that have not yet been published."
+          },
+          "id": {
+            "type": "string",
+            "description": "The universal unique identifier (UUID) of the Fusion application."
+          },
+          "markedForDeletion": {
+            "type": "boolean",
+            "description": "This field indicates if the staging version of this template has been marked for deletion, but the deletion has not been completed because it has not been published yet. If `true`, the template has been marked for deletion, and when it is published, it will actually be deleted. If `false`, the template has not been marked for deletion.",
+            "default": false
+          },
+          "metadata": {
+            "type": "object",
+            "description": "Additional data associated with the template.",
+            "properties": {
+              "layout": {
+                "type": "string",
+                "x-stoplight": {
+                  "id": "3yeq8for61ra9"
+                },
+                "example": "list",
+                "description": "The type of layout for the template. Values include grid and list."
+              }
+            }
+          },
+          "name": {
+            "type": "string",
+            "description": "The name of the template.",
+            "example": "template-name"
+          },
+          "neverPublished": {
+            "type": "boolean",
+            "description": "The status of the template in the zone. If `false`, the template has been published at some point. If `true`, this template has never been published.",
+            "default": false
+          },
+          "priority": {
+            "type": "integer",
+            "description": "The order in which this template is processed when multiple templates with the same status (published or staging) are associated with the application. The higher the number, the earlier the template will be used. For example, a template with a priority of 10 is triggered before a template with a priority of 3.",
+            "example": 10
+          },
+          "startTime": {
+            "type": "string",
+            "description": "The beginning date and time (in Epoch time format) when the template can be used.",
+            "format": "date-time",
+            "example": "2024-08-24T14:15:22Z"
+          },
+          "templateDirty": {
+            "type": "boolean",
+            "description": "The status of the template. If `false`, the template does not have unpublished changes. If `true`, this is the staging version of this template and it contains changes that have not yet been published. This only applies to templates and is different from the status of the zone. Even if the associated zone (query profile) for this template is dirty (contains some type of changes that have not yet been published), the template and its status are separate."
+          },
+          "triggers": {
+            "type": "array",
+            "description": "Triggers - only one trigger needs to be satisfied in order for this template to trigger.",
+            "items": {
+              "$ref": "#/components/schemas/trigger"
+            }
+          },
+          "type": {
+            "type": "string",
+            "description": "The type of template associated with the response. Examples include landing and item-detail.",
+            "example": "landing"
+          },
+          "zoneIds": {
+            "type": "array",
+            "description": "The comma-delimited list of universal unique identifiers (UUIDs) of the zones (query profiles) that are associated with the template.",
+            "items": {
+              "type": "string",
+              "example": "ab6d0e24-9e7a-35h9-a2e7-5hjl72b8a3ea, 2abc1e65-162d-3a8e-76f0-6a962e0f43c5"
+            }
+          }
+        }
+      },
+      "templateResponse": {
+        "title": "Template Response",
+        "x-stoplight": {
+          "id": "28883f5c621ca"
+        },
+        "type": "object",
+        "required": [
+          "app",
+          "id"
+        ],
+        "properties": {
+          "app": {
+            "type": "string",
+            "description": "The Fusion application associated with this template."
+          },
+          "id": {
+            "type": "string",
+            "description": "The universal unique identifier (UUID) of the Fusion application.",
+            "format": "uuid",
+            "example": "6a163bd4-5098-466c-22aa-40bf68294303"
+          },
+          "name": {
+            "type": "string",
+            "description": "The name of the template in this application.",
+            "example": "Item-Detail Page"
+          },
+          "all": {
+            "type": "boolean",
+            "description": "This field indicates if the response includes published or unpublished (staging) templates. The default of `false` includes only published templates. If set to `true`, the request includes published and unpublished (staging) templates.",
+            "default": false
+          },
+          "priority": {
+            "type": "integer",
+            "description": "The order in which this template is processed when multiple templates with the same status (published or staging) are associated with the application. The higher the number, the earlier the template will be used. For example, a template with a priority of 10 is triggered before a template with a priority of 3.",
+            "example": 10
+          },
+          "dirty": {
+            "type": "boolean",
+            "description": "The status of the template. If `false`, the template is published. If `true`, this is the staging version of this template and it contains changes that have not yet been published."
+          },
+          "templateDirty": {
+            "type": "boolean",
+            "description": "The status of the template. If `false`, the template does not have unpublished changes. If `true`, this is the staging version of this template and it contains changes that have not yet been published. This only applies to templates and is different from the status of the zone. Even if the associated zone (query profile) for this template is dirty (contains some type of changes that have not yet been published), the template and its status are separate."
+          },
+          "markedForDeletion": {
+            "type": "boolean",
+            "description": "This field indicates if the staging version of this template has been marked for deletion, but the deletion has not been completed because it has not been published yet. If `true`, the template has been marked for deletion, and when it is published, it will actually be deleted. If `false`, the template has not been marked for deletion."
+          },
+          "neverPublished": {
+            "type": "boolean",
+            "description": "The status of the template in the zone. If `false`, the template has been published at some point. If `true`, this template has never been published."
+          },
+          "type": {
+            "type": "string",
+            "description": "The type of template associated with the response. Examples include landing and item-detail.",
+            "example": "landing"
+          },
+          "zoneIds": {
+            "type": "array",
+            "description": "The comma-delimited list of universal unique identifiers (UUIDs) of the zones (query profiles) that are associated with the template.",
+            "items": {
+              "type": "string",
+              "example": "ab6d0e24-9e7a-35h9-a2e7-5hjl72b8a3ea, 2abc1e65-162d-3a8e-76f0-6a962e0f43c5"
+            }
+          },
+          "dirtyZoneIds": {
+            "type": "array",
+            "description": "The comma-delimited list of universal unique identifiers (UUIDs) of the zones (query profiles) that are associated with the template and have unpublished changes. This only applies to zones and is different from the status of the template. Even if the associated template is dirty (contains some type of changes that have not yet been published), the zones and their respective changes are separate.\n",
+            "items": {
+              "type": "string",
+              "example": "a3e0e22-9e6a-45h9-a2e7-5hjk72b9a3ea, 5avc1e65-162d-5b8e-92f0-6a962e0f43c5"
+            }
+          },
+          "metadata": {
+            "type": "object",
+            "description": "Additional data associated with the template.",
+            "properties": {
+              "layout": {
+                "type": "string",
+                "x-stoplight": {
+                  "id": "zv42tz5888nn5"
+                },
+                "description": "The type of layout for the template. Values include grid and list.",
+                "example": "list"
+              }
+            }
+          },
+          "staging": {
+            "type": "boolean",
+            "description": "This field indicates if the template is a staging template. If `true`, this template has a status of staging. If `false`, this template is not a template with a status of staging."
+          },
+          "published": {
+            "type": "boolean",
+            "description": "This field indicates if the template is a published template. If `true`, this template has a status of published. If `false`, this template is not a template with a status of published."
+          },
+          "startTime": {
+            "type": "string",
+            "description": "The beginning date and time (in Epoch time format) when the template can be used.",
+            "format": "date-time",
+            "example": "2024-08-24T14:15:22Z"
+          },
+          "endTime": {
+            "type": "string",
+            "description": "The template cannot be used after this date and time. The format is Epoch time format.",
+            "format": "date-time",
+            "example": "2024-08-24T14:15:22Z"
+          },
+          "triggers": {
+            "type": "array",
+            "description": "Only one trigger needs to be satisfied for this template to trigger.",
+            "items": {
+              "$ref": "#/components/schemas/trigger"
+            }
+          }
+        }
+      },
+      "templateSettingsRequest": {
+        "title": "Template Settings Request",
+        "x-stoplight": {
+          "id": "e84236f7f583a"
+        },
+        "type": "object",
+        "description": "",
+        "properties": {
+          "app": {
+            "type": "string",
+            "description": "The Fusion application name.",
+            "example": "your-app-name"
+          },
+          "entityDirty": {
+            "type": "boolean",
+            "description": "Specifies the status of the entities requested. If `false`, the template is published. If `true`, this is the staging version of this template and it contains changes that have not yet been published."
+          },
+          "hierarchyFields": {
+            "type": "array",
+            "x-stoplight": {
+              "id": "bzyhjw9l4iipv"
+            },
+            "items": {
+              "x-stoplight": {
+                "id": "xul5uqx0vqlif"
+              },
+              "type": "object",
+              "properties": {
+                "field": {
+                  "type": "string",
+                  "x-stoplight": {
+                    "id": "t2mdcss1n49dp"
+                  },
+                  "description": "Hierarchical field name associated with the template. ",
+                  "example": "product_description"
+                },
+                "fieldName": {
+                  "type": "string",
+                  "x-stoplight": {
+                    "id": "ztz4erkcbb8wx"
+                  },
+                  "description": "Hierarchical field name associated with the template. ",
+                  "example": "product_description"
+                },
+                "separator": {
+                  "type": "string",
+                  "x-stoplight": {
+                    "id": "tbr8knjclk5um"
+                  },
+                  "description": "The character that separates each hierarchical field specified for the template.",
+                  "example": ";"
+                }
+              }
+            }
+          },
+          "id": {
+            "type": "string",
+            "description": "The version of the application that is sending the results. Because the application configuration can be changed, the version used for the query is helpful information if troubleshooting or investigation is necessary. The format is: \"your-app-name:version\"."
+          }
+        }
+      },
+      "templateSettingsResponse": {
+        "title": "Template Settings Response",
+        "x-stoplight": {
+          "id": "e86236f7f5dd4"
+        },
+        "type": "object",
+        "properties": {
+          "app": {
+            "type": "string",
+            "description": "The Fusion application name.",
+            "example": "your-app-name"
+          },
+          "hierarchyFields": {
+            "type": "array",
+            "x-stoplight": {
+              "id": "8s6zu5cdn252e"
+            },
+            "items": {
+              "x-stoplight": {
+                "id": "7u260nqydn88y"
+              },
+              "type": "object",
+              "properties": {
+                "field": {
+                  "type": "string",
+                  "x-stoplight": {
+                    "id": "0wsl0l6xtfrhx"
+                  },
+                  "description": "Hierarchical field name associated with the template. ",
+                  "example": "product_description"
+                },
+                "separator": {
+                  "type": "string",
+                  "x-stoplight": {
+                    "id": "6c559rq1n9obp"
+                  },
+                  "description": "The character that separates each hierarchical field specified for the template.",
+                  "example": ";"
+                }
+              }
+            }
+          },
+          "id": {
+            "type": "string",
+            "description": "The version of the application that is sending the results. Because the application configuration can be changed, the version used for the query is helpful information if troubleshooting or investigation is necessary. The format is: \"your-app-name:version\".",
+            "example": "your-app-name:version"
+          }
+        }
+      },
+      "templateWithZones": {
+        "title": "templateWithZones",
+        "x-stoplight": {
+          "id": "83da126f6b52c"
+        },
+        "type": "object",
+        "description": "Ordered list of zones with associated trigger criteria.",
+        "required": [
+          "app",
+          "id"
+        ],
+        "properties": {
+          "app": {
+            "type": "string",
+            "example": "your-app-name",
+            "description": "The Fusion application name."
+          },
+          "id": {
+            "type": "string",
+            "description": "The universal unique identifier (UUID) of the Fusion application.",
+            "format": "uuid",
+            "example": "6a163bd4-5098-466c-22aa-40bf68294303"
+          },
+          "name": {
+            "type": "string",
+            "description": "The name of the template in this application.",
+            "example": "Item-Detail Page"
+          },
+          "all": {
+            "type": "boolean",
+            "description": "This field indicates if the response includes published or unpublished (staging) templates. The default of `false` includes only published templates. If set to `true`, the request includes published and unpublished (staging) templates."
+          },
+          "priority": {
+            "type": "integer",
+            "format": "int64",
+            "description": "The order in which this template is processed when multiple templates with the same status (published or staging) are associated with the application. The higher the number, the earlier the template will be used. For example, a template with a priority of 10 is triggered before a template with a priority of 3.",
+            "example": 10
+          },
+          "dirty": {
+            "type": "boolean",
+            "description": "The status of the template. If `false`, the template is published. If `true`, this is the staging version of this template and it contains changes that have not yet been published.",
+            "default": true
+          },
+          "templateDirty": {
+            "type": "boolean",
+            "description": "The status of the template. If `false`, the template does not have unpublished changes. If `true`, this is the staging version of this template and it contains changes that have not yet been published. This only applies to templates and is different from the status of the zone. Even if the associated zone (query profile) for this template is dirty (contains some type of changes that have not yet been published), the template and its status are separate.",
+            "default": false
+          },
+          "markedForDeletion": {
+            "type": "boolean",
+            "description": "This field indicates if the staging version of this template has been marked for deletion, but the deletion has not been completed because it has not been published yet. If `true`, the template has been marked for deletion, and when it is published, it will actually be deleted. If `false`, the template has not been marked for deletion.",
+            "default": false
+          },
+          "type": {
+            "type": "string",
+            "description": "The type of template associated with the response. Examples include landing and item-detail.",
+            "example": "lan"
+          },
+          "metadata": {
+            "type": "object",
+            "description": "Additional data associated with the template.",
+            "properties": {
+              "type": {
+                "type": "string",
+                "x-stoplight": {
+                  "id": "33ngpb0pkd3t7"
+                },
+                "description": "The type of template associated with the response. Examples include landing and item-detail.",
+                "example": "landing"
+              }
+            }
+          },
+          "zones": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/zone"
+            }
+          },
+          "neverPublished": {
+            "type": "boolean",
+            "description": "The status of the template in the zone. If `false`, the template has been published at some point. If `true`, this template has never been published.",
+            "default": false
+          },
+          "published": {
+            "type": "boolean",
+            "description": "This field indicates if the template is a published template. If `true`, this template has a status of published. If `false`, this template is not a template with a status of published."
+          },
+          "staging": {
+            "type": "boolean",
+            "description": "This field indicates if the template is a staging template. If `true`, this template has a status of staging. If `false`, this template is not a template with a status of staging."
+          },
+          "dirtyZoneIds": {
+            "type": "array",
+            "description": "The comma-delimited list of universal unique identifiers (UUIDs) of the zones (query profiles) that are associated with the template and have unpublished changes. This only applies to zones and is different from the status of the template. Even if the associated template is dirty (contains some type of changes that have not yet been published), the zones and their respective changes are separate.",
+            "items": {
+              "type": "string",
+              "example": "a3e0e22-9e6a-45h9-a2e7-5hjk72b9a3ea, 5avc1e65-162d-5b8e-92f0-6a962e0f43c5"
+            }
+          },
+          "startTime": {
+            "type": "string",
+            "format": "date-time",
+            "description": "The beginning date and time (in Epoch time format) when the template can be used.",
+            "example": "2024-08-24T14:15:22Z"
+          },
+          "endTime": {
+            "type": "string",
+            "format": "date-time",
+            "example": "2024-08-24T14:15:22Z",
+            "description": "The template cannot be used after this date and time. The format is Epoch time format."
+          },
+          "triggers": {
+            "type": "array",
+            "description": "Triggers - only one trigger needs to be satisfied in order for this template to trigger.",
+            "items": {
+              "$ref": "#/components/schemas/trigger"
+            }
+          }
+        }
+      },
+      "trigger": {
+        "title": "Trigger",
+        "x-stoplight": {
+          "id": "c2653282c4224"
+        },
+        "type": "object",
+        "description": "An individual trigger criteria for a template. All the conditions indicated in the trigger must be met for the trigger to be a match on a particular nav state. A trigger consists of search (q) and filter (fq) criteria.",
+        "properties": {
+          "exact": {
+            "type": "boolean",
+            "description": "This field specifies if the template status (published or staging) must match this trigger's criteria. If `true`, the status must be an exact match. No extra filters are allowed, and no search terms are allowed if this trigger does not define them. This is not the same as `exact` match mode, which specifically defines the search term matching logic."
+          },
+          "filters": {
+            "type": "array",
+            "description": "Filters (fq) values required in the query for this trigger to match. Additional filters may be present in the query (and still satisfy this trigger) unless 'exact: true' is specified for this trigger, in which case the filters in the query must exactly match the filters in this trigger, no more and no less.",
+            "items": {
+              "$ref": "#/components/schemas/KeyAndValue"
+            }
+          },
+          "matchMode": {
+            "type": "string",
+            "description": "Defines search terms matching criteria. 'phrase' (the default) requires the search tokens of this trigger to exist as a phrase within the search terms of the query, in the same order. 'all' requires the search tokens of this trigger to exist within the search terms of the query in any order. 'exact' requires that the search tokens in this trigger exactly match the search tokens in the query, in the same order. As with all match modes, 'exact' still applies the configured analysis, such as stemming, so singular / plural forms will be considered identical despite not being 'exactly' the same.",
+            "enum": [
+              "all",
+              "exact",
+              "phrase"
+            ]
+          },
+          "search": {
+            "type": "string",
+            "description": "Search terms required in the query for this trigger to match. The configured analysis will be applied to tokenize and process these terms."
+          },
+          "urlContext": {
+            "type": "string",
+            "description": "The context for the URL used in this trigger. The URL context and path must match the request to trigger this template."
+          },
+          "urlPath": {
+            "type": "string",
+            "description": "The URL path for this trigger."
+          }
+        }
+      },
+      "triggerResponse": {
+        "title": "triggerResponse",
+        "x-stoplight": {
+          "id": "287809fb042eb"
+        },
+        "type": "object",
+        "properties": {
+          "triggered": {
+            "$ref": "#/components/schemas/templateWithZones"
+          }
+        },
+        "description": ""
+      },
+      "zone": {
+        "title": "Zone",
+        "x-stoplight": {
+          "id": "7d2ff9dde3cbb"
+        },
+        "type": "object",
+        "required": [
+          "id"
+        ],
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "The name of the zone that contains the specified query profiles to search in the query.",
+            "example": "Results List"
+          },
+          "id": {
+            "type": "string",
+            "description": "The universal unique identifier (UUID) of the zone.",
+            "example": "6a092bd4-5098-466c-94aa-40bf68294303",
+            "format": "uuid"
+          },
+          "type": {
+            "type": "string",
+            "description": "Read-only value that classifies the zone in the Fusion Predictive Merchandiser UI. This value does not affect the triggering/rendering logic. ",
+            "example": "result-list"
+          },
+          "queryProfile": {
+            "type": "string",
+            "x-stoplight": {
+              "id": "zi250yjpgkfrx"
+            },
+            "description": "The query profile for this zone, that designates the endpoint that is searched.",
+            "example": "fusion-query-profile-name"
+          },
+          "omitFilters": {
+            "type": "boolean",
+            "x-stoplight": {
+              "id": "qoqbd8mfoq6b2"
+            },
+            "description": "Specifies whether to include filters `fq` parameters in the search. If set to `Off`, all query parameters in the original request are passed on to the defined query profile when a template is being rendered. If set to `On`, all filters (`fq` parameters) from the original request are omitted from the query to the query profile. For example, if you have a category landing page where the category is used to filter the displayed items, this setting can allow a zone to display items outside of that category (by omitting the category filter).",
+            "default": false
+          },
+          "dirty": {
+            "type": "boolean",
+            "description": "The status of the template. If `false`, the template is published. If `true`, this is the staging version of this template and it contains changes that have not yet been published."
+          },
+          "neverPublished": {
+            "type": "boolean",
+            "description": "The status of the template in the zone. If `false`, the template has been published at some point. If `true`, this template has never been published."
+          },
+          "metadata": {
+            "type": "object",
+            "description": "Additional data associated with this zone.",
+            "properties": {
+              "image": {
+                "type": "string",
+                "x-stoplight": {
+                  "id": "ng7twgf49w0wo"
+                },
+                "description": "ID for the image associated with the zone.",
+                "example": "image-id"
+              },
+              "primary": {
+                "type": "string",
+                "x-stoplight": {
+                  "id": "pd68k7gfs977m"
+                },
+                "description": "The unique ID for the primary metadata associated with the zone.",
+                "example": "primary-metadata-id"
+              },
+              "secondary": {
+                "type": "string",
+                "x-stoplight": {
+                  "id": "za5f0vppycwja"
+                },
+                "description": "Additional text data for the zone.",
+                "example": "_text_"
+              }
+            }
+          },
+          "inTemplates": {
+            "type": "array",
+            "description": "IDs of the staging and/or published templates in which this zone appears. The IDs are not displayed in any particular order. The `staging` and `published` boolean fields specify if that type of template ID is returned in this field.",
+            "items": {
+              "type": "string",
+              "example": "e123f4bc-5e7e-46dd-9be8-71a4f73e511a, 8084969c-bd23-40f7-9acf-c68d6798bec2, 441eb3be-7de6-470a-8141-e416a15c7db1, fb148491-b39e-46d1-af33-44cd964d8ee0"
+            }
+          },
+          "staging": {
+            "type": "boolean",
+            "description": "Specifies if IDs are returned for staging templates associated with this zone.",
+            "default": false
+          },
+          "published": {
+            "type": "boolean",
+            "description": "Specifies if IDs are returned for published templates associated with this zone.",
+            "default": false
+          },
+          "layout": {
+            "type": "string",
+            "x-stoplight": {
+              "id": "fpwelumw4uze6"
+            },
+            "description": "The type of layout for the template. Values include grid and list.",
+            "example": "grid"
+          }
+        }
+      },
+      "postRenderRequest": {
+        "title": "postRenderRequest",
+        "x-stoplight": {
+          "id": "pzqvfq9gp4r13"
+        },
+        "type": "object",
+        "properties": {
+          "templateTypes": {
+            "type": "array",
+            "x-stoplight": {
+              "id": "dr1jb25cumlp0"
+            },
+            "description": "The comma-separated list of template types to retrieve. Options include item-detail, landing, and typeahead. The default is `landing`.",
+            "items": {
+              "x-stoplight": {
+                "id": "cidrz13ht42xh"
+              },
+              "type": "string",
+              "default": "landing",
+              "example": "landing, item-detail"
+            }
+          },
+          "params": {
+            "type": "object",
+            "x-stoplight": {
+              "id": "ghott6mwho4e3"
+            },
+            "description": "\"The POST request parameter is: `dictionary[string,array[string]]`\n\nA dictionary is also called a map or hashmap has the form of: {\\\"key1\\\": \\\"value1\\\", \\\"key2\\\" : 2, \\\"key3\\\" : \\\"value3\\\"}\n\n`string` contains any characters in '' or \"\n\nAnd `array [string]` is an array (or list) that contains only strings such as [\\\"one\\\", \\\"two\\\", \\\"a\\\", \\\"B\\\", \\\"bubbles\\\"]\n\nExample 1: \n\n{\"key1\\\" : \\\"value1\\\", \n\n\"key2\\\" : [\\\"one\\\", \\\"two\\\", \\\"a\\\", \\\"B\\\", \\\"bubbles\\\"], \n\n\"key3\\\" : [\\\"five bubbles\\\", \\\"sunny\\\"],\n \n\"key4\\\" : \\\"value4\\\"}\n\nExample 2:\n\n{\"key1\\\" : [\\\"one\\\", \\\"two\\\", \\\"a\\\", \\\"B\\\", \\\"bubbles\\\"], \n\n\"key2\\\" : [\\\"five bubbles\\\", \\\"sunny\\\"]\"}",
+            "additionalProperties": {
+              "x-stoplight": {
+                "id": "fyhov0pye1o29"
+              },
+              "type": "array",
+              "items": {
+                "x-stoplight": {
+                  "id": "9yaqa6n9pp9gw"
+                },
+                "type": "string"
+              }
+            }
+          }
+        }
+      },
+      "postRenderIdRequest": {
+        "title": "postRenderIdRequest",
+        "x-stoplight": {
+          "id": "j67jn8guhwo2w"
+        },
+        "type": "object",
+        "properties": {
+          "params": {
+            "type": "object",
+            "description": "\"The POST request parameter is: `dictionary[string,array[string]]`\n\nA dictionary is also called a map or hashmap has the form of: {\\\"key1\\\": \\\"value1\\\", \\\"key2\\\" : 2, \\\"key3\\\" : \\\"value3\\\"}\n\n`string` contains any characters in '' or \"\n\nAnd `array [string]` is an array (or list) that contains only strings such as [\\\"one\\\", \\\"two\\\", \\\"a\\\", \\\"B\\\", \\\"bubbles\\\"]\n\nExample 1: \n\n{\"key1\\\" : \\\"value1\\\", \n\n\"key2\\\" : [\\\"one\\\", \\\"two\\\", \\\"a\\\", \\\"B\\\", \\\"bubbles\\\"], \n\n\"key3\\\" : [\\\"five bubbles\\\", \\\"sunny\\\"],\n \n\"key4\\\" : \\\"value4\\\"}\n\nExample 2:\n\n{\"key1\\\" : [\\\"one\\\", \\\"two\\\", \\\"a\\\", \\\"B\\\", \\\"bubbles\\\"], \n\n\"key2\\\" : [\\\"five bubbles\\\", \\\"sunny\\\"]\"}",
+            "additionalProperties": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          }
+        }
+      },
+      "settingsSchemaResponse": {
+        "title": "Settings Schema Response",
+        "x-stoplight": {
+          "id": "uejuwv5lhzdup"
+        },
+        "type": "object",
+        "properties": {
+          "type": {
+            "type": "string",
+            "x-stoplight": {
+              "id": "pqfm30j96ua39"
+            },
+            "default": "object",
+            "description": "The type of object returned in the response."
+          },
+          "title": {
+            "type": "string",
+            "x-stoplight": {
+              "id": "01jz2w6qf8sq7"
+            },
+            "description": "Description of what is returned in the schema response.",
+            "example": "General settings of the template service."
+          },
+          "description": {
+            "type": "string",
+            "x-stoplight": {
+              "id": "kymcvvdtcuzug"
+            },
+            "example": "Stores common application configuration of templating service.",
+            "description": "Description of the information stored in the schema."
+          },
+          "properties": {
+            "type": "object",
+            "x-stoplight": {
+              "id": "fuqvg1yogwod4"
+            },
+            "description": "Properties stored in the schema.",
+            "properties": {
+              "id": {
+                "type": "object",
+                "x-stoplight": {
+                  "id": "2n2m7oz05nt4y"
+                },
+                "description": "Identifier properties of the settings in the schema.",
+                "properties": {
+                  "type": {
+                    "type": "string",
+                    "x-stoplight": {
+                      "id": "frt0njz2mu6hk"
+                    },
+                    "description": "The type of identifier."
+                  },
+                  "title": {
+                    "type": "string",
+                    "x-stoplight": {
+                      "id": "l3163jwdrvz6d"
+                    },
+                    "description": "The title of the identifier."
+                  },
+                  "description": {
+                    "type": "string",
+                    "x-stoplight": {
+                      "id": "exlsvgv37a08y"
+                    },
+                    "description": "The description of the identifier of this object."
+                  }
+                }
+              },
+              "app": {
+                "type": "object",
+                "x-stoplight": {
+                  "id": "1yiizvkyl2z47"
+                },
+                "properties": {
+                  "type": {
+                    "type": "string",
+                    "x-stoplight": {
+                      "id": "6pnfw478tr607"
+                    },
+                    "description": "The type of application in the schema."
+                  },
+                  "title": {
+                    "type": "string",
+                    "x-stoplight": {
+                      "id": "1o97rkux48cr4"
+                    },
+                    "description": "The Fusion application name."
+                  },
+                  "description": {
+                    "type": "string",
+                    "x-stoplight": {
+                      "id": "ltip6sesrtqjx"
+                    },
+                    "description": "The description of the application associated with the settings."
+                  }
+                }
+              },
+              "hierarchyFields": {
+                "type": "object",
+                "x-stoplight": {
+                  "id": "z97e3l5m9o2e5"
+                },
+                "properties": {
+                  "type": {
+                    "type": "string",
+                    "x-stoplight": {
+                      "id": "tjyopqfbxy8ib"
+                    },
+                    "description": "The type of setting for the hierarchical fields.",
+                    "example": "array"
+                  },
+                  "title": {
+                    "type": "string",
+                    "x-stoplight": {
+                      "id": "cgat1t74roih4"
+                    },
+                    "description": "The title for the hierarchical fields.",
+                    "example": "Hierarchy fields"
+                  },
+                  "description": {
+                    "type": "string",
+                    "x-stoplight": {
+                      "id": "2lzyk2xi7wfkj"
+                    },
+                    "description": "The list of hierarchical fields for the schema."
+                  },
+                  "items": {
+                    "type": "object",
+                    "x-stoplight": {
+                      "id": "8hpxdutnjv1in"
+                    },
+                    "properties": {
+                      "type": {
+                        "type": "string",
+                        "x-stoplight": {
+                          "id": "5fwdfsc7pqa2m"
+                        },
+                        "description": "The type of hierarchical item.",
+                        "example": "object"
+                      },
+                      "properties": {
+                        "type": "object",
+                        "x-stoplight": {
+                          "id": "zz1rvwanrfvq6"
+                        },
+                        "properties": {
+                          "field": {
+                            "type": "object",
+                            "x-stoplight": {
+                              "id": "m4q2931ez9b18"
+                            },
+                            "properties": {
+                              "type": {
+                                "type": "string",
+                                "x-stoplight": {
+                                  "id": "cv8shi1jfllip"
+                                },
+                                "description": "The type of field."
+                              },
+                              "title": {
+                                "type": "string",
+                                "x-stoplight": {
+                                  "id": "6noi4bh78bfko"
+                                },
+                                "description": "The hierarchical field name."
+                              },
+                              "description": {
+                                "type": "string",
+                                "x-stoplight": {
+                                  "id": "ytyn9zlsqelq6"
+                                },
+                                "description": "The description of the hierarchical field."
+                              }
+                            }
+                          }
+                        }
+                      },
+                      "separator": {
+                        "type": "object",
+                        "x-stoplight": {
+                          "id": "mvqrwdb80kknf"
+                        },
+                        "description": "The character that separates each hierarchical field specified for the template.",
+                        "properties": {
+                          "type": {
+                            "type": "string",
+                            "x-stoplight": {
+                              "id": "g2cpipepm5qon"
+                            },
+                            "description": "The type of separator associated with the hierarchical field."
+                          },
+                          "title": {
+                            "type": "string",
+                            "x-stoplight": {
+                              "id": "58pw8jt8kmhl8"
+                            },
+                            "description": "The name of the separator."
+                          },
+                          "description": {
+                            "type": "string",
+                            "x-stoplight": {
+                              "id": "w6nuei7aip9o3"
+                            },
+                            "description": "The description of the separator character."
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "category": {
+            "type": "string",
+            "x-stoplight": {
+              "id": "a9re65rkhgbbm"
+            },
+            "description": "The category of the object in the schema."
+          },
+          "categoryPriority": {
+            "type": "string",
+            "x-stoplight": {
+              "id": "uvrxhqx361le0"
+            },
+            "description": "The importance (priority) of the object in the schema."
+          },
+          "unsafe": {
+            "type": "boolean",
+            "x-stoplight": {
+              "id": "pzzf7ggdzkvkq"
+            },
+            "description": "The security status of the objects in the schema. If `false`, the schema contents are valid. If `true`, the schema contents are not valid."
+          }
+        }
+      },
+      "templatesSchemaResponse": {
+        "title": "Templates Schema Response",
+        "x-stoplight": {
+          "id": "gaj5nltrhvcm5"
+        },
+        "type": "object",
+        "required": [
+          "id"
+        ],
+        "properties": {
+          "type": {
+            "type": "string",
+            "default": "object",
+            "description": "The type of object returned in the response.",
+            "example": "Templating Template"
+          },
+          "title": {
+            "type": "string",
+            "description": "Description of what is returned in the schema response.",
+            "example": "Templating Template"
+          },
+          "description": {
+            "type": "string",
+            "description": "Description of the information stored in the schema.",
+            "example": "Stores configuration of the templates."
+          },
+          "properties": {
+            "type": "object",
+            "description": "Properties stored in the schema.",
+            "required": [
+              "app"
+            ],
+            "properties": {
+              "dirty": {
+                "type": "boolean",
+                "x-stoplight": {
+                  "id": "2j99g6nvqtzbd"
+                },
+                "description": "The status of the template. If `false`, the template is published. If `true`, this is the staging version of this template and it contains changes that have not yet been published."
+              },
+              "zoneIds": {
+                "type": "array",
+                "x-stoplight": {
+                  "id": "0b8qms89nyo3a"
+                },
+                "description": "The comma-delimited list of universal unique identifiers (UUIDs) of the zones (query profiles) that are associated with the template.",
+                "items": {
+                  "x-stoplight": {
+                    "id": "pdnj0ea0jhil1"
+                  },
+                  "type": "string",
+                  "example": "ab6d0e24-9e7a-35h9-a2e7-5hjl72b8a3ea, 2abc1e65-162d-3a8e-76f0-6a962e0f43c5"
+                }
+              },
+              "metadata": {
+                "type": "object",
+                "x-stoplight": {
+                  "id": "bhqmnves4jswv"
+                },
+                "description": "Additional data associated with this template."
+              },
+              "isStaging": {
+                "type": "boolean",
+                "x-stoplight": {
+                  "id": "j1nyh5fk70z3z"
+                },
+                "description": "This field indicates if the templates is published or unpublished (staging). If set to `false`, the template is published. If set to `true`, the template is unpublished (staging)."
+              },
+              "startTime": {
+                "type": "string",
+                "x-stoplight": {
+                  "id": "a55tqkfjyrvm7"
+                },
+                "description": "The beginning date and time (in Epoch time format) when the template can be used.",
+                "format": "date-time"
+              },
+              "app": {
+                "type": "string",
+                "x-stoplight": {
+                  "id": "8uzleshldc2v9"
+                },
+                "description": "The Fusion application associated with this template.",
+                "example": "application-id"
+              },
+              "isPublished": {
+                "type": "boolean",
+                "x-stoplight": {
+                  "id": "r1qpedwkc37ks"
+                },
+                "description": "This field indicates if the template is a published template. If `true`, this template has a status of published. If `false`, this template is not a template with a status of published."
+              },
+              "triggers": {
+                "$ref": "#/components/schemas/trigger"
+              }
+            }
+          },
+          "category": {
+            "type": "string",
+            "description": "The category of the object in the schema."
+          },
+          "categoryPriority": {
+            "type": "integer",
+            "description": "The importance (priority) of the object in the schema."
+          },
+          "unsafe": {
+            "type": "boolean",
+            "description": "The security status of the objects in the schema. If `false`, the schema contents are valid. If `true`, the schema contents are not valid."
+          },
+          "all": {
+            "type": "boolean",
+            "x-stoplight": {
+              "id": "stn4zz9lgto5r"
+            },
+            "description": "This field indicates if the request includes published or unpublished (staging) templates. The default of `false` includes only published templates. If set to `true`, the request includes published and unpublished (staging) templates."
+          },
+          "isMarkedForDeletion": {
+            "type": "boolean",
+            "x-stoplight": {
+              "id": "ez62vvjczqwgh"
+            },
+            "description": "This field indicates if the staging version of this template has been marked for deletion, but the deletion has not been completed because it has not been published yet. If `true`, the template has been marked for deletion, and when it is published, it will actually be deleted. If `false`, the template has not been marked for deletion."
+          },
+          "endTime": {
+            "type": "string",
+            "x-stoplight": {
+              "id": "9rj8golw45xoe"
+            },
+            "description": "The template cannot be used after this date and time. The format is Epoch time format.",
+            "format": "date-time",
+            "example": "2024-08-24T14:15:22Z"
+          },
+          "dirtyZoneIds": {
+            "type": "array",
+            "x-stoplight": {
+              "id": "nzuy3t2t9i2e3"
+            },
+            "description": "The comma-delimited list of universal unique identifiers (UUIDs) of the zones (query profiles) that are associated with the template and have unpublished changes. This only applies to zones and is different from the status of the template. Even if the associated template is dirty (contains some type of changes that have not yet been published), the zones and their respective changes are separate.",
+            "items": {
+              "x-stoplight": {
+                "id": "djkko5331vfgt"
+              },
+              "type": "string",
+              "example": "a3e0e22-9e6a-45h9-a2e7-5hjk72b9a3ea, 5avc1e65-162d-5b8e-92f0-6a962e0f43c5"
+            }
+          },
+          "templateDirty": {
+            "type": "boolean",
+            "x-stoplight": {
+              "id": "5nno5r2aykycx"
+            },
+            "description": "The status of the template. If `false`, the template does not have unpublished changes. If `true`, this is the staging version of this template and it contains changes that have not yet been published. This only applies to templates and is different from the status of the zone. Even if the associated zone (query profile) for this template is dirty (contains some type of changes that have not yet been published), the template and its status are separate.",
+            "default": false
+          },
+          "neverPublished": {
+            "type": "boolean",
+            "x-stoplight": {
+              "id": "93io83q0hwua0"
+            },
+            "description": "The status of the template in the zone. If `false`, the template has been published at some point. If `true`, this template has never been published.",
+            "default": false
+          },
+          "name": {
+            "type": "string",
+            "x-stoplight": {
+              "id": "p62l84lz2c70j"
+            },
+            "description": "The Fusion application name.",
+            "example": "your-app-name"
+          },
+          "priority": {
+            "type": "integer",
+            "x-stoplight": {
+              "id": "ek677d02u2upz"
+            },
+            "description": "The order in which this template is processed when multiple templates with the same status (published or staging) are associated with the application. The higher the number, the earlier the template will be used. For example, a template with a priority of 10 is triggered before a template with a priority of 3.",
+            "format": "int64",
+            "example": 10
+          },
+          "id": {
+            "type": "string",
+            "x-stoplight": {
+              "id": "ohmojz4vcy92z"
+            },
+            "description": "The universal unique identifier (UUID) of the Fusion application.",
+            "format": "uuid",
+            "example": "6a163bd4-5098-466c-22aa-40bf68294303"
+          }
+        }
+      },
+      "zonesSchemaResponse": {
+        "title": "Zones Schema Response",
+        "x-stoplight": {
+          "id": "2bo4650zuo0j6"
+        },
+        "type": "object",
+        "properties": {
+          "type": {
+            "type": "string",
+            "default": "object",
+            "description": "The type of object returned in the response.",
+            "example": "Templating Zone"
+          },
+          "title": {
+            "type": "string",
+            "description": "Description of what is returned in the schema response.",
+            "example": "Templating Template"
+          },
+          "description": {
+            "type": "string",
+            "description": "Description of the information stored in the schema.",
+            "example": "Stores configuration of the templates."
+          },
+          "properties": {
+            "type": "object",
+            "description": "Properties stored in the schema.",
+            "properties": {
+              "dirty": {
+                "type": "boolean",
+                "description": "The status of the template. If `false`, the template is published. If `true`, this is the staging version of this template and it contains changes that have not yet been published."
+              },
+              "metadata": {
+                "type": "object",
+                "description": "Additional data associated with this zone."
+              },
+              "neverPublished": {
+                "type": "boolean",
+                "x-stoplight": {
+                  "id": "m73fq34po93zg"
+                },
+                "default": false,
+                "description": "The status of the zone. If `false`, the zone has been published at some point. If `true`, this zone has never been published."
+              },
+              "isStaging": {
+                "type": "boolean",
+                "description": "This field indicates if the zone is published or unpublished (staging). If set to `false`, the zone is published. If set to `true`, the zone is unpublished (staging)."
+              },
+              "isPublished": {
+                "type": "boolean",
+                "description": "This field indicates if the template is a published template. If `true`, this template has a status of published. If `false`, this template is not a template with a status of published."
+              },
+              "inTemplates": {
+                "type": "array",
+                "x-stoplight": {
+                  "id": "wsu6my341bgn3"
+                },
+                "description": "IDs of the staging and/or published templates in which this zone appears. The IDs are not displayed in any particular order. The `staging` and `published` boolean fields specify if that type of template ID is returned in this field.\n\nThe IDs are listed in the `items` field.",
+                "items": {
+                  "x-stoplight": {
+                    "id": "ew3o6nj5tchj4"
+                  },
+                  "type": "string",
+                  "example": "e123f4bc-5e7e-46dd-9be8-71a4f73e511a, 8084969c-bd23-40f7-9acf-c68d6798bec2, 441eb3be-7de6-470a-8141-e416a15c7db1, fb148491-b39e-46d1-af33-44cd964d8ee0"
+                }
+              },
+              "name": {
+                "type": "string",
+                "x-stoplight": {
+                  "id": "vg8lweix0muqq"
+                },
+                "description": "The name of the zone that contains the specified query profiles to search in the query.",
+                "example": "Results List"
+              },
+              "id": {
+                "type": "string",
+                "x-stoplight": {
+                  "id": "4gcss9lg4oylo"
+                },
+                "description": "The universal unique identifier (UUID) of the zone.",
+                "format": "uuid",
+                "example": "6a163bd4-5098-466c-22aa-40bf68294303"
+              },
+              "type": {
+                "type": "string",
+                "x-stoplight": {
+                  "id": "ls25pse6hr6mj"
+                },
+                "description": "Read-only value that classifies the zone in the Fusion Predictive Merchandiser UI. This value does not affect the triggering/rendering logic. ",
+                "example": "result-list"
+              },
+              "tags": {
+                "type": "array",
+                "x-stoplight": {
+                  "id": "ouyp2443mf7ef"
+                },
+                "description": "The tags to pass to the query profile during the operation (GET, POST, PUT, DELETE). This data is combined with tags send in the request paramaters.",
+                "items": {
+                  "x-stoplight": {
+                    "id": "so4a3p3d8dnq3"
+                  },
+                  "type": "string",
+                  "example": "zones-controller"
+                }
+              },
+              "isOmitFilters": {
+                "type": "boolean",
+                "x-stoplight": {
+                  "id": "na118m8gmn086"
+                },
+                "description": "Specifies whether to include filters `fq` parameters in the search. If set to `Off`, all query parameters in the original request are passed on to the defined query profile when a template is being rendered. If set to `On`, all filters (`fq` parameters) from the original request are omitted from the query to the query profile. For example, if you have a category landing page where the category is used to filter the displayed items, this setting can allow a zone to display items outside of that category (by omitting the category filter).",
+                "default": false
+              },
+              "queryProfile": {
+                "type": "string",
+                "x-stoplight": {
+                  "id": "o7e4coj4fxg8j"
+                },
+                "description": "The query profile for this zone, that designates the endpoint that is searched.",
+                "example": "query-profile"
+              },
+              "uiTreatment": {
+                "type": "string",
+                "x-stoplight": {
+                  "id": "qwlhkb2268hgn"
+                },
+                "description": "Text included in the response for this zone. If the user interface (UI) is configured to use the zone, the text in this field can be used to influence how the zone is displayed or processed in the UI."
+              }
+            }
+          },
+          "category": {
+            "type": "string",
+            "description": "The category of the object in the schema."
+          },
+          "categoryPriority": {
+            "type": "integer",
+            "description": "The importance (priority) of the object in the schema."
+          },
+          "unsafe": {
+            "type": "boolean",
+            "description": "The security status of the objects in the schema. If `false`, the schema contents are valid. If `true`, the schema contents are not valid."
+          }
+        }
+      },
+      "settingsStatusResponse": {
+        "title": "settingsStatusResponse",
+        "x-stoplight": {
+          "id": "2quvhn4l9jgt4"
+        },
+        "type": "array",
+        "items": {
+          "x-stoplight": {
+            "id": "69n393ckjk8lj"
+          },
+          "type": "object",
+          "properties": {
+            "status": {
+              "type": "string",
+              "x-stoplight": {
+                "id": "wt8sznt0ir9tw"
+              },
+              "description": "The status of the settings of the schema.",
+              "example": "ok"
+            },
+            "node": {
+              "type": "string",
+              "x-stoplight": {
+                "id": "6y2004vw0d0v5"
+              },
+              "description": "The location of the template settings.",
+              "example": "http://templating/settings"
+            },
+            "messages": {
+              "type": "array",
+              "x-stoplight": {
+                "id": "yde05aa6j0u4x"
+              },
+              "description": "The message date and contents of the status of the settings.",
+              "items": {
+                "x-stoplight": {
+                  "id": "istajcrl8fr7f"
+                },
+                "type": "object",
+                "properties": {
+                  "date": {
+                    "type": "string",
+                    "x-stoplight": {
+                      "id": "4vi22e0w80gus"
+                    },
+                    "description": "The date of the status response.",
+                    "example": "",
+                    "format": ""
+                  },
+                  "message": {
+                    "type": "string",
+                    "x-stoplight": {
+                      "id": "z4wox5guzm2xf"
+                    },
+                    "description": "Additional message text returned in the response.",
+                    "example": "Additional message text."
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "templatesStatusResponse": {
+        "title": "templateStatusResponse",
+        "x-stoplight": {
+          "id": "fp56knfzjps6l"
+        },
+        "type": "array",
+        "items": {
+          "type": "object",
+          "properties": {
+            "status": {
+              "type": "string",
+              "description": "The status of the template.",
+              "example": "ok"
+            },
+            "node": {
+              "type": "string",
+              "description": "The location of the template.",
+              "example": "http://templating/settings"
+            },
+            "messages": {
+              "type": "array",
+              "description": "The message date and contents of the status of the template.",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "date": {
+                    "type": "string",
+                    "description": "The date of the status response.",
+                    "example": "",
+                    "format": ""
+                  },
+                  "message": {
+                    "type": "string",
+                    "description": "Additional message text returned in the response.",
+                    "example": "Additional message text."
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "zonesStatusResponse": {
+        "title": "zonesStatusResponse",
+        "x-stoplight": {
+          "id": "0pt0l0576e5by"
+        },
+        "type": "array",
+        "items": {
+          "type": "object",
+          "properties": {
+            "status": {
+              "type": "string",
+              "description": "The status of the zone.",
+              "example": "ok"
+            },
+            "node": {
+              "type": "string",
+              "description": "The location of the zone.",
+              "example": "http://templating/settings"
+            },
+            "messages": {
+              "type": "array",
+              "description": "The message date and contents of the status of the zone.",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "date": {
+                    "type": "string",
+                    "description": "The date of the status response.",
+                    "example": "",
+                    "format": ""
+                  },
+                  "message": {
+                    "type": "string",
+                    "description": "Additional message text returned in the response.",
+                    "example": "Additional message text."
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "securitySchemes": {
+      "Basic auth": {
+        "type": "http",
+        "scheme": "basic"
+      }
+    }
+  }
+}

@@ -1,0 +1,227 @@
+---
+subGroup: "ai"
+permalink: "6bb9s5"
+layout: default
+title: 'Custom model training user interface'
+description: 'Needs description'
+icon: 'text-size'
+subtitle: 'Lucidworks AI Custom model training'
+order: 58
+doctype: concept
+---
+
+The Lucidworks AI custom model training user interface lets you train and deploy custom models, and provides information about the custom models deployed on your site. 
+
+For technical information about custom embedding models, see [Custom embedding model training](/lw-platform/ai/k1zkfn/custom-embedding-model-training).
+
+The other embedding models you can use are the _pre-trained_ embedding models that Lucidworks deploys for every organization. For more information, see [Lucidworks AI Pre-trained embedding models](/lw-platform/ai/3vqfxe/pre-trained-embedding-models).
+
+## Custom Models screen
+
+To access the Custom Models screen, sign in to Lucidworks Platform, click **Lucidworks AI** and then click the **Custom Models** tab. The Lucidworks AI Custom Models screen displays a list of deployed custom models. 
+
+![Lucidworks AI custom model training user interface](/assets/images/lw-platform/lw-ai/lw-ai-custom-model-training-ui.png)
+
+
+The following table describes the information for each model.
+
+|====
+|Field |Description
+
+|Name |The name of the model. 
+
+|Use case |The model use case used to train the model.
+
+|Training status |Also referred to as `state`, this is the current status of the model. Options are:
+
+* **AVAILABLE**. The custom model was successfully trained and is ready to be deployed. 
+* **TRAINING**. The custom model is being trained.
+* **TRAINING_FAILED**. The custom model training failed.
+* **DELETING**. The custom model is being deleted.
+* **DELETING_FAILED**. The action failed and the model has not been deleted.
+
+|Vector size |The number of elements and objects in the custom model. 
+
+|Deployed regions |The geographic region specified when the custom model is deployed.
+
+|Training started |The date and time the training started. 
+
+|Training completed |The date and time the training completed.
+
+|Created by |Also referred to as `Author`, this is the user who created the model.
+
+|====
+
+**📌 NOTE**\
+You can also create a new custom model. For more information, see [Create a new model](/lw-platform/ai/vjs5ie/create-deploy-custom-models#create-a-new-model).
+
+## Model Details screen
+
+If you hold the pointer over a model on the list and click the entry, the Model Details screen displays.
+
+You can view [Training details](#training-details) that include [Metadata](#metadata), [Summary](#summary), and [Metrics](#metrics) information about the selected model.
+
+   
+
+You can also:
+
+* Click **Download Model Data** to download the JSON file for the model. You can use the parameters from this model in a different model without rekeying the information.
+* Click **Delete** if the model can be deleted. If the model cannot be deleted because it is associated with deployments, all the deployments must be deleted first. For example, if the model is associated with two deployments, `2 Active Deployments: Deleting Disabled` displays instead of the Delete button. This example indicates there are two current deployments for the model, and based on the status of those deployments, the option to delete the model is disabled. 
+
+   
+
+### Training Details
+
+The Training Details screen provides metadata, summary, and metrics information.
+
+![Lucidworks AI custom model training details](/assets/images/lw-platform/lw-ai/lw-ai-model-details.png)
+
+#### Metadata
+
+This metadata provides the data supplied when the model was created.
+
+|====
+|Field |Description
+
+|id |The unique identifier for the model. The identifier of the model. For custom models, the value is the universally unique identified (UUID) that is the primary key for the model.
+
+|Author |Also referred to as `createdBy`, this is the user who created the model. 
+
+|Use case |The model use case used to train the model.
+
+|ModelType |The model type. For custom models, it is the name of the model.
+
+|Region |Also referred to as `Deployed region` this is the geographic region specified when the model was trained.
+
+|State |Also referred to as `Training status`, this is the current status of the model. Options are:
+
+* **AVAILABLE**. The model  was successfully trained and is ready to be deployed. 
+* **TRAINING**. The custom model is being trained. 
+* **TRAINING_FAILED**. The custom model training failed.
+
+|Vector size |The number of elements and objects in the custom model. Default value is 256.
+
+|Training started |The date and time the training started.
+
+|Training completed |The date and time the training completed.
+
+|Training Data Index Catalog |The location of the catalog of the training data in Google Cloud Storage (GCS).
+
+|Training Data Query Signals |The location of signals in the training data in Google Cloud Storage (GCS).
+
+|Error Message | The errors generated when the training failed. This field only displays for custom models with a TRAINING_FAILED status.
+
+|dataset_config |  The options for the dataset format used for training are:
+
+* `mlp_general` - This is used for the general recurrent neural networks (RNN) model type.
+* `mlp_ecommerce` - This used for an ecommerce RNN model type.
+
+|trainer_config |  The options for the trainer type used for training are:
+
+* `mlp_general` - This is used for the general recurrent neural networks (RNN) model type.
+* `mlp_ecommerce` - This used for an ecommerce RNN model type.
+
+|Additional dataset_config parameters | Any additional fields used to train the model using the Manual Entry method are listed. They are custom parameters.
+
+|trainer_config/text_processor_config | This field determines which type of tokenization and embedding is used as the base for the recurrent neural network (RNN) model. This field only displays for custom models with a TRAINING_FAILED status. For more information, see [Lucidworks AI Models API text processors](/lw-platform/ai/e63rmi/models-api#text-processors). From that topic, select **View API specification** for detailed API information.
+endif::[]
+
+|trainer_config.encoder_config.rnn_names_list | This field determines which bi-directional recurrent neural network (RNN) layers are used. Options include `gru` and `lstm`. This field only displays for custom models with a TRAINING_FAILED status.
+
+|====
+
+
+An example of an error message when the training fails is:
+
+![Lucidworks AI custom model error message](/assets/images/lw-platform/lw-ai/lw-ai-training-failed-error.png)
+
+#### Summary
+
+Click the **Summary** tab to view information about training metrics for the selected model.
+
+![Lucidworks AI custom model training details summary](/assets/images/lw-platform/lw-ai/lw-ai-model-details-summary.png)
+
+|====
+|Field |Description
+
+|Best Epoch |The number of the epoch where the most relevant results were returned.
+
+|Index Size |The number of bytes in the vector index.
+
+|Vector size |The number of elements and objects in the custom model. 
+
+|Training Time |The number of seconds to successfully train the model.
+
+|Num Trn Queries |The number of unique training queries used in this model.
+
+|Num Val Queries |The number of unique validation queries used in this model.
+
+|Num Unique Training Pairs |The number of unique training pairs for this model. An example of a training pair is `query/document`. This value may be larger than the `Num Trn Queries` because one query might return many documents, and therefore, many pairs.
+
+|====
+
+#### Metrics
+
+Click the **Metrics** tab to view analytics about the trained model. This information provides insights that help you determine if parameters need to be changed or if more data is needed to improve the model for optimal results.
+
+The [Custom configuration](/lw-platform/ai/tnwswb/custom-configuration) parameter that specifies metrics is `dataset_config.metrics_config.monitor_metric`. When you select one of the values, the `k` designates the numbers `1`, `3`, `5`, and `10.`
+
+* `hit@k` which measures the probability that the prediction is in the first top `k` model predictions.
+* `map@k` is the mean average precision metric that evaluates the system to return relevant items in the top `k` results, and positions more relevant items at the top.
+* `mrr@k` is the mean reciprocal rank that determines how quickly the system displays the first relevant item in the top `k` results.
+* `ndcg@k` is the normalized discounted cumulative gain metric that compares rankings to the optimal order where all relevant items display at the top.
+* `recall@k` displays the number of relevant items returned in the top `k` recommendations out of the number of relevant items in the dataset.
+
+The metrics section displays graphs and lets you select the value to view:
+
+![Training details metrics value options](/assets/images/lw-platform/lw-ai/lw-ai-model-training-details-options.png)
+
+The following is an example when the `hit@k` value is selected. Four graphs display on the screen: `hit@1` (pictured), `hit@3`, `hit@5`, and `hit@10`.
+
+![Training details metrics with value of hit@1](/assets/images/lw-platform/lw-ai/lw-ai-model-training-details-hit1.png)
+
+### Deployment Details
+
+The deployments screen displays information about each time you deployed the selected model.
+
+![Lucidworks AI custom model deployments screen](/assets/images/lw-platform/lw-ai/lw-ai-model-details-deployment.png)
+
+|====
+|Field |Description
+
+|id |The unique identifier for the model. For custom models, the value is the universally unique identified (UUID) that is the primary key for the model.
+
+|Region |The geographic region specified when the model was deployed.
+
+|State |The current status of the deployed model. Options are:
+
+This field specifies the current status of the custom model deployment. Value options include:
+
+* **DEPLOYING**. The model is in the process of being deployed.
+* **DEPLOYED**. The model is deployed and available for predictions.
+* **DEPLOY_FAILED**. The model failed to deploy.
+* **DELETING**. The model deployment is being deleted. The `custom_model_deployment` record is also deleted if the deployment is successfully deleted.
+* **DELETE_FAILED**. The model deployment deletion failed. The model is still deployed and available for predictions.
+
+|Deployed At |The date and time the deployment occurred.
+
+|Last Used |The last date and time this model was used in the `/predict` endpoint.
+
+|Minimum Replicas |The minimum value of replicas for the model.
+
+|Maximum Replicas |The maximum value of replicas for the model.
+
+|parameter_1 |The value of the first parameter passed in the `config` object. This parameter is optional. The name of `parameter_1` is an example placeholder. The actual name of each custom configuration field is designated by the person creating the query.
+|parameter_2 |The value of the second parameter passed in the `config` object. This parameter is optional. The name of `parameter_2` is an example placeholder. The actual name of each custom configuration field is designated by the person creating the query. You can use as many custom configuration fields as needed, it is not limited to the two fields mentioned.
+
+ifeval::["{audience-visibility}" == "beta"]
+NOTE: For information about configuration options for a model, see [Models API](/lw-platform/ai/e63rmi/models-api). You can click **View API specification** for detailed descriptions and options for each field.
+endif::[]
+
+|====
+
+
+You can also:
+
+* Click **+ New Deployment** to deploy the model again. For more information, see [Create a new deployment](/lw-platform/ai/vjs5ie/create-deploy-custom-models#create-a-new-deployment).
+* Click the Trash icon to delete a deployment with a status of "Deployed". You cannot delete a deployment with a status of "Deploying".
