@@ -1,0 +1,29 @@
+---
+subGroup: "ai"
+permalink: "bzik28"
+layout: pipeline_stage-server
+title: 'Lucidworks AI Prediction index stage'
+description: 'Needs description'
+icon: 'text-size'
+subtitle: 'Lucidworks AI'
+data: index_stage_schema
+stage-name: beta-call-lucidworks-ai
+order: 82
+skipBefore: "5.9"
+doctype: reference
+---
+
+The Lucidworks AI Prediction index stage is a general purpose integration between Fusion and Lucidworks AI.
+
+By default, the Fusion `Call Asynchronously?` field is selected, which specifies this stage uses the [Lucidworks AI Async Prediction API](/lw-platform/ai/55ug0f/async-prediction-api) endpoints.
+
+If the Fusion `Call Asynchronously?` field is _not_ selected, this stage uses the [Lucidworks AI Prediction API](/lw-platform/ai/8bx4m9/prediction-api) endpoints.
+
+To use this stage, non-admin Fusion users must be granted the `POST:/LWAI-ACCOUNT-NAME/**` permission in Fusion, which is the Lucidworks AI API Account Name defined in the Lucidworks AI Gateway service when this stage is configured.
+
+More detailed information to configure this stage is in [Configure the Lucidworks AI Prediction index stage](/how-to/ua7khh/configure-fusion-lwai-prediction-index-stage).
+
+## Configuration
+
+**💡 TIP**\
+When entering configuration values in the UI, use _unescaped_ characters, such as `\t` for the tab character. When entering configuration values in the API, use _escaped_ characters, such as `\\t` for the tab character.

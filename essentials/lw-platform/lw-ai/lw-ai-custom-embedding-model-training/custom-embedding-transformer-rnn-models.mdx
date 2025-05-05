@@ -1,0 +1,40 @@
+---
+subGroup: "ai"
+permalink: "gmhy47"
+layout: default
+title: 'Transformer RNN models'
+description: 'Needs description'
+icon: 'text-size'
+subtitle: 'Lucidworks AI custom embedding model training'
+order: 55
+doctype: reference
+---
+
+Lucidworks AI supports general types of transformer with recurrent neural network (RNN) head models.
+
+This architecture in Lucidworks AI is a RNN model that uses a frozen pre-trained transformer (FPT) base. The RNN head is trained while utilizing the frozen transformer weight, and captures the generality that RNN without frozen weights might not achieve. 
+
+This hybrid architecture is larger, which increases training time compared to RNN-only architecture, but produces higher-quality embeddings. Use Transformer RNN models for general use cases.
+
+Lucidworks recommends you use [RNN models](/lw-platform/ai/b18rw1/custom-embedding-rnn-models) for ecommerce use cases due to slower model encoding speed and less flexibility for domain specific language. 
+
+## Available pre-trained bases
+
+The available pre-trained bases are only in English and can be any of the following models:
+
+* [Hugging Face all-MiniLM-L12-v2 model](https://huggingface.co/sentence-transformers/all-MiniLM-L12-v2)
+
+And these [Lucidworks AI pre-trained embedding models](/lw-platform/ai/3vqfxe/pre-trained-embedding-models):
+
+* [all-minilm-l6-v2](/lw-platform/ai/3vqfxe/pre-trained-embedding-models#all-minilm-l6-v2)
+* [e5-small-v2](/lw-platform/ai/3vqfxe/pre-trained-embedding-models#e5-small-v2)
+* [e5-base-v2](/lw-platform/ai/3vqfxe/pre-trained-embedding-models#e5-base-v2)
+* [e5-large-v2](/lw-platform/ai/3vqfxe/pre-trained-embedding-models#e5-large-v2)
+* [multilingual-e5-small](/lw-platform/ai/3vqfxe/pre-trained-embedding-models#multilingual-e5-small)
+* [multilingual-e5-base](/lw-platform/ai/3vqfxe/pre-trained-embedding-models#multilingual-e5-base)
+* [multilingual-e5-large](/lw-platform/ai/3vqfxe/pre-trained-embedding-models#multilingual-e5-large)
+* [gte-small](/lw-platform/ai/3vqfxe/pre-trained-embedding-model#gte-small)
+* [gte-base](/lw-platform/ai/3vqfxe/pre-trained-embedding-model#gte-base)
+* [gte-large](/lw-platform/ai/3vqfxe/pre-trained-embedding-model#gte-large)
+* [snowflake-arctic-embed-xs](/lw-platform/ai/3vqfxe/pre-trained-embedding-model#snowflake-arctic-embed-xs)
+* [snowflake-arctic-embed-s](/lw-platform/ai/3vqfxe/pre-trained-embedding-model#snowflake-arctic-embed-s)

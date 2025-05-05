@@ -1,0 +1,125 @@
+---
+subGroup: "ai"
+permalink: "48b92g"
+title: 'Named entity recognition (NER) use case'
+description: 'Needs description'
+icon: 'text-size'
+subtitle: 'Lucidworks AI Async Prediction API'
+layout: stoplight
+data: api-machine-learning-platform-async-prediction
+private: true
+doctype: reference
+order: 30
+---
+
+In the Named entity recognition (NER) use case of the [Lucidworks AI Async Prediction API](/lw-platform/ai/55ug0f/async-prediction-api), the LLM ingests text and entities to extract and return a JSON response that contains a list of entities extracted from the text. No options can be configured.
+
+This use case:
+
+* Can be used to extract nouns and proper nouns such as Brand, Date, Company, Places, and Category in order to guide and refine searches.
+* Can be minimally configured with specific entities, but has a higher latency of a few seconds, making it less suitable for query-time processing. 
+
+The NER use case contains two requests:
+
+* The `USE_CASE` and `MODEL_ID` fields in the `/async-prediction` for the POST request. The path is `/ai/async-prediction/USE_CASE/MODEL_ID`. A list of supported modes is returned in the [Lucidworks AI Use Case API](/lw-platform/ai/0stpyb/use-case-api). For more information about supported models, see [Generative AI models](/lw-platform/ai/r7ai90/generative-ai#generative-ai-models).
+
+## Common POST request parameters and fields 
+
+### modelConfig
+
+Some parameters of the `/ai/async-prediction/USE_CASE/MODEL_ID` POST request are common to all of the generative AI (GenAI) use cases, including the `modelConfig` parameter. If you do not enter values, the following defaults are used.
+
+### Unique values for the named entity recognition NER use case
+
+The GenAI NER use case does not provide direct mappings, nor does it have a mechanism to recognize the full catalog entities. Therefore, the entities passed in the request may not be in the catalog. 
+
+To create NER mappings for entities, configure the LWAI Prediction indexing stage `"useCaseConfig": "entityTypeMap"` parameter. Once mapped, the entities are returned and the query-side pipeline can leverage those mappings.
+
+The values available in this use case (that may not be available in other use cases) are:
+
+|====
+
+|Parameter |Value
+
+|"useCaseConfig" |`"entityTypeMap": {"ENTITY": ["exampleA", "exampleB"], "ENTITY1": ["exampleC", "exampleD"]}`
+
+This parameter provides a map with entity type as a key with a list of example values to search. The entity type is required, but example values are optional and can be empty. Multiple entities with examples can be entered in the request.
+
+In the [LWAI Prediction index stage](/lw-platform/ai/bzik28/lucidworks-ai-prediction-index-stage) and the [LWAI Prediction query stage](/lw-platform/ai/hnuyky/lucidworks-ai-prediction-query-stage), the `useCaseConfig entityTypeMap` parameter only supports a string. Therefore, the string entered in Fusion is converted to a JSON string, which is required in the Lucidworks AI `entityTypeMap` variable. For example:
+
+`"entityTypeMap": "{\"ENTITY\": [\"exampleA\", \"exampleB\"], \"ENTITY1\": [\"exampleC\", \"exampleD\"]}`
+|====
+
+### Example POST request
+
+This example does not include `modelConfig` parameters, but you can submit requests that include parameters described in [Common POST request parameters and fields](#common-post-request-parameters-and-fields).
+
+```json
+curl --request POST \
+  --url https://APPLICATION_ID.applications.lucidworks.com/ai/async-prediction/ner/MODEL_ID \
+ --header 'Authorization: Bearer AUTH_TOKEN' \
+  --data '{
+	"batch": [
+		{
+			"text": "Mahatma Gandhi, born on October 2, 1869, in Porbandar, India, led a life that profoundly shaped the course of history. Inspired by his principles of non-violence, truth, and civil disobedience, Gandhi became a pivotal figure in India'\''s struggle for independence from British rule. His journey began as a lawyer in South Africa, where he experienced racial discrimination and injustice, sparking his commitment to social justice. Returning to India, he became the face of the nonviolent resistance movement, employing methods like peaceful protests, fasting, and marches. The iconic Salt March of 1930 exemplified his philosophy as thousands followed him in the defiance of salt taxes imposed by the British. Gandhi'\''s ascetic lifestyle, clad in simple attire and practicing self-sufficiency, endeared him to the masses. Despite facing imprisonment multiple times, he remained steadfast in his pursuit of India'\''s freedom. Tragically, Gandhi was assassinated on January 30, 1948, but his legacy endures globally as a symbol of peace, tolerance, and the transformative power of nonviolent resistance"
+		}
+	],
+	"useCaseConfig": {
+		"entityTypeMap":{
+					"Location":["India", "South Africa"]
+		}
+	}
+}'
+```
+
+### Example GET request
+
+The following is an example response:
+
+```json
+{
+  "predictionId": "fd110486-f168-47c0-a419-1518a4840589",
+  "status": "READY",
+	"predictions": [
+		{
+			"tokensUsed": {
+				"promptTokens": 387,
+				"completionTokens": 23,
+				"totalTokens": 410
+			},
+			"entities": {
+				"Location": [
+					"Porbandar",
+					"India",
+					"South Africa"
+				]
+			},
+			"response": "{\n\"Location\": [\n\"Porbandar\",\n\"India\"\n]\n}"
+		}
+	]
+}
+```
+
+## Uses of the responses from the GET request
+
+Overall, the GenAI NER is flexible in recognizing entities, but lacks built-in support for boosting or filtering. The actions described in this section can help determine whether the extracted entities should be used for boosting, filtering, or query expansion.
+
+Entities extracted by the Fusion LWAI NER stage can be used in the query pipeline in several ways:
+
+* Boosting results: The extracted entities can be matched against catalog fields and used to apply relevance boosts to results containing those entities.
+* Query expansion: If an entity has multiple known variations, the query can be expanded to include all relevant forms.
+* Filtering results: The identified entities can be used to filter out irrelevant results based on category, brand, or other metadata.  You must verify the entity is in your catalog or a zero result is returned.
+* Canonical mapping: If different terms map to the same entity, the query can be rewritten to standardize search terms. For example, if **Hewlett-Packard, Inc.** and **HP** are mapped to the same entity, you can rewrite the query to standardize the search terms.
+
+If precision is the goal, strict filtering can be applied. For example, only return results that match identified entities in specific fields.
+
+If recall is the goal, boosting rather than filtering would allow broader result sets while still prioritizing relevant matches.
+
+## Fusion AI NER
+
+Fusion AI NER differs from GenAI NER. The Fusion AI NER approach returns entity results based on a pre-defined list and is more configurable than GenAI, is rule-based, and is optimized for query-time execution. In addition, Fusion AI NER allows:
+
+* Boosting results based on entity matches. For example, you can prioritize results that match brands or colors.
+* Entity recognition using predefined lists that can be used in queries to refine results. For example, a facet query can extract all unique brands and colors from the catalog.
+* Custom rule-based mapping of entity variations to ingest information where the entity may be referred to under multiple names. For example, **Hewlett-Packard, Inc.** and **HP** can be mapped to the same entity to return results from both identifiers.
+* Configurable boosting and query rewriting within Fusion’s pipeline.

@@ -1,0 +1,476 @@
+---
+subGroup: "ai"
+permalink: "e63rmi"
+title: 'Models API'
+description: 'Needs description'
+icon: 'text-size'
+subtitle: 'Lucidworks AI'
+layout: stoplight
+data: api-machine-learning-models
+private: true
+doctype: reference
+order: 72
+---
+
+The Lucidworks AI Models API is used to manage custom models.
+
+## Prerequisites
+
+To use this API, you need:
+
+* The unique `CUSTOMER_ID` for your organization. For more information, see [credentials to use APIs](/lw-platform/platform/oqzogo/apis-and-credentials#credentials). 
+* A bearer token generated with a scope value of `machinelearning.model`. For more information, see [Authentication API](/lw-platform/ai/oa96k5/authentication-api).
+* Other result-specific fields such as `MODEL_ID` and `DEPLOYMENT_ID` for certain operations.
+
+## Training configuration
+
+General and ecommerce recurrent neural network (RNN) models are supported.
+
+For detailed information about training parameters and configuration, click **View API specification**.
+
+### Training data format
+
+The `catalog` and `signals` training data require a shared primary key id `pkid` in both the:
+
+* `index` file that contains documents or products that are searched
+* `query` file that contains query data associated with the index documents
+
+### Text processors
+
+The supported text processors are:
+
+* **Word** that contains a default of pre-trained English word tokenization and embeddings. The general RNN model defaults to this processor. The ecommerce RNN model uses this processor, and fine tunes the embeddings during training.
+
+  This processor sets text to lowercase and numbers are split into single digits. Processing attempts to match misspelled words and out-of-vocabulary (OOV) words. The result vocabulary is maximum 100,000 words.
+
+  **📌 NOTE**\
+  For a language other than English, use the applicable byte pair encoding (BPE) processor. 
+* **Byte pair encoding (BPE)** uses pre-trained BPE tokenization and embeddings. Each available pre-trained BPE model has different versions. The versions use the same token vectors, but have different vocabulary sizes:
+  * `bpe_*_small` embeddings have up to 10,000 vocabulary tokens
+  * `bpe_*_large` embeddings have up to 100,000 vocabulary tokens
+  * `bpe_multi multilingual` embeddings have up to 320,000 vocabulary tokens
+* **Custom** token embeddings, either word or BPE, that are based on the data provided during model training. This can be used if your content contains domain-specific vocabulary, or to train a model for a non-supported language.  This embeddings training is language agnostic, but Lucidworks recommends using custom BPE training for non-Latin languages or in multilingual scenarios.
+
+  To train custom token embeddings, set TextProcessor to one of the following:
+  * `word_custom` which trains word embeddings with up to 100,000 vocabulary size.
+  * `bpe_custom` which trains BPE embeddings with up to 10,000 vocabulary size. This text processor learns a custom tokenization function over your data, so the default vocabulary size of 10,000 is sufficient in most cases.
+
+## Models endpoint
+
+The `/models` endpoint operations perform the following:
+
+* `GET` returns a list of pre-trained and custom models. 
+* `POST` creates a custom model and starts a training job. The custom model cannot be modified after it is created.
+
+### GET /models example
+
+The request requires your unique `CUSTOMER_ID`. For more information, see [Credentials](/lw-platform/platform/oqzogo/apis-and-credentials#credentials).
+
+```bash
+curl --request GET \
+  --url https://api.lucidworks.com/customers/CUSTOMER_ID/ai/models \
+  --header 'Content-Type: application/json'
+  --header 'Authorization: Bearer ACCESS_TOKEN'
+```
+
+The following is an example response.
+
+```json
+[
+  {
+    "id": "text-encoder",
+    "category": "pre-trained (shared)",
+    "modelType": "text-encoder",
+    "description": "This is the model description.",
+    "state": "AVAILABLE"
+  },
+  {
+    "id": "multilinguallm",
+    "category": "pre-trained (shared)",
+    "modelType": "multilinguallm",
+    "description": "This is the model description.",
+    "state": "AVAILABLE"
+  },
+  {
+    "id": "1af001c0-cabc-4430-b3b1-c1d8f632e87a",
+    "name": "ecommerce custom model name",
+    "modelType": "ecommerce-rnn",
+    "category": "CUSTOM",
+    "description": "Custom model tuned for ecommerce training",
+    "region": "us-iowa",
+    "trainingData": {
+      "catalog": "gs://ml-platform-model-parameters-us-iowa/customer/data/index.parquet",
+      "signals": "gs://ml-platform-model-parameters-us-iowa/customer/data/query.parquet"
+    },
+    "config": {
+      "dataset_config": "mlp_ecommerce",
+      "trainer_config": "mlp_ecommerce",
+      "trainer_config/text_processor_config": "word_en",
+      "trainer_config.encoder_config.rnn_names_list": [
+        null
+      ],
+      "trainer_config.encoder_config.rnn_units_list": [
+        null
+      ],
+      "trainer_config.trn_batch_size": 0,
+      "trainer_config.num_epochs": 1,
+      "trainer_config.monitor_patience": 8,
+      "trainer_config.encoder_config.emb_spdp": 0.3,
+      "trainer_config.encoder_config.emb_trainable": true
+    },
+    "state": "string",
+    "trainingStarted": "2019-08-24T14:15:22Z",
+    "trainingCompleted": "2019-08-24T14:15:22Z",
+    "createdBy": "string",
+    "deployments": [
+      {}
+    ]
+  }
+]
+```
+
+### POST /models example
+
+The request requires your unique `CUSTOMER_ID`. For more information, see [Credentials](/lw-platform/platform/oqzogo/apis-and-credentials#credentials).
+
+```json
+curl --request POST \
+  --url https://api.lucidworks.com/customers/CUSTOMER_ID/ai/models \
+  --header 'Content-Type: application/json' \
+  --data '{
+  "name": "ecommerce custom model name",
+  "modelType": "ecommerce-rnn",
+  "region": "us-iowa",
+  "trainingData": {
+    "catalog": "gs://ml-platform-model-parameters-us-iowa/customer/data/index.parquet",
+    "signals": "gs://ml-platform-model-parameters-us-iowa/customer/data/query.parquet"
+  },
+ "config": {
+    "dataset_config": "mlp_ecommerce",
+    "trainer_config": "mlp_ecommerce",
+    "trainer_config/text_processor_config": "word_en",
+    "trainer_config.encoder_config.rnn_names_list": [
+      "gru"
+    ],
+    "trainer_config.encoder_config.rnn_units_list": [
+      128
+    ],
+    "trainer_config.trn_batch_size": 0,
+    "trainer_config.num_epochs": 1,
+    "trainer_config.monitor_patience": 8,
+    "trainer_config.encoder_config.emb_spdp": 0.3,
+    "trainer_config.encoder_config.emb_trainable": true
+  },
+  "trainingDataCredentials": {
+    "serviceAccountKey": "string"
+  }
+}
+```
+
+The following is an example response.
+
+```json
+{
+  "id": "fb148491-b39e-46d1-af33-44cd964d8ee0",
+  "name": "ecommerce custom model name",
+  "modelType": "ecommerce-rnn",
+  "category": "CUSTOM",
+  "description": "Custom model tuned for ecommerce training",
+  "region": "us-iowa",
+  "trainingData": {
+    "catalog": "gs://ml-platform-model-parameters-us-iowa/customer/data/index.parquet",
+    "signals": "gs://ml-platform-model-parameters-us-iowa/customer/data/query.parquet"
+  },
+"config": {
+    "dataset_config": "mlp_ecommerce",
+    "trainer_config": "mlp_ecommerce",
+    "trainer_config/text_processor_config": "word_en",
+    "trainer_config.encoder_config.rnn_names_list": [
+      "gru"
+    ],
+    "trainer_config.encoder_config.rnn_units_list": [
+      128
+    ],
+    "trainer_config.trn_batch_size": 0,
+    "trainer_config.num_epochs": 1,
+    "trainer_config.monitor_patience": 8,
+    "trainer_config.encoder_config.emb_spdp": 0.3,
+    "trainer_config.encoder_config.emb_trainable": true
+  },
+  "state": "string",
+  "trainingStarted": "string",
+  "trainingCompleted": "string",
+  "createdBy": "string"
+}
+```
+
+## Model ID endpoint
+
+The `/modelId` endpoint operation performs the following:
+
+* `GET` returns information about a specific model.
+
+### GET /modelId example
+
+The request requires your unique `CUSTOMER_ID` and the specific `MODEL_ID` to return. For more information about `CUSTOMER_ID`, see [Credentials](/lw-platform/platform/oqzogo/apis-and-credentials#credentials).
+
+```bash
+curl --request GET \
+  --url https://api.lucidworks.com/customers/CUSTOMER_ID/ai/models/MODEL_ID \
+  --header 'Content-Type: application/json'
+```
+
+The following is an example response for the `MODEL_ID` you sent in the request.
+
+```json
+{
+  "id": "text-encoder",
+  "modelType": "text-encoder",
+  "description": "This is the model description.",
+  "state": "AVAILABLE"
+}
+```
+
+The following is an example response for the custom `MODEL_ID` you sent in the request.
+
+```json
+{
+  "id": "441eb3be-7de6-470a-8141-e416a15c7db1",
+  "name": "ecommerce custom model name",
+  "modelType": "ecommerce-rnn",
+  "category": "CUSTOM",
+  "description": "Custom model tuned for ecommerce training",
+  "region": "us-iowa",
+  "vectorSize": 256,
+  "trainingData": {
+    "catalog": "gs://ml-platform-model-parameters-us-iowa/customer/data/index.parquet",
+    "signals": "gs://ml-platform-model-parameters-us-iowa/customer/data/query.parquet"
+  },
+  "config": {
+    "dataset_config": "mlp_ecommerce",
+    "trainer_config": "mlp_ecommerce",
+    "trainer_config.num_epochs": 1
+  },
+  "state": "AVAILABLE",
+   "trainingStarted": "2023-06-14T15:28:40.201Z",
+  "trainingCompleted": "2023-06-14T15:36:55.320Z",
+  "trainingMetrics": {
+    "summary": {
+      "best_epoch": 1,
+      "index_size": 3885,
+      "vector_size": 256,
+      "training_time": 45.730143308639526,
+      "num_trn_queries": 17730,
+      "num_val_queries": 1969,
+      "num_unique_training_pairs": 41380
+    },
+    "epoch_metrics": {
+      "hit": {
+        "trn": {
+          "1": [
+            0.22955815134586086
+          ],
+          "3": [
+            0.4154393092940579
+          ],
+          "5": [
+            0.5073641442356526
+          ],
+          "10": [
+            0.6140172676485526
+          ]
+        },
+        "val": {
+          "1": [
+            0.21736922295581512
+          ],
+          "3": [
+            0.4245810055865922
+          ],
+          "5": [
+            0.510411376333164
+          ],
+          "10": [
+            0.6069070594210259
+          ]
+        }
+      },
+    },
+  }
+  "deployments": [
+    {
+      "id": "441eb3be-7de6-470a-8141-e416a15c7db1",
+      "region": "us-southcarolina",
+      "state": "DEPLOYED"
+    }
+  ]
+}
+```
+
+## Deployments endpoint
+
+The `/deployments` endpoint operations perform the following:
+
+* `GET` returns a list of custom model deployments. Pre-trained models are not returned in the response because they are deployed in all available regions.
+* `POST` deploys a custom model.
+* `DELETE` deletes a custom model deployment.
+
+### GET /deployments example
+
+The request requires your unique `CUSTOMER_ID`. For more information, see [Credentials](/lw-platform/platform/oqzogo/apis-and-credentials#credentials).
+
+```bash
+curl --request GET \
+  --url https://api.lucidworks.com/customers/CUSTOMER_ID/ai/deployments \
+  --header 'Content-Type: application/json'
+```
+
+The following is an example response.
+
+```json
+[
+  {
+    "id": "1af001c0-cabc-4430-b3b1-c1d8f632e87a",
+    "modelId": "441eb3be-7de6-470a-8141-e416a15c7db1",
+    "region": "us-southcarolina",
+    "config": {
+      "parameter_1": "value_1",
+      "parameter_2": "value_2"
+    },
+    "minReplicas": 1,
+    "maxReplicas": 1,
+    "state": "DEPLOYED",
+    "deployedAt": "2019-08-24T14:15:22Z",
+    "createdBy": "string"
+  },
+  {
+    "id": "6a092bd4-5098-466c-94aa-40bf68294303",
+    "modelId": "441eb3be-7de6-470a-8141-e416a15c7db1",
+    "region": "us-southcarolina",
+    "minReplicas": 2,
+    "maxReplicas": 4,
+    "state": "DEPLOYED",
+    "deployedAt": "2019-08-24T14:15:22Z",
+    "createdBy": "string"
+  }
+]
+```
+
+### POST /deployments example
+
+The request requires your unique `CUSTOMER_ID`. For more information, see [Credentials](/lw-platform/platform/oqzogo/apis-and-credentials#credentials).
+
+```json
+curl --request POST \
+  --url https://api.lucidworks.com/customers/CUSTOMER_ID/ai/deployments \
+  --header 'Content-Type: application/json' \
+  --data '{
+  "modelId": "441eb3be-7de6-470a-8141-e416a15c7db1",
+  "region": "us-southcarolina",
+  "minReplicas": 2,
+  "maxReplicas": 4,
+  "config": {
+    "parameter_1": "value_1",
+    "parameter_2": "value_2"
+  }
+}
+```
+
+The following is an example response.
+
+```json
+{
+  "id": "118109e5-7ec5-42bb-834d-e3cd41bba65f",
+  "modelId": "441eb3be-7de6-470a-8141-e416a15c7db1",
+  "region": "us-southcarolina",
+  "config": {
+    "parameter_1": "value_1",
+    "parameter_2": "value_2"
+  },
+  "minReplicas": 2,
+  "maxReplicas": 4,
+  "state": "DEPLOYING",
+  "deployedAt": "2019-08-24T14:15:22Z",
+  "createdBy": "string"
+}
+```
+
+### DELETE /deployments example
+
+The request requires your unique `CUSTOMER_ID` and the specific `DEPLOYMENT_ID` for the model. For more information about `CUSTOMER_ID`, see [Credentials](/lw-platform/platform/oqzogo/apis-and-credentials#credentials).
+
+```bash
+curl --request DELETE \
+  --url https://api.lucidworks.com/customers/CUSTOMER_ID/ai/deployments/DEPLOYMENT_ID \
+  --header 'Content-Type: application/json'
+```
+
+The following is an example response.
+
+```json
+{
+  "id": "441eb3be-7de6-470a-8141-e416a15c7db1",
+  "modelId": "1af001c0-cabc-4430-b3b1-c1d8f632e87a",
+  "region": "us-southcarolina",
+  "config": {
+    "parameter_1": "value_1",
+    "parameter_2": "value_2"
+  },
+  "minReplicas": 2,
+  "maxReplicas": 4,
+  "state": "DELETING",
+  "deployedAt": "2019-08-24T14:15:22Z",
+  "createdBy": "string"
+}
+```
+
+## Model ID Deployments endpoint
+
+The `/modelId/deployments` endpoint operation performs the following:
+
+* `GET` returns a list of custom model deployments.
+
+### GET /modelId/deployments example
+
+The request requires your unique `CUSTOMER_ID` and the specific `MODEL_ID` to return. For more information about `CUSTOMER_ID`, see [Credentials](/lw-platform/platform/oqzogo/apis-and-credentials#credentials).
+
+```bash
+curl --request GET \
+  --url https://api.lucidworks.com/customers/CUSTOMER_ID/ai/models/MODEL_ID/deployments \
+  --header 'Content-Type: application/json'
+```
+
+The following is an example response for the `MODEL_ID` you sent in the request. 
+
+```json
+[
+  {
+    "id": "441eb3be-7de6-470a-8141-e416a15c7db1",
+    "modelId": "6a092bd4-5098-466c-94aa-40bf6829430",
+    "region": "us-southcarolina",
+    "config": {
+      "parameter_1": "value_1",
+      "parameter_2": "value_2"
+    },
+    "minReplicas": 1,
+    "maxReplicas": 1,
+    "state": "DEPLOYED",
+    "deployedAt": "2019-08-24T14:15:22Z",
+    "createdBy": "string"
+  },
+  {
+    "id": "118109e5-7ec5-42bb-834d-e3cd41bba65f",
+    "modelId": "d439fd0d-1edf-4982-b00c-51c94a5c0490",
+    "region": "us-southcarolina",
+    "config": {
+      "parameter_1": "value_1",
+      "parameter_2": "value_2"
+    },
+    "minReplicas": 2,
+    "maxReplicas": 4,
+    "state": "DEPLOYED",
+    "deployedAt": "2019-08-24T14:15:22Z",
+    "createdBy": "string"
+  }
+]
+```

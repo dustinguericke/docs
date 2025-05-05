@@ -1,0 +1,25 @@
+---
+subGroup: "ai"
+permalink: "4h364i"
+layout: pipeline_stage-server
+title: 'Lucidworks AI Vectorize Field'
+description: 'Needs description'
+icon: 'text-size'
+subtitle: 'Lucidworks AI'
+data: index_stage_schema
+stage-name: beta-vectorize-field-via-lucidworks-ai
+order: 86
+skipBefore: "5.9"
+doctype: reference
+---
+
+Lucidworks AI Vectorize Field is a Fusion index pipeline stage that invokes a Lucidworks AI model to encode a string field to a vector representation.
+
+To use this stage, non-admin Fusion users must be granted the `POST:/LWAI-ACCOUNT-NAME/**` permission in Fusion, which is the Lucidworks AI API Account Name defined in the Lucidworks AI Gateway service when this stage is configured.
+
+More detailed information to configure this stage is in [Configure Lucidworks AI vector search](/how-to/6bl4nm/configure-lucidworks-ai-vector-search). 
+
+## Configuration
+
+**💡 TIP**\
+When entering configuration values in the UI, use _unescaped_ characters, such as `\t` for the tab character. When entering configuration values in the API, use _escaped_ characters, such as `\\t` for the tab character.

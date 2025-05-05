@@ -1,0 +1,174 @@
+---
+permalink: "ravw5k"
+subGroup: "cs"
+layout: default
+title: 'Ranking Rules'
+description: 'Needs description'
+icon: 'text-size'
+order: 14
+doctype: concept
+---
+
+Ranking rules affect the order in which products appear in your search results.
+Rules let you pin, boost, bury, and block specific items in your catalog. 
+You can also use rules to display custom banners, redirect customers to a different page on your site, set facets, and more. 
+
+## Ranking rules vs. query rewrites
+
+Both ranking rules and query rewrites can be configured to help return the best search results to your users. 
+Query rewrites allow you to alter and interpret search terms in multiple ways so relevant results are delivered. 
+Ranking rules changes the order in which search results are displayed, allowing you to promote certain items over others. 
+
+Although query rewrites are configured on a separate screen, you may see the effects of query rewrites on the Ranking Rules screen. 
+
+## How rules work
+
+Rules contain conditions and actions. 
+When a condition (or a combination of conditions) is met, the rule performs an action.
+
+### Conditions
+
+You can trigger rules on a single condition or a combination of conditions.
+
+|     |     |     |
+| --- | --- | --- |
+| Type | Description | Notes  |
+| Dates | The date and time range for the rule. | Dates must be in ISO format. For example: `2024-12-10T19:29:34Z` |
+| Field Value | The field value to which the rule applies. | You can add multiple fields. |
+| Query | The query that triggers the rule. | You must select a **Query Matching Method**: * **keywords**: At least one keyword of one of the search terms values must match the query. * **phrase**: The search query must contain one of the search terms values as a subphrase. * **text**: At least one of the search terms values must match the query, but unlike `phrase`, the query only needs to match part of the value. |
+| Query Profile | Trigger this rule on a specified query profile. | This value must match an existing Fusion query profile, which points your search application to the specified static endpoint. |
+
+### Actions
+You can only apply one action per rule.
+
+**📌 NOTE**\
+Commerce Studio alerts you if you create multiple rules with conflicting actions. 
+For example, a conflict occurs if you create rules that boost, block, and bury the same item.
+
+|     |     |
+| --- | --- |
+| Type | Description  |
+| Add Banner | Returns an image outside of the search results that can be displayed in the frontend.  |
+| Block Items | Blocks the associated values from appearing in the search results.  |
+| Boost Attributes | Boosts products with specific attributes in a search. Boosts can be one of the following: * Additive, which adds a factor to the base score of the document * Multiplicative, which multiplies the base score of the document by a specified factor |
+| Boost Items | Boosts products with a large multiplicative boost so the products appear at the top of the results. Larger boosts can override this action.  |
+| Bury Items | Buries products with the selected values. This action minimizes certain products without blocking them.  |
+| Rerank Items in Group | Changes the ranking within a group of items. You can pin items so they display in a specific order. This feature requires the item to have product variants and is configured in the Visual Editor. Assign a number to each variant to determine the display order. Assigning the number '1' makes that variant the default version shown in search results. |
+| Filter Items | Applies [filter queries](https://solr.apache.org/guide/common-query-parameters.html) (`fq`) to the query and changes the results so a pre-selected set of content displays.  |
+| Set JSON Blob | Returns a JSON blob to your frontend when a condition is met. The JSON blob displays outside of the search results.  |
+| Pin Items | Puts a product in a specified order within the search results. You also have the option to use [Query Elevation Component](#qec). |
+| Redirect | Displays a message that the frontend can use to redirect a user to a specific URL. You can use this action to send users to dedicated landing pages or campaigns. If you have queries that return zero results, you may opt to create a dedicated page to redirect those queries. |
+| Set Response Value | Sends an arbitrary value to the frontend or pipeline to trigger another action. This action can be combined with other actions within the same rule. For example, an ecommerce website may use the response value action to display an advertisement. |
+| Set Facets | Customizes the facets (categories of groups) returned in the query response. For example, if your site sells clothing, you may set a number of facets as different colors (black, blue, red, yellow, and so on) so the customer can select a specific color for items they want to view. |
+| Set Params | Sets a [parameter name and value](https://solr.apache.org/guide/solr/latest/query-guide/common-query-parameters.html) to a search query. For example, the sort order for the results, or a filter that affects results. |
+
+**📌 NOTE**\
+Query Elevation Component (QEC) applies the rule action to the top results regardless of the product’s (document’s) score. 
+Enabling QEC does not boost the document’s score. QEC only supports elevation through the `id` field. 
+Your Solr cluster must be configured to enable QEC. Contact your Lucidworks representative for more information.
+
+## Manage rules
+
+You can manage rules in [Visual Editor](#visual) or [Rules Wizard](#wizard).
+
+### Create a rule using the Visual Editor
+
+You can create rules in the [Visual Editor](/lw-platform/cs/l6f36o/index) screen.
+
+**Create a rule for one item**
+
+1. To create a rule for an individual item, click **+ Add** on an item.
+2. Select an action from the menu. This creates an unpublished rule.
+3. See [Publish a rule](#publish).
+
+![Create rule visual editor](/assets/images/lw-platform/commerce-studio/lw-cs-create-rule-home.png)
+
+**Create a rule for multiple items**
+
+1. Select the checkbox for every item you want to include in the new rule.
+2. Click **Add Rule**.
+3. Select an action from the menu. This creates an unpublished rule.
+4. See [Publish a rule](#publish).
+
+You can also use these steps to create a rule for a single item.
+
+### Create a rule using the Rules Wizard
+
+For a more detailed rule configuration, use the Rules Wizard found on the Ranking Rules screen.
+
+1. Click **Create New Rules** and select **Via Rules Wizard** from the menu. 
+2. In the **Name** field, enter a name for the rule.
+3. In the **Rule Group** field, enter a user-defined, logical grouping name where rule is reported.
+4. In the **Tags** field, enter a name that is used to filter the rules and change search results in the Visual Editor.
+5. In the **Precedence** field, enter a number that sets the priority order in which the rule is evaluated. 
+6. Optional: In the **Description** field, enter user-defined text to describe the rule. 
+7. Click **Next**.
+8. Click **Select Condition** and then select one or more [conditions](#conditions). You can select dates, field value, query, and query profile. When you select an option, additional fields may be required. 
+9. Click **Next**.
+10. Click the **Add Actions** menu and then select [an action](#actions). You can block, boost, bury, pin, or set values based on the previously-defined condition. When you select an option, additional fields may be required.
+11. Click **Next**.
+12. Review your rule’s settings, then click **Save**.
+
+### Edit a rule
+
+1. Navigate to the Ranking Rules screen.
+2. Hold the pointer over the rule and click the pencil icon.
+3. Enter your changes in the **Name**, **Priority**, **Rule Group** entries, **Tags**, and **Description** fields.
+4. If you:
+   * Have entered all of your changes, click **Save** to return to the Ranking Rules screen.
+   * Want to enter changes to the conditions or actions, click **Open Wizard**. Then enter changes to conditions and click **Next**, enter changes to actions and click **Next**, and then click **Save as New** to save the edits as a new rule or click **Publish** to update the existing rule. 
+
+### Delete a rule
+
+1. Navigate to the Ranking Rules screen.
+2. Hold the pointer over the rule to delete and click the trash can icon.
+
+To delete multiple rules, select the checkbox for each of the rules to delete and then click the trash can icon.
+
+Rules can also be deleted using the Rules Wizard by clicking **Delete Rule**.
+
+<dl><dt><strong>🔥 CAUTION</strong></dt><dd>
+
+Rules are deleted permanently. There is no way to undo this action. 
+</dd></dl>
+
+### Publish a rule
+
+Rules created using the [Rules Wizard](#wizard) are published immediately. If you create a rule using the [Visual Editor](#visual), you must publish it manually.
+
+1. Navigate to the Ranking Rules screen.
+2. Click the **Published** toggle to publish or unpublish a rule.
+
+To publish multiple rules, select the checkbox for each of the rules to publish and then click the up arrow. The toggle switches for each of those rules changes to **Yes**.
+
+To unpublish multiple rules, select the checkbox for each of the rules to unpublish and then click the down arrow. The toggle switches for each of those rules changes to **No**.
+
+## Effective workflows for teams
+
+Commerce Studio has multiple options for actions that can occur when a query contains certain terms. 
+
+Here is an example situation to help understand how each action might be effectively used by a commerce website based on the specified goals and actions of the following personnel. 
+
+* The **VP of Ecommerce** for a bookstore wants their team to use Commerce Studio to improve their search experience.
+* The **Graphic Design team** creates banners for books on sale that are displayed when users search for related terms.
+* The **Merchandising Manager** defines discounts by setting sale prices and calculating margins.
+* The **Data Analyst** and **Marketing Specialist** collaborate to track traffic and sales metrics for real-time performance monitoring, enabling adjustments to search configurations as needed.
+
+To help improve product search, they decide to use the following Commerce Studio actions:
+
+* **Boost Attributes**: Highlight books from a popular series by listing them toward the top of search results when the search query includes the author’s name.  
+* **Block Items**: Exclude books discontinued by the publisher from appearing in search results.  
+* **Boost Items**: Prioritize specific new or overstocked titles in search results.  
+* **Filter Items**: Show only children’s and young adult books when a user searches for `children’s books`.  
+* **Boost Items in Group**: Ensure more popular titles from a book series appear earlier in search results when someone searches for that series.  
+* **Set Facets**: Display genre facets on the homepage and top author facets on the search page.  
+* **Set JSON Blob**: Show a random advertisement for popular mystery books when a user searches for mystery titles.  
+
+Additionally, they decide to implement Commerce Studio actions in the Help section of their website to reduce support workload:
+
+* **Pin Items**: Place a document with gift card information at the top of search results for queries like `gift`.  
+* **Redirect**: Show a prominent link to the Contact Us form at the top of search results for queries such as `email` or `contact`.  
+* **Bury Items**: Deprioritize notices about a defunct membership program in search results.  
+* **Set Parameters**: Display PDF files from the Legal department at the top of search results when a user searches for `privacy policy`.  
+* **Bury Items in Group**: Push rules for older e-reader models toward the bottom of search results when users search the Help section for support information about the company’s e-reader.  
+* **Pin Items in Group**: Ensure a rule about the new membership card program consistently appears at the top of search results for queries like `membership` or `card`.

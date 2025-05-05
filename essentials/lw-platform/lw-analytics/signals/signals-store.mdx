@@ -1,0 +1,48 @@
+---
+subGroup: "analytics"
+permalink: "88pjp2"
+title: 'Signals Store'
+description: 'Needs description'
+icon: 'text-size'
+layout: default
+order: 30
+doctype: reference
+---
+
+The signals store is the repository in your Lucidworks Platform workspace that holds query, click, cart-add, purchase, and facet usage signals gathered from customer interactions on your site.
+
+## Create a Signal Store
+
+One of the tasks to use signals is to create a repository to store signals. 
+. Sign in to [Lucidworks Platform](https://platform.lucidworks.com).
+
+1. In the navigation bar, select the workspace that will access the signals store.
+2. Click **Analytics Studio**.
+
+![Signals store](/assets/images/lw-platform/analytics/signals-store.png)
+
+1. Click **Create New**. 
+
+![Create a signals store](/assets/images/lw-platform/analytics/signals-store-create.png)
+
+1. In the **Name** field, enter a unique user-defined for the signals store.
+2. In the **Region** field, select the geographical area for the signal store.
+
+   **📌 NOTE**\
+   This selection cannot be changed. If you need a signal store in a different region, you need to create another signal store with the other region specified.
+3. Click **Create**.
+After the signal store is created, you can configure the [signals beacon](/lw-platform/analytics/k649vy/signals-beacon).
+
+## Signal fields stored
+
+## Technical components
+
+The properties of each signal store include:
+
+* User-defined name.
+* Universally unique identifier (`uuid`) of the signals store.
+* Location of the signal store, which is also referred to as a data cell
+
+The `uuid` and `data cell` define the endpoint where the signals are sent. For example, `<signals_store.uuid>.signals.lucidworks.com` is a `CNAME` to the appropriate data cell endpoint.
+
+For more information about signals, see [signals](/lw-platform/analytics/0le96f/signals).

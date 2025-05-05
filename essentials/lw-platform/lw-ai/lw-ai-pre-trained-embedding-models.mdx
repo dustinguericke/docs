@@ -1,0 +1,265 @@
+---
+subGroup: "ai"
+permalink: "3vqfxe"
+layout: default
+title: 'Pre-trained embedding models'
+description: 'Needs description'
+icon: 'text-size'
+subtitle: 'Lucidworks AI'
+order: 45
+doctype: concept
+---
+
+Lucidworks AI provides certain pre-trained embedding models. 
+These models are also publicly available and most of the model names have not been changed, so they can be searched under the model name at [Hugging Face](https://huggingface.co/).
+
+To generate a list of models for your organization, see the [Lucidworks AI Use Case API](/lw-platform/ai/0stpyb/use-case-api).
+
+To run requests for individual use cases, see [LWAI Prediction API](/lw-platform/ai/8bx4m9/predict-api).
+
+## Model families
+
+The pre-trained models provided are in the E5, GTE, BGE, and ARCTIC families. Each model is different, and you may need to index using several different models to determine what is most effective for your dataset and domain.
+
+### E5
+
+Models in the E5 family are state-of-the-art text encoders that are satisfactory for a wide range of tasks. For details about the training of E5 models, see [e5-base-v2](https://huggingface.co/intfloat/e5-base-v2).
+
+#### E5 Multilingual
+
+The E5 models family shows very strong quality on our multilingual benchmark. Each document or query in a batch can be in a different language, and different languages can exist within each document or query.
+
+### GTE
+
+The GTE models are a very strong family of models that surpass the E5 family on public benchmarks. In our benchmarks, it shows comparable quality with the E5 family, depending on the particular data and domain.
+
+### BGE
+
+The BGE model family shows the best quality among open source models on public benchmarks. In our benchmarks, it shows comparable quality with the E5 and GTE families, which again depends on the particular dataset. For more information about the training of BGE models see the [pre-train repository](https://github.com/FlagOpen/FlagEmbedding/blob/master/examples/pretrain/README.md) and [Hugging Face](https://huggingface.co/).
+
+### ARCTIC
+
+The Snowflake Arctic text embedding models suite focuses on creating high-quality retrieval models, which are highly competitive on public benchmarks. For more information you can visit Hugging Face or their [Snowflake Lab arctic embed git repository](https://github.com/Snowflake-Labs/arctic-embed).
+
+## Model size guide
+
+This chart is designed to help determine the best model size for each model family. Factors to consider regarding model size include:
+
+* Smaller vector sizes use less space in collections than larger vector sizes.
+* Smaller models are easier to scale and have quicker responses, but quality may be less than the base and large models.
+
+| Model size | Vector size | Quality | Performance |
+| --- | --- | --- | --- |
+| Extra Small | 384 | Medium | Fast+ |
+| Small | 384 | Medium | Fast |
+| Base | 768 | High | Medium |
+| Large | 1024 | Very High | Slow |
+
+## Pre-trained embedding models
+
+The following table lists the available pre-trained embedding (vectorization) models that provide semantic vector search (SVS) using L2 normalized vectors with cosine similarity scoring. Click the model name for detailed information.
+
+**❗ IMPORTANT**\
+Model names must be all lowercase.
+
+| Family | Model | Input | Vector size | Quality | Performance |
+| --- | --- | --- | --- | --- | --- |
+|  | [all-minilm-l6-v2](#all-minilm-l6-v2) | English text | 384 | Medium | Fast+ |
+|  | [text-encoder](#text-encoder) | English text | 768 | High- | Medium+ |
+| E5 | [e5-small-v2](#e5-small-v2) | English text | 384 | Medium | Fast |
+| E5 | [e5-base-v2](#e5-base-v2) | English text | 768 | High | Medium |
+| E5 | [e5-large-v2](#e5-large-v2) | English text | 1024 | Very High | Slow |
+| E5 | [multilingual-e5-small](#multilingual-e5-small) | Multilingual text | 384 | Medium | Fast |
+| E5 | [multilingual-e5-base](#multilingual-e5-base) | Multilingual text | 768 | High | Medium |
+| E5 | [multilingual-e5-large](#multilingual-e5-large) | Multilingual text | 1024 | Very High | Slow |
+| GTE | [gte-small](#gte-small) | English text | 384 | Medium | Fast |
+| GTE | [gte-base](#gte-base) | English text | 768 | High | Medium |
+| GTE | [gte-large](#gte-large) | English text | 1024 | Very High | Slow |
+| BGE | [bge-small](#bge-small) | English text | 384 | Medium | Fast |
+| BGE | [bge-base](#bge-base) | English text | 768 | High | Medium |
+| BGE | [bge-large](#bge-large) | English text | 1024 | Very High | Slow |
+| ARCTIC | [snowflake-arctic-embed-xs](#snowflake-arctic-embed-xs) | English text | 384 | Medium | Fast+ |
+| ARCTIC | [snowflake-arctic-embed-s](#snowflake-arctic-embed-s) | English text | 384 | Medium | Fast |
+| ARCTIC | [snowflake-arctic-embed-m-v1.5](#snowflake-arctic-embed-m-v1-5) | English text | 768 | High | Medium |
+| ARCTIC | [snowflake-arctic-embed-l-v2.0](#snowflake-arctic-embed-l-v2-0) | English text | 1024 | Very High | Slow |
+
+## Detailed model information
+
+Each pre-trained model hosted on Lucidworks AI adheres to the certain conventions such as input and output keys, batch limits, normalization. The following conventions are used unless the model information explicitly states differently:
+
+* **Model type:** pre-trained
+* **Input key:** text
+* **Input type:** Supported language text where input text is truncated in the Prediction API to the first 512 tokens
+* **Output key:** vector
+* **Output type:** L2 normalized vectors to use with cosine similarity scoring
+* **Maximum batch size:** 32
+
+### all-minilm-l6-v2
+
+The all-minilm-l6-v2 model contains 6 layers. It is the fastest model, but also provides the lowest quality. It is smaller than any of the other provided models, including the E5, GTE and BGE small models. Therefore, it provides lower quality but faster performance. 
+
+* **Intended use:** Use this model for semantic textual search when higher scalability is required.
+* **Underlying model:** all-MiniLM-L6-v2
+* **Vector size:** 384
+* **Supported language:** English
+
+### text-encoder
+
+The multi-qa-distilbert-cos-v1 model is an efficient general text encoder. The quality and performance range between what the small and base model sizes of the E5, GTE, and BGE families provide.
+
+* **Intended use:** Use this model as a general text encoder for semantic vector search if higher quality is needed, but a slower encoding time is not an issue.
+* **Underlying model:** multi-qa-distilbert-cos-v1
+* **Vector size:** 768
+* **Supported language:** English
+
+### e5-small-v2 
+
+The e5-small-v2 model is a smaller version of the E5 encoder and is an effective small-text encoder that provides medium quality and performance.  
+
+* **Intended use:** Use this model as a starting point for most cases for semantic textual search with 384d vector size to lower resource consumption and decrease vector search times.
+* **Underlying model:** e5-small-v2
+* **Vector size:** 384
+* **Supported language:** English
+
+### e5-base-v2 
+
+The e5-base-v2 model is the base E5 encoder that provides all-around quality and performance. 
+
+* **Intended use:** Use this medium-sized model as a starting point for semantic textual search. This model provides higher quality results than e5-small-v2 with slower performance. 
+* **Underlying model:** e5-base-v2
+* **Vector size:** 768
+* **Supported language:** English
+
+### e5-large-v2
+
+The e5-large-v2 model should not be used in a heavy load environment because performance time is low.
+
+* **Intended use:** Use this large model for semantic vector search where high quality is needed, and slow performance is not an issue. In most cases, it meets or exceeds the quality of OpenAI embeddings such as `text-embedding-ada-002`.
+* **Underlying model:** e5-large-v2
+* **Vector size:** 1024
+* **Supported language:** English
+
+### multilingual-e5-small
+
+The multilingual-e5-small model is a smaller version of the E5 Multilingual encoder and is an effective small-text encoder that provides medium quality and performance.
+
+* **Intended use:** Use this model as a starting point for multilingual and cross-lingual semantic textual search in over 50 different languages with 384d vector size to lower resource consumption and decrease vector search times. 
+* **Underlying model:** multilingual-e5-small
+* **Vector size:** 384
+* **Supported languages:** Afrikaans | Albanian | Amharic | Arabic | Armenian | Assamese | Azerbaijani | Basque | Belarusian | Bengali | Bengali Romanize | Bosnian | Breton | Bulgarian | Burmese | Burmese zawgyi font | Catalan | Chinese (Simplified) | Chinese (Traditional) | Croatian | Czech | Danish | Dutch | English | Esperanto | Estonian | Filipino | Finnish | French | Galician | Georgian | German | Greek | Gujarati | Hausa | Hebrew | Hindi | Hindi Romanize | Hungarian | Icelandic | Indonesian | Irish | Italian | Japanese | Javanese | Kannada | Kazakh | Khmer | Korean | Kurdish (Kurmanji) | Kyrgyz | Lao | Latin | Latvian | Lithuanian| Macedonian | Malagasy | Malay | Malayalam | Marathi | Mongolian | Nepali | Norwegian | Oriya | Oromo | Pashto | Persian | Polish | Portuguese | Punjabi | Romanian | Russian | Sanskrit | Scottish Gaelic | Serbian | Sindhi | Sinhala | Slovak | Slovenian | Somali | Spanish | Sundanese | Swahili | Swedish | Tamil | Tamil Romanize | Telugu | Telugu Romanize | Thai | Turkish | Ukrainian | Urdu | Urdu Romanize | Uyghur | Uzbek | Vietnamese | Welsh | West Frisian | Xhosa | Yiddish
+
+### multilingual-e5-base
+
+The multilingual-e5-base model is the base E5 Multilingual encoder that provides all-around quality and performance.
+
+* **Intended use:** Use this model for multilingual and cross-lingual semantic textual search in over 50 different languages.
+* **Underlying model:** multilingual-e5-base
+* **Vector size:** 768
+* **Supported languages:** Afrikaans | Albanian | Amharic | Arabic | Armenian | Assamese | Azerbaijani | Basque | Belarusian | Bengali | Bengali Romanize | Bosnian | Breton | Bulgarian | Burmese | Burmese zawgyi font | Catalan | Chinese (Simplified) | Chinese (Traditional) | Croatian | Czech | Danish | Dutch | English | Esperanto | Estonian | Filipino | Finnish | French | Galician | Georgian | German | Greek | Gujarati | Hausa | Hebrew | Hindi | Hindi Romanize | Hungarian | Icelandic | Indonesian | Irish | Italian | Japanese | Javanese | Kannada | Kazakh | Khmer | Korean | Kurdish (Kurmanji) | Kyrgyz | Lao | Latin | Latvian | Lithuanian | Macedonian | Malagasy | Malay | Malayalam | Marathi | Mongolian | Nepali | Norwegian | Oriya | Oromo | Pashto | Persian | Polish | Portuguese | Punjabi | Romanian | Russian | Sanskrit | Scottish Gaelic | Serbian | Sindhi | Sinhala | Slovak | Slovenian | Somali | Spanish | Sundanese | Swahili | Swedish | Tamil | Tamil Romanize | Telugu | Telugu Romanize | Thai | Turkish | Ukrainian | Urdu | Urdu Romanize | Uyghur | Uzbek | Vietnamese | Welsh | Western Frisian | Xhosa | Yiddish
+
+### multilingual-e5-large
+
+The multilingual-e5-large model should not be used in a heavy load environment because performance time is low.
+
+* **Intended use:** Use this model for multilingual and cross-lingual semantic textual search in over 50 different languages.
+* **Underlying model:** multilingual-e5-large
+* **Vector size:** 1024
+* **Supported languages:** Afrikaans | Albanian | Amharic | Arabic | Armenian | Assamese | Azerbaijani | Basque | Belarusian | Bengali | Bengali Romanize | Bosnian | Breton | Bulgarian | Burmese | Burmese zawgyi font | Catalan | Chinese (Simplified) | Chinese (Traditional) | Croatian | Czech | Danish | Dutch | English | Esperanto | Estonian | Filipino | Finnish | French | Galician | Georgian | German | Greek | Gujarati | Hausa | Hebrew | Hindi | Hindi Romanize | Hungarian | Icelandic | Indonesian | Irish | Italian | Japanese | Javanese | Kannada | Kazakh | Khmer | Korean | Kurdish (Kurmanji) | Kyrgyz | Lao | Latin | Latvian | Lithuanian | Macedonian | Malagasy | Malay | Malayalam | Marathi | Mongolian | Nepali | Norwegian | Oriya | Oromo | Pashto | Persian | Polish | Portuguese | Punjabi | Romanian | Russian | Sanskrit | Scottish Gaelic | Serbian | Sindhi | Sinhala | Slovak | Slovenian | Somali | Spanish | Sundanese | Swahili | Swedish | Tamil | Tamil Romanize | Telugu | Telugu Romanize | Thai | Turkish | Ukrainian | Urdu | Urdu Romanize | Uyghur | Uzbek | Vietnamese | Welsh | Western Frisian | Xhosa | Yiddish
+
+### gte-small
+
+The gte-small model is a smaller version of the GTE encoder and is an effective small-text encoder that provides medium quality and performance.
+
+* **Intended use:** Use this model for semantic textual search with 384d vector size to lower resource consumption and decrease vector search times. 
+* **Underlying model:** gte-small
+* **Vector size:** 384
+* **Supported language:** English
+
+### gte-base
+
+The gte-base model is the base GTE encoder that provides all-rounded quality and performance.
+
+* **Intended use:** Use this medium-sized model as a starting point for semantic textual search. This model provides higher quality results than gte-small with slower performance.
+* **Underlying model:** gte-base
+* **Vector size:** 768
+* **Supported language:** English
+
+### gte-large
+
+The gte-large model is the largest GTE encoder and should not be used in a heavy load environment because performance time is low.
+
+* **Intended use:** Use this large model for semantic vector search where high quality is needed, and slow performance is not an issue.
+* **Underlying model:** gte-large
+* **Vector size:** 1024
+* **Supported language:** English
+
+### bge-small
+
+The bge-small-en-v1.5 model is a smaller version of the BGE encoder and is an effective small-text encoder that provides medium quality and performance.
+
+* **Intended use:** Use this model for semantic textual search with 384d vector size to lower resource consumption and decrease vector search times. 
+* **Underlying model:** bge-small-en-v1.5
+* **Vector size:** 384
+* **Supported language:** English
+
+### bge-base
+
+The bge-base-en-v1.5 model is the base BGE encoder that provides all-rounded quality and performance.
+
+* **Intended use:** Use this medium-sized model as a starting point for semantic textual search. This model provides higher quality results than bge-small-en-v1.5  with slower performance.
+* **Underlying model:** bge-base-en-v1.5
+* **Vector size:** 768
+* **Supported language:** English
+
+### bge-large
+
+The bge-large-en-v1.5 model is the largest version on the BGE encoder. It should not be used in a heavy load environment because performance time is low.
+
+* **Intended use:** Use this large model for semantic vector search where high quality is needed, and slow performance is not an issue.
+* **Underlying model:** bge-large-en-v1.5
+* **Vector size:** 1024
+* **Supported language:** English
+
+### snowflake-arctic-embed-xs
+
+The snowflake-arctic-embed-xs model is the smallest version of the ARCTIC encoder and is an effective small-text encoder that provides medium quality and performance. For more information about the model, see the [Hugging Face snowflake-arctic-embed-xs page](https://huggingface.co/Snowflake/snowflake-arctic-embed-xs).
+
+* **Intended use:** Use this model for semantic textual search with 384d vector size to lower resource consumption and decrease vector search times. 
+* **Underlying model:** snowflake-arctic-embed-xs
+* **Vector size:** 384
+* **Supported language:** English
+
+### snowflake-arctic-embed-s
+
+The snowflake-arctic-embed-s model is the second smallest version of the ARCTIC encoder and provides all-around quality and performance. For more information about the model, see the [Hugging Face snowflake-arctic-embed-s page](https://huggingface.co/Snowflake/snowflake-arctic-embed-s).
+
+* **Intended use:** Use this small-sized model as a starting point for semantic textual search. This model provides higher quality results than the snowflake-arctic-embed-xs model, but with slightly slower performance. 
+* **Underlying model:** snowflake-arctic-embed-s
+* **Vector size:** 384
+* **Supported language:** English
+
+### snowflake-arctic-embed-m-v1.5
+
+The snowflake-arctic-embed-m-v1.5 model is the medium-sized model of the ARCTIC encoder. For more information about the model, see the [Hugging Face snowflake-arctic-embed-m-v1.5 page](https://huggingface.co/Snowflake/snowflake-arctic-embed-m-v1.5).
+
+A unique feature of this model is that it was trained to handle retrieval quality even down to 128-byte embedding vectors through a combination of [Matryoshka Representation Learning (MRL)](https://sbert.net/examples/training/matryoshka/README.html) and uniform scalar quantization. This dimension reduction can be set using the `modelConfig` parameter at retrieval by setting `dimReductionSize`. For more information, see [Matryoshka vector dimension reduction](/lw-platform/ai/dyl5lt/embedding-use-cases#matryoshka-vector-dimension-reduction).
+
+* **Intended use:** Use this base model for semantic vector search where high quality is needed and slower performance is manageable.
+* **Underlying model:** snowflake-arctic-embed-m-v1.5
+* **Vector size:** 768
+* **Supported language:** English
+
+### snowflake-arctic-embed-l-v2.0
+
+The snowflake-arctic-embed-l-v2.0 model is the largest version of the ARCTIC encoders. This model should not be used in a heavy load environment because of slower performance time. 
+
+This model is multilingual, and demonstrates a capability to generalize well even to languages not included in the training. It may be valuable to explore this model even if the language is not specifically called out as supported. 
+
+For more information about the model, see the [Hugging Face snowflake-arctic-embed-l-v2.0 page](https://huggingface.co/Snowflake/snowflake-arctic-embed-l-v2.0).
+
+A unique feature of this model is that it was trained to handle retrieval quality even down to 256 vector size through a combination of [Matryoshka Representation Learning (MRL)](https://sbert.net/examples/training/matryoshka/README.html) and uniform scalar quantization. This dimension reduction can be set using the `modelConfig` parameter at retrieval by setting `dimReductionSize`. For more information, see [Matryoshka vector dimension reduction](/lw-platform/ai/dyl5lt/embedding-use-cases#matryoshka-vector-dimension-reduction).
+
+* **Intended use:**  Use this large model for semantic vector search where high quality is needed, and slow performance is not an issue.
+* **Underlying model:** snowflake-arctic-embed-l-v2.0
+* **Vector size:** 1024
+* **Supported languages:** Afrikaans | Albanian | Arabic | Armenian | Azerbaijani | Basque | Belarusian | Bengali | Bulgarian | Burmese | Catalan | Cebuano | Chinese | Creole | Croatian | Czech | Danish | Dutch | English | Estonian | Finnish | French | Galician | Georgian | German | Greek | Gujarati | Haitian | Hebrew | Hindi | Hungarian | Icelandic | Indonesian | Italian | Japanese | Javanese | Kannada | Kazakh | Khmer | Korean | Kyrgyz | Lao | Latvian | Lithuanian | Macedonian | Malay | Malayalam | Marathi | Mongolian | Nepali | Persian | Polish | Portuguese | Punjabi | Quechua | Romanian | Russian | Serbian | Sinhala | Slovak | Slovenian | Somali | Spanish | Swahili | Swedish | Tagalog | Tamil | Telugu | Thai | Turkish | Ukrainian | Urdu | Vietnamese | Welsh | Yoruba

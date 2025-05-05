@@ -1,0 +1,151 @@
+---
+subGroup: "ai"
+permalink: "u4a59o"
+title: 'Classification use case'
+description: 'Needs description'
+icon: 'text-size'
+subtitle: 'Lucidworks AI Prediction API'
+layout: stoplight
+data: api-machine-learning-platform-predict
+private: true
+doctype: reference
+order: 10
+---
+
+The Classification use case of the [LWAI Prediction API](/lw-platform/ai/8bx4m9/prediction-api) lets you use embedding models to compute similarity scores between the incoming text and the labels. It returns the labels ranked in order of most similar to least similar.
+
+The classification use case is compatible with all Lucidworks hosted [pre-trained](/lw-platform/ai/3vqfxe/pre-trained-embedding-models) and [custom embedding models](/lw-platform/ai/k1zkfn/custom-embedding-model-training). The default behavior of embedding models is to always have a score returned.
+ 
+The `topK` and `similarityCutoff` parameters can be used to achieve behaviors where only the following are returned:
+
+* The single most applicable label
+* Labels with similarities that exceed a threshold
+ 
+* A set number of items
+* A set number if it exceeds the threshold
+
+## Prerequisites
+
+* The `USE_CASE` and `MODEL_ID` fields for the use case request. The path is: `/ai/prediction/USE_CASE/MODEL_ID`. A list of supported models is returned in the [Lucidworks AI Use Case API](/lw-platform/ai/0stpyb/use-case-api).
+
+### Unique values for the classification use case
+
+The parameters available in the `classification` use case are:
+
+* `"useCaseConfig": "labels"` This required parameter is a list of strings that classify information. For example:
+
+```
+  "useCaseConfig": {
+    "labels": ["Lord of the Rings"]
+  },
+```
+
+* `"useCaseConfig": "topK"` This is an optional parameter for the data structure that identifies the most frequent items in a set of data. The value is the number of top-scored labels to return.
+
+```
+  "useCaseConfig": {
+    "topK": 10
+  },
+```
+
+* `"useCaseConfig": "similarityCutoff"` This optional number&lt;float> decimal field is the similarity score cutoff to filter out less similar fields.
+
+```
+  "useCaseConfig": {
+    "similarityCutoff": 1
+  },
+```
+
+### Classification use case example
+
+The following is an example request.
+
+```
+curl --request POST \
+  --url https://APPLICATION_ID.applications.lucidworks.com/ai/prediction/classification/{MODEL_ID} \
+  --header 'Content-Type: application/json' \
+  --header 'Authorization: Bearer ACCESS_TOKEN'
+  --data '{
+    "batch": [
+        {
+          "text": "Not all those who wander are lost."
+        }
+    ],
+   "useCaseConfig": {
+     "labels": [
+        "Harry Potter",
+        "Lord of the Rings"
+        ]
+    }
+}'
+```
+
+The following is an example response.
+
+```
+{
+    "predictions": [
+        {
+            "tokensUsed": {
+                "inputTokens": 11,
+                "labelsTokens": 14
+            },
+            "labels": {
+                "Lord of the Rings": 0.7287280559539795,
+                "Harry Potter": 0.7193666100502014
+            }
+        }
+    ]
+}
+```
+
+
+For information about custom configuration parameters, see [Classification configuration for custom embedding model](/lw-platform/ai/tnwswb/custom-configuration#classification-configuration-for-custom-embedding-model). 
+
+### Classification with 100 classes or less
+
+If there are 100 or fewer classes and labels for the input, Lucidworks recommends you use the Classification use case. Whether you are using a pre-trained model, or a model you have trained, you can list all the possible labels in the request `labels` parameter along with the text to classify. The response returns all labels in descending order of the highest similarity score.
+
+You can also use the `topK` and `similarityCutoff` parameters to limit the respons and more easily utilize the output labels.
+
+For more information about the parameters, see [Unique values for the classification use case](#unique-values-for-the-classification-use-case). 
+
+### Classification with more than 100 classes
+
+If there are more than 100 classes or labels, you must incorporate a side-car collection that contains all of the labels.
+
+#### Using the Lucidworks AI embeddings and side-car collection
+
+If you use the Lucidworks AI embeddings models and a side-car collection, the general process flow is as follows:
+
+* Use a pre-trained or custom model to vectorize the labels when the side-car collection is indexed.
+* After the labels are indexed, create a query pipeline with a vectorized stage and a hybrid stage to search the labels. 
+  * The query pipeline can also be used in a different query pipeline to check the labels.
+  * The hybrid stage can be used to replicate the `topK` and `similarityCutoff` parameter settings to limit the response and more easily utilize the output labels.
+
+#### Using the Fusion Smart Answers model and side-car collection
+
+If you use the Fusion Smart Answers Coldstart training or the Smart Answers Supervised Training job, the general process is as follows:
+
+* To format the input, set the `class` field and the field to be classified as a pair of documents in a collection.
+* Input the collection into the Fusion job with the following information:
+  * Specify which field contains the documents to be used to learn about the vocabulary. 
+  * Separate the fields by a comma. For example `class`,`query`.
+* Save and run the Fusion job.
+* The subsequent model can be used as the model to both index and query the side-car classes' collection.
+
+### Evaluating classification
+
+To evaluate how well the classification is performed, use the F-score metric. This is also referred to as the F1 metric. 
+
+The formula for the metric is:
+
+![Classification F1 metric formula](/assets/images/lw-platform/lw-ai/lw-ai-classification-f1-metric.png)
+
+In the implementation of the F1 score in the evaluation mode, it is more precisely the Micro F1 score, where each query is evaluated equally.
+
+![Classification Micro F1 metric formula](/assets/images/lw-platform/lw-ai/lw-ai-classification-micro-f1-metric.png)
+
+The following is an example of the F1 metric where a selection of ecommerce and knowledgement management query classification tasks were run on a Fusion classification job. The job used [logistic regression then StarSpace](/fusion/{latest-fusion}/8808/classification-jobs#job-flow), and the Lucidworks AI trained model classification. The Lucidworks AI custom trained classification model outperformed the Fusion jobs when correctly classifying queries.
+
+![Classification F1 metric example](/assets/images/lw-platform/lw-ai/lw-ai-classification-f1-metric-example.png)

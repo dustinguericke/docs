@@ -1,0 +1,71 @@
+---
+subGroup: "ai"
+permalink: "vjs5ie"
+layout: default
+title: 'Create and deploy custom models'
+description: 'Needs description'
+icon: 'text-size'
+subtitle: 'Lucidworks AI Custom model training'
+order: 10
+doctype: concept
+---
+
+This topic details procedures to create a new custom model and deploy existing custom models.
+
+For information about custom models, see [Custom model training user interface](/lw-platform/ai/6bb9s5/lw-ai-custom-embedding-model-training-user-interface/index).
+
+## Create a new model
+
+1. To create a new custom model, sign in to Lucidworks Platform, click **Lucidworks AI** and then click the **Custom Models** tab.
+2. In the Custom Models screen, click **+ Create New Model**.
+3. In the Train New Model screen, enter a user-defined value in the **Name** field, select a **Region** where the training of the model occurs, and click **Continue**.
+
+   **📌 NOTE**\
+   These fields cannot be changed after the model is created. If you need a different name or a model in a different region, you must create another model with the new information.
+4. Click one of the following values for the **Use Case**:
+
+   * **General.** This use case uses general data schema with `mrr@3` as the primary retrieval metric. This option is typically for informational sites.
+   * **ecommerce.** This use case uses ecommerce catalog and signals data schema with `ndcg@5` as the primary retrieval metric. This option is typically used for online sales sites.
+   * **Classification.** This use case uses uses classification data schema for texts labeling with `F1` scores as the primary evaluation metric. This option is used to compute similarity scores between the incoming text and the labels.
+5. In the Query Training Data field, enter the location of signals in the training data in Google Cloud Storage (GCS). For configuration information, see [use case training data query file](/lw-platform/ai/g0ji3z/custom-embedding-model-training-data#query-file).
+6. In the Index Training Data field, enter the location of the index training data in Google Cloud Storage (GCS). For configuration information, see [use case training data index file](/lw-platform/ai/g0ji3z/custom-embedding-model-training-data#index-file).
+7. In the Upload Service Account Key section, the information about how to generate your service account key. To upload a JSON blob that contains the default information from GCS, click **Click here to browse** and select the JSON file. To view an example, click **Sample Service Account Key**.
+
+   **📌 NOTE**\
+   If your Google Cloud Storage (GCS) bucket is publicly accessible, the service account key is optional and you can click **Continue** without entering a key. If you enter a key, it is validated when you click **Continue**. If the key is not valid, the model cannot be configured.
+8. Click **Continue**. You can select values in the fields on this screen, or you can click [**Switch to Manual Entry**](#manual-entry) to manually enter a configuration.
+9. To select values on this screen, click one of the following values for the **Model Type**:
+
+   * **General RNN.** This model type is the RNN encoder with frozen pre-trained token embeddings. The general model is typically used by knowledge management sites that contain information, such as news or documentation. For more information about this model, see [custom embedding models](/lw-platform/ai/b18rw1/custom-embedding-rnn-models).
+   * **ecommerce RNN.** This model type is the RNN encoder with tuneable token embeddings. The ecommerce model is typically used by sites that provide products for purchase. For more information about this model, see [custom embedding models](/lw-platform/ai/b18rw1/custom-embedding-rnn-models).
+   * **Transformer RNN.** This model is the RNN built on top of a frozen pre-trained Transformer (BERT) encoder. This model is typically used for ecommerce use cases due to slower model encoding speed and less flexibility for domain specific language. For more information about this model, see [Transformer RNN models](/lw-platform/ai/gmhy47/custom-embedding-transformer-rnn-models).
+10. Select values in the following fields:
+
+   * **Text Processor Config.** The type of tokenization and embedding to be used as the base for the selected recurrent neural network (RNN) model type. For example, word or byte-pair encoding (BPE). For information about values, see [Text processor](/lw-platform/ai/b18rw1/custom-embedding-rnn-models#text-processor).
+   * **RNN Layers.** In Layer 1 of the RNN Layers field, select the bi-directional recurrent neural network (RNN) layers to use (`gru` or `lstm`), and then select the unit size of the layer. Options are `gru` and `lstm`. Layer 2 is optional. If needed, select the RNN and unit.
+11. Click **Save & Run** to save and execute training for the model. To exit without saving and running the model, click **Cancel**.
+
+## Manual entry
+
+If you click **Switch to Manual Entry**, the Custom Config field displays.
+
+1. In the Custom Config field, enter the configuration parameters for your custom model. 
+
+   **📌 NOTE**\
+   For detailed information about configuration options for a model, see [Custom configuration](/lw-platform/ai/tnwswb/custom-configuration). 
+2. Click **Save & Run** to execute the model training. To exit without saving and running the model, click **Cancel**. To return to creating a model without entering custom configuration, click **Switch to Guided Entry**. 
+
+## Create a new deployment
+
+1. To deploy a custom model, sign in to Lucidworks Platform, click **Lucidworks AI** and then click the **Custom Models** tab.
+2. In the Custom Models screen, click the model you want to deploy, click **Deployment Details > + New Deployment**.
+3. Complete the following fields:
+
+   * Enter a unique value to describe the deployment in the **Name** field.
+   * Click and drag the scale to set the number of **Minimum Replicas** for the model. The maximum value is **12**.
+   * Click and drag the scale to set the number of **Maximum Replicas** for the model. The maximum number is **12**.
+   * Select the **Region** where the model is to be deployed.
+
+     **📌 NOTE**\
+     These fields cannot be changed after the model is deployed. If you need different values, you must create another deployment with the new information.
+4. Click **Save & Run** to deploy the model. To exit without saving the information and deploying the model, click **Cancel**. The deployment displays on the Deployment Details screen for the model.

@@ -1,0 +1,71 @@
+---
+permalink: "n99zcx"
+subGroup: "platform"
+layout: default
+title: 'Fusion'
+description: 'Needs description'
+icon: 'text-size'
+subtitle: 'Lucidworks Platform'
+order: 20
+doctype: concept
+---
+
+The Fusion screen in Lucidworks Platform is where you can view your Fusion instances and perform promotions between environments. For Managed Fusion clients, Lucidworks sets up and configure Fusion integrations for Lucidworks Platform. Self-hosted Fusion clients must set up [Fusion integrations](/lw-platform/platform/04gi1q/fusion-integrations) to view their Fusion instances here.
+
+## Fusion instances
+
+The Fusion Instances tab displays by default. Your Fusion instances contain the following information:
+
+* **Self Hosted** or **Managed** labels indicate the type of Fusion deployment.
+* [Environment](/managed-fusion/5.9/zm43ol/environments) labels indicate the type of Fusion environment, such as **Dev**, **Staging**, and **Prod**.
+
+Based on your user permissions, you can perform the following actions related to your Fusion instances:
+
+* Click on a Fusion instance tile to access the sign in page. 
+* (Managed Fusion only) Click the three dots in the corner of your Fusion instance, then click **View Metrics** to display your [Customer Dashboard](/managed-fusion/5.9/jc151t/customer-dashboard).
+
+![Fusion instances](/assets/images/lw-platform/fusion/lw-platform-fusion-instances.png)
+
+## Configuration promotion
+
+This feature is available to Managed Fusion and self-hosted Fusion clients using Fusion 5.9.8 or later. 
+
+The Configuration Promotion tool uses a GitHub configuration for every Fusion instance you want to manage. 
+
+**📌 NOTE**\
+To use this feature, self-hosted Fusion clients must set up [ConfigSync](/fusion/5.9/j47yes/config-sync) and complete all of the procedures described in the [Configuration Promotion tool integration with Fusion](/lw-platform/platform/qjns2v/configuration-promotion-integration) topic. 
+
+### Create and manage promotions
+
+To create and manage promotions, sign into [Lucidworks Platform](https://platform.lucidworks.com), navigate to **Fusion** and select a Fusion instance. Click the **Configuration Promotion** tab. 
+
+![Configuration promotion](/assets/images/lw-platform/fusion/lw-platform-configuration-promotion.png)
+
+#### Start promotion
+
+You can promote changes between Fusion environments using the Configuration Promotion tool.
+
+For Managed Fusion clients, promotion requests are reviewed by Lucidworks. You can track the approval status in the Configuration Promotion table.
+
+1. Click **Start Promotion**. 
+2. In the **Source** section, select the Fusion instance that contains the changes you want to promote. For example, if you’re promoting changes to a Staging environment, select your Dev environment. A file tree appears in the Source section that represents all the Fusion objects within the selected system.
+3. Select the checkboxes next to the files that you wish to promote into the target instance.
+
+   **📌 NOTE**\
+   Some files are restricted and cannot be selected for promotion. 
+
+4. In the **Target** section, select the Fusion instance where the changes will be promoted. For example, if you’re promoting changes from a Dev environment, select your Staging environmet. A file tree appears in the Source section that represents all the Fusion objects within the selected system. Verify that you have selected the correct target by reviewing the files you want to change.
+
+   ![Request promotion](/assets/images/lw-platform/fusion/lw-platform-request-promotion.png)
+
+5. Click **Request Promotion** to initialize the Configuration Promotion.
+6. On the Configuration Promotion page, a new promotion appears with an Approval Status of `Creating Pull Request`. When the Approval Status changes to `Pending`, the pull request for the Configuration Promotion has been created and is ready to be reviewed.
+
+#### Withdraw promotion
+
+If you want to cancel a promotion request that hasn’t been merged yet, complete these steps to withdraw a promotion from its details page.
+
+1. Click on the row of the promotion request you want to cancel.
+2. Click **Withdraw Promotion**. 
+
+   ![Withdraw promotion](/assets/images/lw-platform/fusion/lw-platform-withdraw-promotion.png)

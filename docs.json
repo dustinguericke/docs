@@ -29,7 +29,91 @@
               "essentials/images",
               "essentials/settings",
               "essentials/navigation",
-              "essentials/reusable-snippets"
+              "essentials/reusable-snippets",
+              {
+                "group": "Lucidworks Platform",
+                "pages": [
+                  "essentials/lw-platform/index",
+                  "essentials/lw-platform/changelog",
+                  {
+                    "group": "Lucidworks AI",
+                    "pages": [
+                      "essentials/lw-platform/lw-ai/index",
+                      "essentials/lw-platform/lw-ai/integrations",
+                      "essentials/lw-platform/lw-ai/lw-ai-ai-model-usage",
+                      "essentials/lw-platform/lw-ai/lw-ai-gateway",
+                      "essentials/lw-platform/lw-ai/lw-ai-generative-ai",
+                      "essentials/lw-platform/lw-ai/lw-ai-pre-trained-embedding-models",
+                      "essentials/lw-platform/lw-ai/lw-ai-security-faq",
+                      {
+                        "group": "APIs",
+                        "pages": [
+                          "essentials/lw-platform/lw-ai/lw-ai-apis/index",
+                          "essentials/lw-platform/lw-ai/lw-ai-apis/lw-ai-async-chunking-api",
+                          {
+                            "group": "Async Prediction API",
+                            "pages": [
+                              "essentials/lw-platform/lw-ai/lw-ai-apis/lw-ai-async-prediction-api/index",
+                              "essentials/lw-platform/lw-ai/lw-ai-apis/lw-ai-async-prediction-api/keyword-extraction-async",
+                              "essentials/lw-platform/lw-ai/lw-ai-apis/lw-ai-async-prediction-api/ner-async",
+                              "essentials/lw-platform/lw-ai/lw-ai-apis/lw-ai-async-prediction-api/passthrough-async",
+                              "essentials/lw-platform/lw-ai/lw-ai-apis/lw-ai-async-prediction-api/rag-async",
+                              "essentials/lw-platform/lw-ai/lw-ai-apis/lw-ai-async-prediction-api/standalone-query-rewriter-async",
+                              "essentials/lw-platform/lw-ai/lw-ai-apis/lw-ai-async-prediction-api/summarization-async"
+                            ]
+                          },
+                          {
+                            "group": "Prediction API",
+                            "pages": [
+                              "essentials/lw-platform/lw-ai/lw-ai-apis/lw-ai-prediction-api/index",
+                              "essentials/lw-platform/lw-ai/lw-ai-apis/lw-ai-prediction-api/classification-prediction",
+                              "essentials/lw-platform/lw-ai/lw-ai-apis/lw-ai-prediction-api/embedding-prediction",
+                              "essentials/lw-platform/lw-ai/lw-ai-apis/lw-ai-prediction-api/keyword-extraction-prediction",
+                              "essentials/lw-platform/lw-ai/lw-ai-apis/lw-ai-prediction-api/ner-prediction",
+                              "essentials/lw-platform/lw-ai/lw-ai-apis/lw-ai-prediction-api/passthrough-prediction",
+                              "essentials/lw-platform/lw-ai/lw-ai-apis/lw-ai-prediction-api/rag-prediction",
+                              "essentials/lw-platform/lw-ai/lw-ai-apis/lw-ai-prediction-api/standalone-query-rewriter-prediction",
+                              "essentials/lw-platform/lw-ai/lw-ai-apis/lw-ai-prediction-api/summarization-prediction"
+                            ]
+                          },
+                          "essentials/lw-platform/lw-ai/lw-ai-apis/lw-ai-models-api",
+                          "essentials/lw-platform/lw-ai/lw-ai-apis/lw-ai-prompting-preview-api",
+                          "essentials/lw-platform/lw-ai/lw-ai-apis/lw-ai-tokenization-api",
+                          "essentials/lw-platform/lw-ai/lw-ai-apis/lw-ai-use-case-api",
+                          "essentials/lw-platform/lw-ai/lw-ai-apis/lw-authentication-api"
+                        ]
+                      },
+                      {
+                        "group": "Custom Embedding Model Training",
+                        "pages": [
+                          "essentials/lw-platform/lw-ai/lw-ai-custom-embedding-model-training/index",
+                          "essentials/lw-platform/lw-ai/lw-ai-custom-embedding-model-training/custom-embedding-model-configuration",
+                          "essentials/lw-platform/lw-ai/lw-ai-custom-embedding-model-training/custom-embedding-model-training-data",
+                          "essentials/lw-platform/lw-ai/lw-ai-custom-embedding-model-training/custom-embedding-rnn-models",
+                          "essentials/lw-platform/lw-ai/lw-ai-custom-embedding-model-training/custom-embedding-transformer-rnn-models",
+                          {
+                            "group": "User Interface",
+                            "pages": [
+                              "essentials/lw-platform/lw-ai/lw-ai-custom-embedding-model-training/lw-ai-custom-model-training-user-interface/index",
+                              "essentials/lw-platform/lw-ai/lw-ai-custom-embedding-model-training/lw-ai-custom-model-training-user-interface/lw-ai-create-deploy-custom-models"
+                            ]
+                          }
+                        ]
+                      },
+                      {
+                        "group": "Lucidworks AI Stages",
+                        "pages": [
+                          "essentials/lw-platform/lw-ai/lw-ai-stages/index",
+                          "essentials/lw-platform/lw-ai/lw-ai-stages/lucidworks-ai-prediction-index-stage",
+                          "essentials/lw-platform/lw-ai/lw-ai-stages/lucidworks-ai-prediction-query-stage",
+                          "essentials/lw-platform/lw-ai/lw-ai-stages/vectorize-field-via-lucidworks-ai-index-stage",
+                          "essentials/lw-platform/lw-ai/lw-ai-stages/vectorize-query-via-lucidworks-ai-query-stage"
+                        ]
+                      }
+                    ]
+                  }
+                ]
+              }
             ]
           }
         ]

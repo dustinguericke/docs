@@ -1,0 +1,119 @@
+---
+subGroup: "platform"
+permalink: "qjns2v"
+layout: default
+title: 'Configuration Promotion tool integration with Fusion'
+description: 'Needs description'
+icon: 'text-size'
+subtitle: 'Lucidworks Platform'
+doctype: concept
+order: 20
+---
+
+This type of Fusion integration lets you connect self-hosted Fusion instances to the Lucidworks Configuration Promotion tool.
+
+You must satisfy the [prerequisites](#prerequisites) and complete all of the procedures in the order described in this topic to implement the Lucidworks Configuration Promotion tool.
+
+1. [Create a GitHub token for configuration promotion](#create-a-github-token-for-configuration-promotion)
+2. [Set up GitHub branch protection (optional)](#set-up-github-branch-protection-optional)
+3. [Configure the integration](#configure-the-integration)
+4. [Create a Fusion security JWT realm](#create-a-fusion-security-jwt-realm)
+5. [Verify the Configuration Promotion tool integration with Fusion](#verify-the-configuration-promotion-tool-integration-with-fusion)
+
+<dl><dt><strong>💡 TIP</strong></dt><dd>
+
+This topic is specific to integrating the Lucidworks Platform with Fusion for the use of the Configuration Promotion tool. 
+
+* To configure a general integration for Lucidworks Platform with Fusion, follow the procedures in [Fusion integrations](/lw-platform/platform/04gi1q/fusion-integrations).
+* To configure an integration that uses Lucidworks Commerce Studio, follow the procedures in the [Commerce Studio integration with Fusion](/lw-platform/platform/zpqyc5/commerce-studio-integration) topic. 
+* To configure a self-hosted Fusion integration with Lucidworks AI, follow the procedures in [Lucidworks AI integrations](/lw-platform/platform/mdlec0/lucidworks-ai-integrations).
+</dd></dl>
+
+## Prerequisites
+
+To create an integration, you must have the following prerequisites in place:
+
+## Create a GitHub token for configuration promotion
+
+To set up the Configuration Promotion tool, you must generate a GitHub token.
+
+1. Sign in to GitHub with an account that has access to the integrated systems repository.
+2. In GitHub, click your profile icon, and then click **Settings**.
+3. Navigate to **Developer Settings > Personal Access Tokens > Tokens (classic)**.
+4. Click **Generate new token** and then select **Generate new token (classic)**.
+5. In the **Note** field, enter details about the token.
+6. In the **Expiration** field, select the period of time the token is active. Lucidworks recommends configuring a long duration in line with your organization’s security pratices. You must generate and configure a new token for your Fusion integration every time your token expires.
+7. In the **Select scopes** section, select the **repo** checkbox. This ensures the token has all required permissions.
+8. Click **Generate token**.
+9. Copy the generated token and save it in a secure location.
+
+**📌 NOTE**\
+Your GitHub organization may need to authorize your token.
+
+For more information, see [Managing your personal access tokens](https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/managing-your-personal-access-tokens).
+
+## Set up GitHub branch protection (optional)
+
+Lucidworks recommends enabling GitHub branch protection for your production (PROD) branch. This protects a branch with requested changes from being promoted until that request has been reviewed.
+
+To configure branch protections, see [About protected branches](https://docs.github.com/en/repositories/configuring-branches-and-merges-in-your-repository/managing-protected-branches/about-protected-branches).
+
+The configuration promotion tool looks at GitHub to see if the branch is ready to merge. The tool can integrate with any GitHub automations that change the merge-ready status of the branch.
+
+## Configure the integration
+
+Complete the following steps to create an integration for the Lucidworks Configuration Promotion tool with Fusion.
+
+1. Sign into [Lucidworks Platform](https://platform.lucidworks.com) as a workspace owner.
+2. Navigate to **Settings > Fusion Integrations**. 
+3. Click **Connect New Fusion**.
+4. On the New Fusion Integration screen, enter a user-defined value in the **Name** field to identify the integration. For example, `Lucidworks Demo Dev`.
+5. In the **API URL** field, enter the URL of your Fusion instance. For example, `https://FUSION_INSTANCE.com`. Do not enter a path after `.com`.
+6. In the **Environment** field, enter the environment for the Fusion instance. The default value is **Development**. 
+7. Optional: In the **Tags** field, enter a description that identifies the integration. This is especially helpful if you create multiple integrations for different purposes. To add multiple tags, enter a tag and press **Enter** to display additional fields in which you can values.
+
+   ![Connect New Fusion integration](/assets/images/lw-platform/integrations/lw-platform-integrations-connect-new-fusion.png)
+8. All fields in the **GitHub** section are required if you’re setting up the Configuration Promotion tool.
+   1. In the **GitHub Branch URL** field, enter the URL from GitHub for your self-hosted Fusion install. The format is `https://github.com/ORGANIZATION_NAME/REPOSITORY_NAME/tree/BRANCH_NAME`. For example, `https://github.com/company_name/fusion_install/tree/lucidworks_demo_dev`.
+   2. In the **GitHub Token** field, enter the [personal access token](#create-a-github-token-for-configuration-promotion) granted privileges to the GitHub organization linked to your self-hosted Fusion install.
+9. Click the **Enable Fusion Configuration Promotion** field to **ON** to allow files or instances to be promoted from development to a staging or production environment.
+
+   ![GitHub information](/assets/images/lw-platform/integrations/lw-platform-integrations-github-info.png)
+10. Click **Add**. If the value in the **API URL** field is:
+   * Not valid, the integration is not created, and it is not displayed on the Fusion Integrations screen.
+   * Valid, the Instructions to Connect with Fusion screen displays:
+
+     ![Connect with Fusion](/assets/images/lw-platform/integrations/lw-platform-integrations-connect-jwt-values.png)
+11. Copy both the **JWK Set URL** value and the **Issuer URL** value to a secure location. These values must be used to create the [Create a Fusion security JWT realm for Lucidworks Platform](#create-a-fusion-security-jwt-realm-for-lucidworks-platform).
+12. Click **Close**.
+13. Verify the new integration displays on the Fusion Integrations screen.
+
+**📌 NOTE**\
+To edit the integration, hold the pointer over the integration, click the pencil icon, enter the changes, and click **Save**. To delete the integration, hold the pointer over the integration and click the trash can icon.
+
+## Create a Fusion security JWT realm
+
+To complete required fields in the integration, you must create a Fusion security realm.
+
+1. Sign in to your Fusion instance as an admin.
+2. Click the Fusion application to connect with the Lucidworks Configuration Promotion tool.
+3. Navigate to **System > Access Control > Security Realms**.
+4. Click **Add Security Realm**.
+5. In the **Name** field, enter a user-defined value to identify the connection. For example, **Lucidworks Configuration Promotion tool JWT realm**.
+6. In the **Type** field, select **jwt**.
+7. Select the **Enabled** checkbox if it is not already selected.
+8. Do not select the **Ephemeral Users** checkbox. Ephemeral users are not created in Zookeeper during login. If selected, auto-create users has no effect.
+9. Select the **Auto-Create Users** checkbox. If selected, Fusion user accounts are auto-created when users successfully authenticate the first time. If not selected, user accounts must be created manually. 
+10. In the **Roles** field, select the roles that this realm provides after successfully authenticating a user by default.
+11. In the **JWT Issuer** field, paste the **Issuer URL** value generated in the [Configure the integration](#configure-the-integration) procedure.
+12. In the **JWK Set URL** field, paste the **JWKS URL** value generated in the [Configure the integration](#configure-the-integration) procedure.
+13. Do not enter values (default is blank) in any of the following fields:
+   * **Signing Key**
+   * **Groups Key**
+   * **Groups Mapping**
+   * **User ID Attribute**
+14. Click **Save**.
+
+## Verify the Configuration Promotion tool integration with Fusion
+
+When the Fusion security JWT realm is created, complete the following steps to verify the Fusion information is displayed.

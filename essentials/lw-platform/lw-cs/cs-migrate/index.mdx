@@ -1,0 +1,405 @@
+---
+permalink: "bpsf27"
+subGroup: "cs"
+layout: default
+title: 'Migration guide'
+description: 'Needs description'
+icon: 'text-size'
+subtitle: 'Migrate from Predictive Merchandiser to Commerce Studio'
+order: 80
+doctype: concept
+---
+
+This guide explains how to migrate from Predictive Merchandiser to Commerce Studio in Lucidworks Platform. It covers all required setup steps, including prerequisites, AI gateway configuration, and API-based instance creation. You’ll learn how to transfer rules and rewrites, verify the success of the migration, and launch Commerce Studio for live traffic.
+
+The migration is one-way. You can revert back to Predictive Merchandiser, but any changes made in Commerce Studio after switching will be lost.
+
+## Prerequisites
+
+Before beginning the migration, ensure that your environment meets all required conditions.
+
+* Admin privileges to a Fusion environment running Fusion 5.9.8 or later.
+* A valid Predictive Merchandiser license.
+* Workspace Owner permissions in a Lucidworks Platform environment.
+* Privileges to access and use Lucidworks Commerce Studio in a Lucidworks platform workspace.
+
+**📌 NOTE**\
+Fusion environments 5.9.8-5.9.11 require a patch to support migration. Contact your Lucidworks client support representative for more information. 
+
+## Migration process
+
+### Prepare Predictive Merchandiser for migration
+
+Before starting the migration, you must publish all pending changes to rules and rewrites. This includes newly created items, any updates to existing ones, and rule deletions.
+
+<dl><dt><strong>⚠️ WARNING</strong></dt><dd>
+
+Failure to publish all pending changes will cause the migration to fail.
+</dd></dl>
+
+### Retrieve lists of objects in Predictive Merchandiser
+
+After preparing Predictive Merchandiser for migration, Lucidworks recommends that you export lists of rules, rewrites, templates, and zones from your Predictive Merchandiser instance to compare against Commerce Studio later. This will help serve as a reference when performing your post-migration validation checks.
+
+1. Export a list of your rules and rewrites:
+
+   ```bash
+   curl --request GET \
+     --url  USER:PASSWORD \
+     'https://FUSION_HOST/api/apps/APP_NAME/query-rewrite/instances' \
+     --header 'accept: application/json' \
+     > exported-rules.json
+   ```
+
+2. Create an inventory of your rules, noting how many of each type and tag appear in the list.
+3. Export a list of your zones:
+
+   ```bash
+   curl --request GET \
+   -u USER:PASSWORD \
+     --url 'https://FUSION_HOST/api/templating/zones?context=app:APP_NAME' \
+     --header 'Accept: application/json' \
+     > zones.json
+   ```
+
+4. Export a list of your templates:
+
+   ```bash
+   curl --request GET \
+   -u USER:PASSWORD \
+     --url 'https://FUSION_HOST/api/templating/templates?context=app:APP_NAME' \
+     --header 'Accept: application/json' \
+     > templates.json
+   ```
+
+### Set up the Commerce Studio integration
+
+Follow the instructions in [Commerce Studio integration with Fusion](/lw-platform/platform/zpqyc5/commerce-studio-integration-with-fusion) to establish the integration. However, **do not** create the instance using the UI. Migration requires creating the instance using the API. 
+
+While completing the process: 
+
+1. Copy the ID of the Fusion instance you’re migrating from and save in a secure location. 
+
+   ![{sh-academy}](/assets/images/lw-platform/commerce-studio/migrate/lw-cs-fusion-integration-id.png)
+2. Copy the Lucidworks Platform workspace ID and save in a secure location. You can find this in the JWKS and Issuer URLs.
+
+   ![{sh-fullscreen}](/assets/images/lw-platform/commerce-studio/migrate/lw-cs-workspace-id.png)
+
+### Create a Commerce Studio instance using the API
+
+Unlike the standard [Commerce Studio integration with Fusion](/lw-platform/platform/zpqyc5/commerce-studio-integration-with-fusion), migration from Predictive Merchandiser to Commerce Studio requires creating a Commerce Studio instance using the API.
+
+<dl><dt><strong>🔥 CAUTION</strong></dt><dd>
+
+After you create the Commerce Studio instance, you cannot access Predictive Merchandiser unless you delete the Commerce Studio instance and restart the process. Ensure you are ready before proceeding.
+</dd></dl>
+
+1. Obtain a bearer token from your browser session:
+   1. Open your browser’s developer console and navigate to the Network tab. 
+   2. Select **Fetch/XHR**, then navigate within the Platform UI. 
+   3. From one of the recorded requests, find the Authorization header and copy the Bearer token value. Save this in a secure place. This token expires after one hour, so repeat this step as needed.
+
+      ![{sh-fullscreen}](/assets/images/lw-platform/commerce-studio/migrate/lw-cs-migrate-token.png)
+2. Using the token copied in the previous step, run the following command in a terminal, replacing the placeholder values with the appropriate values:
+
+   ```json
+   curl --location "https://api.lucidworks.com/customers/WORKSPACE_ID/experience-manager-instances" \
+   --header 'Content-Type: application/json' \
+   --header "Authorization: Bearer BEARER_TOKEN" \
+   --data '{
+       "name": "EM_INSTANCE_NAME",
+       "fusionInstance": "FUSION_INSTANCE_ID",
+       "fusionAppId": "FUSION_APP",
+       "region": "REGION",
+       "migrate": true
+   }'
+   ```
+
+   |====
+   |Placeholder |Description
+
+|`WORKSPACE_ID`  |Your Lucidworks Platform workspace ID. You saved this value when you [set up the integration](#integrate).
+|`BEARER_TOKEN`  |The bearer token you copied from your browser’s developer console.
+|`EM_INSTANCE_NAME`  |What you want to name your Commerce Studio instance. 
+|`FUSION_INSTANCE_ID`  |Your Fusion instance ID. You saved this value when you [set up the integration](#integrate).
+|`FUSION_APP`   |The ID of the Fusion app that contains your Predictive Merchandiser.
+|`REGION` |A valid region identifier where you want to create the Commerce Studio instance. Use `us-southcarolina`.
+|====
++
+This process may take a few minutes.
++
+NOTE: You may encounter an error that states `Fusion app APP_NAME is not ready for Experience Manager`. If you do, try running the command again. You may need to retry several times.
++
+Copy the Commerce Studio instance ID that appears in the response and save it in a secure location. You can also view the ID by navigating to the Commerce Studio instance in the UI. The ID appears in the URL after `/em/`, for example, `platform.lucidworks.com/applications/em/12a34567-b890-1245-cd67-8efg901234h5`. This is your `EM_INSTANCE_ID` value.
+. Optional: Check the status of the instance creation:
++
+```bash
+curl --location "https://api.lucidworks.com/customers/WORKSPACE_ID/experience-manager-instances/EM_INSTANCE_ID" \
+--header "Authorization: Bearer BEARER_TOKEN"
+```
++
+|====
+|Placeholder |Description
+
+|`EM_INSTANCE_ID`  |The ID of your Commerce Studio instance.
+|====
++
+Your Commerce Studio instance is successfully created when the `state` field contains the value `COMPLETED`. 
+. Verify your instance is ready for migration:
++
+```bash
+curl --location "https://EM_INSTANCE_ID.experiencemanager.lucidworks.com/pm-migration" \
+--header "Authorization: Bearer BEARER_TOKEN"
+```
++
+Your Commerce Studio instance is ready when you see a `200` HTTP response code, and the `state` field contains the value `READY`. 
+
+### Migrate data from Predictive Merchandiser to Commerce Studio
+
+1. To start the migration, send a `PUT` request to set the instance state to `MIGRATING`: 
+
+   ```json
+   curl --location --request PUT "https://EM_INSTANCE_ID.experiencemanager.lucidworks.com/pm-migration" \
+   --header "Content-Type: application/json" \
+   --header "Authorization: Bearer BEARER_TOKEN" \
+   --data '{
+       "state": "MIGRATING"
+   }'
+   ```
+
+   The migration process may take an extended period to complete.
+2. Optional: Check the migration status:
+
+   ```bash
+   curl --location "https://api.lucidworks.com/customers/WORKSPACE_ID/experience-manager-instances/EM_INSTANCE_ID" \
+   --header "Authorization: Bearer BEARER_TOKEN"
+   ```
+
+   The response includes the count of successfully migrated objects by type. The process includes backoff and retry logic for handling import errors. If the number of errors exceeds a threshold, the migration stops and is marked as a failure.
+
+#### Success
+
+When the migration completes successfully, the `state` value changes to `COMPLETED`. Visit your Commerce Studio instance in Lucidworks Platform to confirm that all data has been migrated correctly.
+
+Web traffic continues to use rules and rewrites from Predictive Merchandiser. Changes made in Commerce Studio do not affect live traffic. When you’re ready to switch, complete the [launch process](#launch).
+
+If the migration was successful, but you are experiencing issues in Commerce Studio, see [Troubleshooting](#troubleshoot).
+
+**❗ IMPORTANT**\
+Changes made in Commerce Studio are _not_ reflected in Predictive Merchandiser. If you choose to [revert](#revert) later, there is no migration path from Commerce Studio back to Predictive Merchandiser.
+
+#### Failure
+
+If the migration fails, the `state` value changes to `FAILED`, and you must delete your work and start over:
+
+1. Delete your Commerce Studio instance.  
+2. Clear any Fusion collections related to your Commerce Studio instance. These collections have names ending in `_em`.
+
+   <dl><dt><strong>⚠️ WARNING: Ensure you are clearing the correct collections!</strong></dt><dd>
+
+   Do not inadvertently delete other Fusion collections. This may result in permanent data loss.
+   </dd></dl>
+3. Restart the process at [preparing Predictive Merchandiser for migration](#prepare).
+
+### Validate migration data
+
+After successfully migrating, validate that all Predictive Merchandiser objects appear in Commerce Studio. 
+When you [create your Commerce Studio using the API](#create-a-commerce-studio-instance-using-the-api), you are locked out of Predictive Merchandiser, so you must consult the [exported JSON](#retrieve-lists-of-objects-in-predictive-merchandiser) for validation checks. 
+
+1. Sign in to [Lucidworks Platform](https://platform.lucidworks.com) as a workspace owner and navigate to **Commerce Studio**. 
+2. Navigate to **Ranking Rules**, then compare your rule count in Commerce Studio against the JSON you [exported from Predictive Merchandiser](#retrieve-lists-of-objects-in-predictive-merchandiser). 
+3. Navigate to **Rewrite**, then validate that your query rewrites in Commerce Studio match the exported JSON. 
+4. Navigate to **Pages**, then validate your templates have become pages in Commerce Studio, and that the count matches the exported JSON.
+5. Open each page, then validate your Predictive Merchandiser zones have become sections in Commerce Studio, and they are associated with the correct page. 
+6. Navigate to the **Visual Editor** and check that rules and rewrites are applied as expected. Some rules and rewrites only fire under specific conditions:
+   1. For rules that fire under specific templates, change your page to match the required template clicking the Page drop-down menu.
+
+      ![page list](/assets/images/lw-platform/commerce-studio/lw-cs-page-selection.png)
+
+   2. For rules that fire only when specific tags are applied, apply the tags in the visual editor using the **Results List > Apply Tags** option.
+
+      ![results list](/assets/images/lw-platform/commerce-studio/lw-cs-results-list.png)
+
+7. Perform additional rules and rewrites validations as needed, using the exported rules JSON as a reference. For example, check that the direction of synonym rewrites matches the expected direction.
+
+If you encounter any issues, check the [Troubleshooting](#troubleshoot) section of this guide.
+
+### Launch for live traffic
+
+If you are ready to switch live traffic to Commerce Studio rules and rewrites, send a `PUT` request to set the instance state to `CONNECTED`:
+
+```json
+curl --location --request PUT "https://EM_INSTANCE_ID.experiencemanager.lucidworks.com/pm-migration" \
+--header "Content-Type: application/json" \
+--header "Authorization: Bearer BEARER_TOKEN" \
+--data '{
+    "state": "CONNECTED"
+}'
+```
+
+The change takes effect immediately.
+
+### Revert back to Predictive Merchandiser
+
+If you want to revert back to using Predictive Merchandiser, you must delete the Commerce Studio instance. 
+
+If you delete the Commerce Studio instance, changes you made to Commerce Studio after the initial migration from Predictive Merchandiser are _not_ populated back into Predictive Merchandiser.
+
+When you delete the Commerce Studio instance, the system should automatically revert the Fusion app back to Predictive Merchandiser. This restores access to Predictive Merchandiser and routes live traffic back to its rules and rewrites, if traffic had previously been switched to Commerce Studio.
+
+In rare cases, the automatic reversion can fail. You can identify this by visiting the Fusion home page. If the “Commerce Studio enabled” badge still appears on the Fusion app after deleting the Commerce Studio instance and refreshing the page, the reversion did not complete. You will also be unable to access Predictive Merchandiser.
+
+You can revert back to Predictive Merchandiser in the [UI](#revert-to-predictive-merchandiser-using-the-ui) or [manually](#revert-to-predictive-merchandiser-manually).
+
+#### Revert to Predictive Merchandiser using the UI
+
+1. Sign in to [Lucidworks Platform](https://platform.lucidworks.com) as a workspace owner and navigate to **Commerce Studio**. 
+2. Hold the pointer over the instance you want to delete, click the three dots, and then click **Delete**.
+3. In the **Delete** dialog, click **Delete** to confirm.
+
+#### Revert to Predictive Merchandiser manually
+
+To manually revert to Predictive Merchandiser, send a `PUT` request to set the instance state to `DISABLED`.
+
+## Key differences and limitations
+
+Commerce Studio and Predictive Merchandiser are built on different frameworks with distinct architectures and tooling. As a result, there are key differences and limitations you will encounter after migrating.
+
+* Migration cannot be retried. You must delete and re-create the Commerce Studio instance.
+* Lucidworks Platform does not automatically clear Commerce Studio collections in Fusion after a failed migration. You must manually clear them using the Fusion UI.
+
+## Frequently asked questions
+
+**Can I retry a failed migration from Predictive Merchandiser to Commerce Studio?**
+
+No. Migration cannot be retried. If the migration fails, you must delete the Commerce Studio instance, manually clear related Fusion collections, and restart the process from the beginning.
+
+**Can I revert back to Predictive Merchandiser after switching to Commerce Studio?**
+
+Yes. You can revert by deleting the Commerce Studio instance. However, any changes made in Commerce Studio after switching will be lost. In rare cases, the reversion may fail and must be completed manually by setting the instance state to `DISABLED`.
+
+**Does switching to Commerce Studio immediately affect live web traffic?**
+
+No. After a successful migration, web traffic continues to use rules and rewrites from Predictive Merchandiser. To switch live traffic to Commerce Studio, you must explicitly launch by setting the instance state to `CONNECTED`.
+
+**What happens if I forget to publish changes in Predictive Merchandiser before migrating?**
+
+If you fail to publish pending rules and rewrites before starting the migration, the migration may fail or result in incomplete or inaccurate data. All changes must be published before proceeding.
+
+**Is there a UI-based option to create a Commerce Studio instance during migration?**
+
+No. When migrating from Predictive Merchandiser, you must create the Commerce Studio instance using the API. UI-based instance creation is not supported for migration scenarios.
+
+## Troubleshooting
+
+This section provides troubleshooting steps for resolving issues with the Commerce Studio [Visual Editor](/lw-platform/cs/l6f36o/visual-editor) when integrated with Fusion. Use this guidance to debug unexpected behavior that may be caused by Fusion query pipeline or query profile configuration.
+
+This content is intended for users with experience in Fusion and search engineering.
+
+### Symptoms
+
+You may be experiencing a configuration issue if you observe any of the following:
+
+* No results or facets returned in the Visual Editor
+* Error messages when performing searches
+* Rules not firing or not appearing after creation
+* Rewrites not triggering or not affecting live traffic
+* Mismatch between facets and results list
+* “Targeted documents” column in the rules table is empty or incorrect
+* No field value suggestions when configuring rule conditions
+* Missing stage data in the Ranking Factors UI
+
+### General troubleshooting steps
+
+1. Open your browser’s developer tools and go to the Network tab.
+   1. Retry the failing action.
+   2. Look for requests with a non-200 status or check `render` endpoint responses for `errorMessage` fields.
+   3. Use the `fusionRequestUrl` to replicate the request in Fusion Query Workbench.
+2. Verify that the query pipeline behaves as expected in Fusion Query Workbench.
+   1. Confirm there are no errors.
+   2. Verify expected results are returned.
+   3. In the **JSON view**, check for `fusion.applicable_rules` or `fusion.tagger` values.
+3. Confirm that rules and rewrites are saved to the correct Solr collections.
+   1. In Solr Admin, check `APP_NAME_query_rewrite_staging_em` and `APP_NAME_query_rewrite_em`.
+   2. Use the rule ID to query and confirm the entry exists.
+4. Ensure the staging collection has only one replica.
+   1. If multiple replicas exist, set `shards.preference=replica.leader` in the **Apply Rules** and **Text Tagger** stage parameters.
+5. Verify that the pipeline supports the `fl` parameter.
+   1. Do not overwrite `fl`. Add required fields only when needed.
+   2. Do not use `fl=*`.
+
+### Required pipeline configuration
+
+Your Fusion query pipeline must include the following stages in this order:
+
+1. **Text Tagger stage.** Leave **Tagger Collection** blank.
+2. **Apply Rules stage.** Leave **Collection** blank.
+3. **Solr Query stage.**
+4. **Modify Response with Rules stage.**
+5. **Response Diagnostics stage.**
+
+In addition, the pipeline must:
+
+* Use the `edismax` query parser (`defType=edismax`)
+* Preserve the following query parameters: `tags`, `lw.rules.simulate`, `lw.app.emStatus`, `context`, `lw.tagger.debug`, `lw.rules.debug`, `lw.em.staging`
+* Preserve required response fields: `response.docs`, `response.numFound`, `fusion.tagger`, `fusion.applicable_rules`, `fusion.applicable_stages`, `response.facet_counts`, `responseHeader.params`
+
+### Feature-specific checks
+
+#### Targeted document lookup
+
+* The Fusion app and query profile must have the same name.
+* The query profile must support `q=**:**` and standard `fq` parameters.
+* Avoid using grouping, collapse/expand, or custom logic that may interfere with standard filter behavior.
+
+#### Field value suggestions
+
+* The Solr collection must match the Fusion app name.
+* The collection must support the `/terms` request handler with standard parameters.
+* Suggestions will fail if `/terms` is missing or misconfigured.
+
+#### Rewrites and rules interaction
+
+* If the **Text Tagger** stage appears before the **Apply Rules** stage, rewrites apply first.
+* If the **Apply Rules** stage appears before the **Text Tagger** stage, only the original terms are used for rule evaluation.
+* Rules must target the rewritten query term, not the original term.
+
+#### Grouping via collapse/expand
+
+* The query pipeline must set an `fq` with the collapse field specified, indicating what field identifies members of a group. For example, set `fq={!collapse field=product_id_s}` when `expand=true` is passed as a query param.
+* Set the following query parameters:
+
+  ```
+  expand=true
+  expand.rows=5
+  ```
+
+* Relevant response fields include the following:
+
+  ```
+  expanded
+  response.docs
+  ```
+
+#### Query Workbench debugging tips
+
+* Use the correct query profile and associated pipeline.
+* Set the following query parameters:
+
+  ```
+  lw.rules.debug=1  
+  lw.tagger.debug=1  
+  lw.em.staging=1=<FUSION_APP_NAME>_query_rewrite_staging_em  
+  lw.app.emStatus=CONNECTED  
+  queryProfileID=<ID>  
+  tags=<comma-separated values>  
+  lw.rules.target_segment=<segment>
+  ```
+* Use **View As: JSON** to verify `fusion.applicable_rules` and the final query string.
+* Use custom JavaScript stages to inspect `ctx` or log intermediate values.
+
+### Known configuration issues
+
+* Hardcoded `tags` in pipelines may prevent rules from matching if users forget to apply corresponding tags in the Visual Editor.
+* Query pipelines that use grouping may break document targeting. Only collapse/expand-based grouping is suported. Grouping via Solr `group` params or blockjoin query parser is not supported.
+* If a boost stage and a rule both adjust relevancy, only one may take effect, depending on rule priority and creation date.

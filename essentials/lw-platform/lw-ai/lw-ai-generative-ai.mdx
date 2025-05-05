@@ -1,0 +1,177 @@
+---
+subGroup: "ai"
+permalink: "r7ai90"
+layout: default
+title: 'Generative AI'
+description: 'Needs description'
+icon: 'text-size'
+subtitle: 'Lucidworks AI'
+order: 70
+doctype: concept
+---
+
+## Generative AI service
+
+Lucidworks AI provides a generative AI (GenAI) service that lets you access and use large language models (LLM) for a variety of GenAI use cases. 
+
+The GenAI models use one of Lucidworks' pre-defined use cases described in the following APIs:
+
+* [LWAI Prediction API](/lw-platform/ai/8bx4m9/prediction-api)
+* [Lucidworks AI Async Prediction API](/lw-platform/ai/55ug0f/async-prediction-api) 
+
+The APIs specify configuration for:
+
+* Use cases are set in the `useCaseConfig` parameter. 
+* Models are set in the `modelConfig` parameter.
+
+For information about the stages that integrate Fusion with Lucidworks AI, see:
+
+* [LWAI Prediction query stage](/fusion/5.9/hnuyky/lwai-prediction)
+* [LWAI Prediction index stage](/fusion/5.9/bzik28/lwai-prediction)
+
+Lucidworks AI is built with Meta Llama 3.
+
+## Generative AI models
+
+### Lucidworks-hosted GenAI models
+
+All of the models currently hosted by Lucidworks are open source.
+
+In models hosted by Lucidworks, the data is:
+
+* Contained within Lucidworks and is never exposed to third parties.
+* Passed to the specified model and generates responses to the instance’s requests, but is not retained to train or be used by the model after the initial request.
+
+For information about model training, biases, and safety features for those models, refer to the documentation provided by the model creators. Hugging Face is one information source, and links to information about Lucidworks-hosted models are provided in [Available Lucidworks-hosted models](#available-lucidworks-hosted-models).
+
+#### Available Lucidworks-hosted models
+
+To display the Huggingface information for each model, click the model name.
+
+* [Llama-3.1-8b-instruct (llama-3-8b-instruct)](https://huggingface.co/meta-llama/Llama-3.1-8B-Instruct)
+* [Llama-3.2-3b-instruct (llama-3v2-3b-instruct)](https://huggingface.co/meta-llama/Llama-3.2-3B-Instruct)
+* [Mistral-7B-instruct (v0.2) (mistral-7b-instruct)](https://huggingface.co/mistralai/Mistral-7B-Instruct-v0.2)
+* [nu-zero-ner](https://huggingface.co/numind/NuNER_Zero). This model only supports the NER use case.
+
+### OpenAI models
+
+An API key is required in each OpenAI model request. There is no default key.
+
+#### Available OpenAI models
+
+The supported OpenAI models are:
+
+* gpt-4
+* gpt-4o 
+* gpt-4o-2024-05-13
+* gpt-4-0613
+* gpt-4-turbo 
+* gpt-4-turbo-2024-04-09
+* gpt-4-turbo-preview
+* gpt-4-1106-preview
+* gpt-3.5-turbo
+* gpt-3.5-turbo-1106
+* gpt-3.5-turbo-0125
+
+### Azure OpenAI models
+
+Deployed Azure OpenAI models are supported in the [LWAI Prediction API](/lw-platform/ai/8bx4m9/prediction-api) and the [Lucidworks AI Async Prediction API](/lw-platform/ai/55ug0f/async-prediction-api) in the following use cases:
+
+* Pass-through
+* Retrieval Augmented Generation (RAG)
+* Standalone query rewriter
+* Summarization
+* Keyword extraction
+* Named Entity Recognition (NER)
+
+#### Prerequisites
+
+The requirements to use Azure OpenAI models on Lucidworks AI include:
+
+* A valid Azure subscription on [Microsoft Azure](https://portal.azure.com).
+* Deployed `Azure OpenAI` models you want to use. Lucidworks does not support `Azure AI Studio`.
+* The Azure `Deployment Name` for the model you want to use. Use this as the value of the Lucidworks AI API `"modelConfig": "azureDeployment"` field.
+* The Azure `Key1` or `Key2` for the model you want to use. Use either as the value of the Lucidworks AI API `"modelConfig": "apiKey"` field.
+* The Azure `Endpoint` for the model you want to use. Use this as the value of the Lucidworks AI API `"modelConfig": "azureEndpoint"` field.
+* The Lucidworks AI API value of `MODEL_ID` for Azure OpenAI is `azure-openai`.
+
+### Google Vertex AI models 
+
+Each request requires an `apiKey`, `googleProjectId`, and `googleRegion`. There are no defaults for any of these fields. The value for `apiKey` is the Google Vertex AI service account key. For more information, see [Create a Google service account key](https://cloud.google.com/iam/docs/keys-create-delete#creating).
+
+#### Generate service account key
+
+Create a Google Vertex AI service account key with the [Vertex AI user](https://cloud.google.com/iam/docs/understanding-roles#aiplatform.user) role enabled, and then base64 encode the key:
+
+```bash
+# Set variables
+PROJECT_ID="your-gcp-project-id"
+SERVICE_ACCOUNT_NAME="vertex-ai-user-sa"
+KEY_FILE="vertex-ai-key.json"
+
+# 1. Create the service account
+gcloud iam service-accounts create $SERVICE_ACCOUNT_NAME \
+    --project=$PROJECT_ID
+
+# 2. Assign the Vertex AI User role to the service account
+gcloud projects add-iam-policy-binding $PROJECT_ID \
+    --member="serviceAccount:${SERVICE_ACCOUNT_NAME}@${PROJECT_ID}.iam.gserviceaccount.com" \
+    --role="roles/aiplatform.user"
+
+# 3. Generate the service account key
+gcloud iam service-accounts keys create $KEY_FILE \
+    --iam-account="${SERVICE_ACCOUNT_NAME}@${PROJECT_ID}.iam.gserviceaccount.com" \
+    --project=$PROJECT_ID
+
+# 4. Base64 encode the key
+base64 $KEY_FILE > ${KEY_FILE}.b64
+
+# Optional: print base64 string to terminal
+cat ${KEY_FILE}.b64
+```
+
+#### Available Google Vertex AI models
+
+The supported Google Vertex AI models are `gemini-2.0-flash` and `gemini-2.0-flash-lite`.
+
+## Generative AI use cases
+
+The GenAI use cases are used to run predictions from pre-trained models.
+
+**📌 NOTE**\
+The Prediction API also contains the embedding use case (that is not categorized as GenAI use cases). 
+
+For more information about models, see:
+
+* [Pre-trained models](/lw-platform/ai/3vqfxe/pre-trained-embedding-models) for the LWAI Prediction API.
+* [Custom models](/lw-platform/ai/k1zkfn/custom-embedding-model-training) for either the LWAI Prediction API or the Lucidworks AI Async Prediction API.
+
+The generic path for the Prediction API is `/ai/prediction/USE_CASE/MODEL_NAME`.
+
+The generic path for the Async Prediction API is `/ai/async-prediction/USE_CASE/MODEL_NAME`.
+
+The GenAI use cases based on the generic path are as follows:
+
+* Pass-through use case lets you use the Generative AI services as a proxy to the large language model (LLM). Use this use case when you want full control over the prompt sent to the GenAI model.
+* Retrieval augmented generation (RAG) use case uses candidate documents inserted into a LLM’s context to ground the generated response to those documents to prevent frequency of LLM hallucinative responses. 
+* Standalone query rewriter use case rewrites the text in relation to information associated with the `memoryUuid`. This use case can be invoked during the RAG use case.
+* Summarization use case where the LLM ingests text and returns a summary of that text as a response.
+* Keyword extraction use case where the LLM ingests text and returns a JSON response that lists keywords extracted from that text.
+* Named Entity Recognition `ner` use case where the LLM ingests text and entities to extract and return a JSON response that contains a list of entities extracted from the text.
+
+## Anthropic models
+
+An API key is required in each OpenAI model request. There is no default key.
+
+#### Available Anthropic models
+
+The supported Anthropic models are:
+
+* claude-3-5-sonnet-20241022
+* claude-3-5-haiku-20241022
+
+Most of the typical parameters are supported. However, the tooling part of the models or streaming is not currently supported.
+
+To set a system prompt in the pass-through, use the [JSON prompt dataType example](/lw-platform/ai/aimylh/pass-through-use-case#data-type). This method automatically passes the prompt correctly.
+
+To set multiple system prompts, you must add all of the values in a single text string. If all of the values are not in a single string, only the last system prompt is sent in the query. This scenario supports all use cases.

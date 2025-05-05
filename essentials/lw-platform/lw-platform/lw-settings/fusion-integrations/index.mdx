@@ -1,0 +1,98 @@
+---
+subGroup: "platform"
+permalink: "04gi1q"
+layout: default
+topindex: true
+title: 'Fusion Integrations'
+description: 'Needs description'
+icon: 'text-size'
+subtitle: 'Lucidworks Platform'
+doctype: concept
+order: 50
+---
+
+The Fusion Integrations features lets you connect self-hosted Fusion instances to Lucidworks Platform features and other software to extend and enhance your workflows.
+
+This topic details how to create an integration between Lucidworks Platform and Fusion. You must satisfy the [prerequisites](#prerequisites) and complete the procedures in the order described in this topic:
+
+1. [Create a Lucidworks Platform integration with Fusion](#create-a-lucidworks-platform-integration-with-fusion)
+2. [Create a Fusion security JWT realm for Lucidworks Platform](#create-a-fusion-security-jwt-realm-for-lucidworks-platform)
+3. [Verify the integration](#verify-the-integration)
+
+<dl><dt><strong>💡 TIP</strong></dt><dd>
+
+This topic details the steps to configure a general integration for Lucidworks Platform with Fusion. 
+
+* To configure an integration that uses the Lucidworks Configuration Promotion tool, follow the procedures in the [Configuration Promotion tool integration with Fusion](/lw-platform/platform/qjns2v/configuration-promotion-integration) topic. 
+* To configure an integration that uses Lucidworks Commerce Studio, follow the procedures in the [Commerce Studio integration with Fusion](/lw-platform/platform/zpqyc5/commerce-studio-integration) topic. 
+* To configure a self-hosted Fusion integration with Lucidworks AI, follow the procedures in [Lucidworks AI integrations](/lw-platform/platform/mdlec0/lucidworks-ai-integrations).
+</dd></dl>
+
+## Prerequisites
+
+To create an integration between Lucidworks Platform and Fusion, you must have the following prerequisites in place:
+
+* Admin privileges to a self-hosted Fusion environment running Fusion 5.9.8 or later. 
+* A Fusion application that contains usable data.
+* Workspace Owner permissions in a Lucidworks Platform environment. 
+
+## Create a Lucidworks Platform integration with Fusion
+
+Complete the following steps to create an integration from Lucidworks Platform to Fusion.
+
+1. Sign into [Lucidworks Platform](https://platform.lucidworks.com) as a workspace owner.
+2. Navigate to **Settings > Fusion Integrations**. 
+3. Click **Connect New Fusion**.
+4. On the New Fusion Integration screen, enter a user-defined value in the **Name** field to identify the integration. For example, `Lucidworks Demo Dev`.
+5. In the **API URL** field, enter the URL of your Fusion instance. For example, `https://FUSION_INSTANCE.com`. Do not enter a path after `.com`.
+6. In the **Environment** field, enter the environment for the Fusion instance. The default value is **Development**. 
+7. Optional: In the **Tags** field, enter a description that identifies the integration. This is especially helpful if you create multiple integrations for different purposes. To add multiple tags, enter a tag and press **Enter** to display additional fields in which you can values.
+
+   ![Connect New Fusion integration](/assets/images/lw-platform/integrations/lw-platform-integrations-connect-new-fusion.png)
+8. Do not enter values in any of the fields in the **GitHub** section. Values in these fields are only required to set up the Configuration Promotion tool. To configure an integration for the Configuration Promotion tool, see [Configuration Promotion tool integration with Fusion](/lw-platform/platform/qjns2v/configuration-promotion-integration).
+9. Click **Add**. If the value in the **API URL** field is:
+   * Not valid, the integration is not created, and it is not displayed on the Fusion Integrations screen.
+   * Valid, the Instructions to Connect with Fusion screen displays:
+
+     ![Connect with Fusion](/assets/images/lw-platform/integrations/lw-platform-integrations-connect-jwt-values.png)
+10. Copy both the **JWK Set URL** value and the **Issuer URL** value to a secure location. These values must be used to create the JWT realm.
+11. Click **Close**.
+12. Verify the new integration displays on the Fusion Integrations screen.
+
+**📌 NOTE**\
+To edit the integration, hold the pointer over the integration, click the pencil icon, enter the changes, and click **Save**. To delete the integration, hold the pointer over the integration and click the trash can icon.
+
+## Create a Fusion security JWT realm for Lucidworks Platform
+
+To complete required fields in the integration, you must create a Fusion security realm.
+
+1. Sign in to your Fusion instance as an admin.
+2. Click the Fusion application to connect with Lucidworks Platform.
+3. Navigate to **System > Access Control > Security Realms**.
+4. Click **Add Security Realm**.
+5. In the **Name** field, enter a user-defined value to identify the connection. For example, **Lucidworks Platform JWT realm**.
+6. In the **Type** field, select **jwt**.
+7. Select the **Enabled** checkbox if it is not already selected.
+8. Do not select the **Ephemeral Users** checkbox. Ephemeral users are not created in Zookeeper during login. If selected, auto-create users has no effect.
+9. Select the **Auto-Create Users** checkbox. If selected, Fusion user accounts are auto-created when users successfully authenticate the first time. If not selected, user accounts must be created manually. 
+10. In the **Roles** field, select the roles that this realm provides after successfully authenticating a user by default.
+11. In the **JWT Issuer** field, paste the **Issuer URL** value generated in the [Create a Lucidworks Platform integration with Fusion](#create-a-lucidworks-platform-integration-with-fusion) procedure.
+12. In the **JWK Set URL** field, paste the **JWKS URL** value generated in the [Create a Lucidworks Platform integration with Fusion](#create-a-lucidworks-platform-integration-with-fusion) procedure.
+13. Do not enter values (default is blank) in any of the following fields:
+   * **Signing Key**
+   * **Groups Key**
+   * **Groups Mapping**
+   * **User ID Attribute**
+14. Click **Save**.
+
+## Verify the integration 
+
+When the Fusion security JWT realm is created, complete the following steps to verify the Fusion information is displayed.
+
+1. Sign into [Lucidworks Platform](https://platform.lucidworks.com) as a workspace owner.
+2. Navigate to **Settings > Fusion Integrations**. 
+3. Hold the pointer over the integration and click the pencil icon.
+4. Verify the information is accurate.
+
+   **📌 NOTE**\
+   The information in the Instructions section must match the values in the **Additional URLs JWKS URL** and **Issuer URL** fields.

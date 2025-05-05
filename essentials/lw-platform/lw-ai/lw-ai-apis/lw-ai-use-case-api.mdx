@@ -1,0 +1,369 @@
+---
+subGroup: "ai"
+permalink: "0stpyb"
+title: 'Use Case API'
+description: 'Needs description'
+icon: 'text-size'
+subtitle: 'Lucidworks AI'
+layout: stoplight
+data: api-machine-learning-platform-use-case
+private: true
+doctype: reference
+order: 64
+---
+
+The Lucidworks AI Use Case API returns a list of each use case and its associated models. 
+
+You can enter the values returned in the response of the Use Case API in the: 
+
+* [LWAI Prediction API](/lw-platform/ai/8bx4m9/prediction-api) use case requests
+* [Lucidworks AI Async Prediction API](/lw-platform/ai/55ug0f/async-prediction-api) use case requests
+
+## Prerequisites
+
+To use this API, you need:
+
+* The unique `APPLICATION_ID` for your Lucidworks AI application. For more information, see [credentials to use APIs](/lw-platform/platform/oqzogo/apis-and-credentials#credentials).
+* A bearer token generated with a scope value of `machinelearning.predict`. For more information, see [Authentication API](/lw-platform/ai/oa96k5/authentication-api).
+
+## Request
+
+```bash
+curl --request GET \
+  --url https://APPLICATION_ID.applications.lucidworks.com/ai/usecase\
+  --header 'Authorization: Bearer ACCESS_TOKEN'
+```
+
+## Prediction API Response
+
+The following example response lists some of the supported models. For a complete list of supported models, see [Generative AI models](/lw-platform/ai/r7ai90/generative-ai#generative-ai-models).
+
+```json
+[
+	{
+		"useCase": "embedding",
+		"models": [
+			
+			{
+				"id": "e5-small-v2",
+				"name": "e5-small-v2",
+				"modelType": "shared",
+				"vectorSize": 384
+			},
+			{
+				"id": "text-encoder",
+				"name": "text-encoder",
+				"modelType": "shared",
+				"vectorSize": 768
+			}
+	
+			{
+				"id": "multi-qa-distilbert-cos-v1",
+				"name": "multi-qa-distilbert-cos-v1",
+				"modelType": "shared",
+				"vectorSize": 768
+			},
+			{
+				"id": "multilingual-e5-base",
+				"name": "multilingual-e5-base",
+				"modelType": "shared",
+				"vectorSize": 768
+			},
+			{
+				"id": "6dc3462d-ae64-4247-ac5e-e1bd95db67d8",
+				"name": "model-6dc3462d-ae64-4247-ac5e-e1bd95db67d8",
+				"modelType": "ecommerce-rnn"
+			}
+		]
+	},
+	{
+		"useCase": "rag",
+		"models": [
+			{
+				"id": "llama-3-8b-instruct",
+				"name": "llama-3-8b-instruct",
+				"modelType": "shared"
+			},
+			{
+				"id": "gpt-3.5-turbo",
+				"name": "gpt-3.5-turbo",
+				"modelType": "shared"
+			},
+			{
+				"id": "gpt-4-turbo",
+				"name": "gpt-4-turbo",
+				"modelType": "shared"
+			}
+		]
+	},
+	{
+		"useCase": "passthrough",
+		"models": [
+			{
+				"id": "mistral-7b-instruct",
+				"name": "mistral-7b-instruct",
+				"modelType": "shared"
+			},
+			{
+				"id": "llama-3-8b-instruct",
+				"name": "llama-3-8b-instruct",
+				"modelType": "shared"
+			},
+			{
+				"id": "gpt-3.5-turbo",
+				"name": "gpt-3.5-turbo",
+				"modelType": "shared"
+			},
+			{
+				"id": "gpt-4-turbo",
+				"name": "gpt-4-turbo",
+				"modelType": "shared"
+			}
+		]
+	},
+	{
+		"useCase": "summarization",
+		"models": [
+			{
+				"id": "mistral-7b-instruct",
+				"name": "mistral-7b-instruct",
+				"modelType": "shared"
+			},
+			{
+				"id": "llama-3-8b-instruct",
+				"name": "llama-3-8b-instruct",
+				"modelType": "shared"
+			},
+			{
+				"id": "gpt-3.5-turbo",
+				"name": "gpt-3.5-turbo",
+				"modelType": "shared"
+			},
+			{
+				"id": "gpt-4-turbo",
+				"name": "gpt-4-turbo",
+				"modelType": "shared"
+			}
+		]
+	},
+	{
+		"useCase": "keyword_extraction",
+		"models": [
+			{
+				"id": "mistral-7b-instruct",
+				"name": "mistral-7b-instruct",
+				"modelType": "shared"
+			},
+			{
+				"id": "llama-3-8b-instruct",
+				"name": "llama-3-8b-instruct",
+				"modelType": "shared"
+			},
+			{
+				"id": "gpt-3.5-turbo",
+				"name": "gpt-3.5-turbo",
+				"modelType": "shared"
+			},
+			{
+				"id": "gpt-4-turbo",
+				"name": "gpt-4-turbo",
+				"modelType": "shared"
+			}
+		]
+	},
+	{
+		"useCase": "standalone_query_rewriter",
+		"models": [
+			{
+				"id": "llama-3-8b-instruct",
+				"name": "llama-3-8b-instruct",
+				"modelType": "shared"
+			},
+			{
+				"id": "gpt-3.5-turbo",
+				"name": "gpt-3.5-turbo",
+				"modelType": "shared"
+			},
+			{
+				"id": "gpt-4-turbo",
+				"name": "gpt-4-turbo",
+				"modelType": "shared"
+			},
+		]
+	},
+	{
+		"useCase": "ner",
+		"models": [
+			{
+				"id": "mistral-7b-instruct",
+				"name": "mistral-7b-instruct",
+				"modelType": "shared"
+			},
+			{
+				"id": "llama-3-8b-instruct",
+				"name": "llama-3-8b-instruct",
+				"modelType": "shared"
+			},
+			{
+				"id": "gpt-3.5-turbo",
+				"name": "gpt-3.5-turbo",
+				"modelType": "shared"
+			},
+			{
+				"id": "gpt-4-turbo",
+				"name": "gpt-4-turbo",
+				"modelType": "shared"
+			}
+		]
+	}
+]
+```
+
+## Async Prediction API Response
+
+The following example response lists some of the supported models. For a complete list of supported models, see [Generative AI models](/lw-platform/ai/r7ai90/generative-ai#generative-ai-models).
+
+```json
+[
+	{
+		"useCase": "rag",
+		"models": [
+			{
+				"id": "llama-3-8b-instruct",
+				"name": "llama-3-8b-instruct",
+				"modelType": "shared"
+			},
+			{
+				"id": "gpt-3.5-turbo",
+				"name": "gpt-3.5-turbo",
+				"modelType": "shared"
+			},
+			{
+				"id": "gpt-4-turbo",
+				"name": "gpt-4-turbo",
+				"modelType": "shared"
+			}
+		]
+	},
+	{
+		"useCase": "passthrough",
+		"models": [
+			{
+				"id": "mistral-7b-instruct",
+				"name": "mistral-7b-instruct",
+				"modelType": "shared"
+			},
+			{
+				"id": "llama-3-8b-instruct",
+				"name": "llama-3-8b-instruct",
+				"modelType": "shared"
+			},
+			{
+				"id": "gpt-3.5-turbo",
+				"name": "gpt-3.5-turbo",
+				"modelType": "shared"
+			},
+			{
+				"id": "gpt-4-turbo",
+				"name": "gpt-4-turbo",
+				"modelType": "shared"
+			}
+		]
+	},
+	{
+		"useCase": "summarization",
+		"models": [
+			{
+				"id": "mistral-7b-instruct",
+				"name": "mistral-7b-instruct",
+				"modelType": "shared"
+			},
+			{
+				"id": "llama-3-8b-instruct",
+				"name": "llama-3-8b-instruct",
+				"modelType": "shared"
+			},
+			{
+				"id": "gpt-3.5-turbo",
+				"name": "gpt-3.5-turbo",
+				"modelType": "shared"
+			},
+			{
+				"id": "gpt-4-turbo",
+				"name": "gpt-4-turbo",
+				"modelType": "shared"
+			}
+		]
+	},
+	{
+		"useCase": "keyword_extraction",
+		"models": [
+			{
+				"id": "mistral-7b-instruct",
+				"name": "mistral-7b-instruct",
+				"modelType": "shared"
+			},
+			{
+				"id": "llama-3-8b-instruct",
+				"name": "llama-3-8b-instruct",
+				"modelType": "shared"
+			},
+			{
+				"id": "gpt-3.5-turbo",
+				"name": "gpt-3.5-turbo",
+				"modelType": "shared"
+			},
+			{
+				"id": "gpt-4-turbo",
+				"name": "gpt-4-turbo",
+				"modelType": "shared"
+			}
+		]
+	},
+	{
+		"useCase": "standalone_query_rewriter",
+		"models": [
+			{
+				"id": "llama-3-8b-instruct",
+				"name": "llama-3-8b-instruct",
+				"modelType": "shared"
+			},
+			{
+				"id": "gpt-3.5-turbo",
+				"name": "gpt-3.5-turbo",
+				"modelType": "shared"
+			},
+			{
+				"id": "gpt-4-turbo",
+				"name": "gpt-4-turbo",
+				"modelType": "shared"
+			},
+		]
+	},
+	{
+		"useCase": "ner",
+		"models": [
+			{
+				"id": "mistral-7b-instruct",
+				"name": "mistral-7b-instruct",
+				"modelType": "shared"
+			},
+			{
+				"id": "llama-3-8b-instruct",
+				"name": "llama-3-8b-instruct",
+				"modelType": "shared"
+			},
+			{
+				"id": "gpt-3.5-turbo",
+				"name": "gpt-3.5-turbo",
+				"modelType": "shared"
+			},
+			{
+				"id": "gpt-4-turbo",
+				"name": "gpt-4-turbo",
+				"modelType": "shared"
+			}
+		]
+	}
+]
+```

@@ -1,0 +1,134 @@
+---
+permalink: "lbpv7c"
+subGroup: "ai"
+layout: default
+title: 'Data Handling and Security FAQ'
+description: 'Needs description'
+icon: 'text-size'
+subtitle: 'Lucidworks AI'
+order: 71
+doctype: concept
+---
+
+## What data is sent to Lucidworks AI?
+
+Data is sent to Lucidworks AI (LW AI) in the following scenarios:
+
+**Indexing and query operations**
+
+* Data such as descriptions or query text may be sent to LW AI for processing.
+* Descriptions may be sent to extract keywords, leveraging language models such as generative LLMs.  
+* Query text may be sent to be vectorized by embedding models or utilized by a generative LLM in a retrieval-augmented generation (RAG) context.  
+
+**Lucidworks-hosted and third-party services**
+
+* For third-party models (for example, OpenAI), data may be sent from LW AI to the third party if those models are selected.  
+* When third-party services are involved, customer-provided API keys are used to securely authorize requests.  
+
+**Training data**
+
+* Unless agreed to by both parties, client content will not be used to train AI models.  
+* When leveraging the model training interface, training data, including bulk user behavior data, may also be sent for training or fine-tuning.  
+* The resulting trained model is exclusively accessible to the originating client that initiated the training process, ensuring privacy and restricted access to the customized solution.  
+* Training data is securely managed during the process and is destroyed after completion unless otherwise specified.  
+
+These mechanisms ensure that only the necessary data is sent, securely managed, and handled transparently.  
+
+## How long is my data retained on Lucidworks AI (including caching, or logging for debugging)?
+
+**Caching**
+
+* Cached data is retained for 1 day to facilitate efficient processing of repeated identical requests.  
+* Data associated with a conversation (initial queries and associated follow-up questions linked by a conversation UUID) held in memory (cached) can persist for up to 7 days after the last interaction.  
+
+**Logs**
+
+* Logs do not include query or index text to ensure data privacy.  
+* Logs capture request IDs, timing information, and other contextual metadata but exclude the actual text sent to the models.  
+* Secret keys, such as API keys, are securely managed and not exposed in logs.  
+
+**Training data**
+
+* Training data is pulled into the system for the duration of the training job and is destroyed immediately after the training process is completed.  
+* Lucidworks has read-only access to training data, which can be stored in a location of the client’s choosing.  
+
+These practices ensure limited data retention, protecting customer data and adhering to stringent privacy and security standards.  
+
+## By policy, what Lucidworks roles have access to my data on Lucidworks AI?
+
+Access to data on LW AI is governed by a strict role-based access control (RBAC) policy. Only the Fusion users with the appropriate roles and permissions are authorized to call specific internal endpoints required to interact with LW AI.  
+
+Service administrators potentially have access to data stored in LW AI. Therefore, this access is strictly limited and closely monitored. This ensures that access to data is limited to only those roles explicitly granted the necessary permissions.  
+
+## How does Lucidworks ensure the role-access policy is followed?
+
+RBAC is enforced through well-defined internal role configurations. Access to specific services and resources is restricted to authorized roles, ensuring that users can only perform actions aligned with their assigned permissions.  
+
+This policy guarantees compliance with access control requirements and minimizes the risk of unauthorized access.  
+
+## How does Lucidworks ensure isolation of client data?
+
+Lucidworks ensures the isolation of client data through a combination of robust security measures, including:
+
+* **Strict access controls**:
+  * Access is highly restricted and monitored to prevent unauthorized access.  
+* **Logical separation of environments**:
+  * Environments are logically segregated to ensure that data from different clients remains isolated.  
+* **Encryption protocols**:
+  * All data is encrypted both at rest and in transit, in compliance with SOC 2 Type 2 and ISO 27001 standards, to safeguard sensitive information.  
+* **Multi-tenant data isolation**:
+  * Encryption keys are account-scoped, ensuring that customers cannot access each other’s data.  
+  * While cached data is logically isolated, it is not fully client-specific due to potential cache sharing in multi-tenant scenarios.  
+
+These measures are designed to protect data and prevent any unauthorized cross-tenant access, providing a secure and reliable environment for client operations.  
+
+## How is client data encrypted in transit?
+
+Lucidworks encrypts data in transit using TLS 1.2 at a minimum and encrypts data at rest using AES-256, ensuring encrypted communication and protecting data from interception or unauthorized access during transmission.  
+
+## How is client data encrypted at rest?
+
+Data at rest is secured using Google Cloud Platform’s (GCP) default encryption implementation of AES-256. This encryption standard is validated under FIPS 140-2, ensuring compliance with stringent security requirements and providing robust protection for stored data.  
+
+## Is client data always encrypted at rest and in transit?
+
+Yes, data is always encrypted both at rest and in transit using Google Cloud Platform’s (GCP) robust encryption implementations, ensuring end-to-end protection.  
+
+## How do clients ensure their data is isolated from others in a multi-tenant environment?
+
+LW AI is a multi-tenant environment, and cached data may persist for up to 1 or 7 days, depending on its lifecycle.  
+
+To address concerns about data isolation in shared models, Lucidworks offers the option of deploying private models. This ensures complete data isolation and can be arranged for an additional fee to meet your specific needs.  
+
+## In what situations is client data sent to a third-party AI services provider?
+
+Your data will only be sent to a third-party AI service provider (for example, OpenAI, Azure, Google, Anthropic) if you provide your own API key and explicitly select a third-party model from the model selector during a query or document indexing operation.  
+
+* Data sent to these services is transmitted securely via TLS.  
+* Third-party providers may have visibility into the data as part of processing, and customers must explicitly agree to their terms of use.  
+* This data sharing is not enabled by default and requires your consent.  
+
+## What data does LW AI send to a third-party AI services provider?
+
+Your data will only be sent to a third-party AI service provider if you explicitly select a third-party model in the model selector. Here’s how data interactions are handled:
+
+Index vectorization stage
+
+* By default, Lucidworks provides open-source models for vectorization, ensuring that no data leaves the environment or is shared with third parties.  
+
+Use of third-party large language models (LLMs)
+
+* Today, clients can use both third-party LLMs and Lucidworks’ hosted LLMs. However, custom LLMs are not currently supported.  
+* Access to third-party services requires client-provided API keys, which are securely managed and not included in logs or exposed in the UI.  
+
+Training data
+
+* Training data can be supplied via a Google Cloud Storage (GCS) bucket controlled by the client.  
+* Access to this data is only maintained during the training run itself.  
+* Trained models are stored until explicitly deleted by the client. If not deleted, the model could, in theory, persist indefinitely.  
+
+Data sent for vectorization or generative AI tasks
+
+* Relevant data, such as descriptions, queries, or input text, is sent to the selected third-party service for processing.  
+
+These safeguards ensure that any data sharing is deliberate, secure, and under client control, with a clear focus on transparency and data protection.

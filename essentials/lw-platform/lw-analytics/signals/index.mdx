@@ -1,0 +1,54 @@
+---
+subGroup: "analytics"
+permalink: "0le96f"
+title: 'Signals'
+description: 'Needs description'
+icon: 'text-size'
+layout: default
+order: 20
+doctype: reference
+---
+
+The signals features in Analytics Studio include the [signals beacon](/lw-platform/analytics/k649vy/signals-beacon), a lightweight script tag that gathers query, click, cart-add, purchase, and facet usage signals from customer interactions on your website and the [signals store](/lw-platform/analytics/88pjp2/signals-store) for the designated workspace where signals are stored.
+
+Instead of using the signals beacon, you can manually configure and maintain code in your backend codebase by using the [Signals API](/lw-platform/analytics/uist05/signals-api) to send signals to Analytics Studio. This method is useful if you need to send signals from your backend, rather than a website or frontend application, or if your website does not support Javascript.
+
+**❗ IMPORTANT**\
+Lucidworks adheres to strict data privacy and security policies, including General Data Protection Regulation (GDPR) compliance, when collecting and storing signals. Security features include user IP address anonymization, exclusion of personally-identifiable information, and secure storage. The policies also provide guidelines and best practices to help clients implement compliant configurations. To review the detailed policies, see [Lucidworks Signals Beacon Privacy and Security policies](/policies/76qvrv/lucidworks-signals-beacon-privacy-and-security-policies) and [GDPR Compliance policy](/policies/2cddpz/gdpr-compliance-policy).
+
+The following signals are collected:
+
+* **Query signals.** When a user performs a search, a signal is recorded. 
+* **Click signals.** When a user clicks on a product, a signal is recorded. One example of a click signal is when a user clicks a search result, which is a strong indicator the result is relevant.
+* **Cart-add signals.** When a user clicks to add an item to the cart, a signal is recorded.
+* **Purchase signals.** When a user clicks to purchase the items in the cart, a signal is recorded.
+* **Facet usage signals.** When a user interacts with the facets associated with the results, a signal is recorded.
+
+If present in the signal, the information collected by the signals beacon and housed in the signals store for each signal is:
+
+* Product ID
+* Title
+* Image URI
+* Price
+
+## Overview of signals process
+
+This section provides an overview of how to implement the use of signals in Analytics Studio. More information is detailed in additional topics.
+
+1. Analyze the queries, clicks, cart-adds, and purchases on your site to determine areas that could be strengthened to enhance your company’s goals. 
+2. Create the [signals store](/lw-platform/analytics/88pjp2/signals-store) for the designated workspace. For example, you may have a testing workspace and a production workspace. The signals store for the testing workspace may contain data that would not be available in your production site.
+3. Add the [signals beacon](/lw-platform/analytics/k649vy/signals-beacon) is to the `<HEAD>` section of your site. This includes not only header information, but specific field identifiers for the signals based on your site analysis.
+
+When the signals beacon is added, signals are:
+   * Gathered by the signals beacon
+   * Stored in the signals store
+   * Sent to [Analytics Studio metrics](/lw-platform/analytics/xcd2n5/metrics) that provide valuable customer behavior insights and can be used to improve your business 
+
+## Additional information
+
+* [Signals store](/lw-platform/analytics/88pjp2/signals-store)
+* [Signals beacon](/lw-platform/analytics/k649vy/signals-beacon)
+* [Beacon configuration interface property information](/lw-platform/analytics/k6vyeq/beacon-configuration-interface)
+* [Analytics Studio service](/lw-platform/analytics/10aut8/analytics-studio)
+* [Analytics Studio metrics](/lw-platform/analytics/xcd2n5/metrics)
+* [Signals API](/lw-platform/analytics/uist05/signals-api)

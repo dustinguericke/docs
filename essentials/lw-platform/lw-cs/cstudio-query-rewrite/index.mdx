@@ -1,0 +1,161 @@
+---
+permalink: "5zeagj"
+subGroup: "cs"
+layout: default
+title: 'Rewrite'
+description: 'Needs description'
+icon: 'text-size'
+order: 19
+doctype: concept
+---
+
+You can configure query rewrite rules to help users find more relevant results. Create rules to account for underperforming or misspelled search terms, identify phrases to boost items, map synonyms to alternative search terms, and remove words from queries that limit the results returned.
+
+To learn more about the different rewrite rules, see [Types](#types). To start creating and publishing query rewrites, refer to the [Manage rewrites](#manage) section.
+
+## Query rewrites vs. ranking rules
+
+Query rewrites improve the accuracy and relevance of search results by modifying the query. In contrast, [ranking rules](/lw-platform/cs/ravw5k/ranking-rules) manipulate the ranking and presentation of search results.
+
+Query rewrites focus on the user’s intent. They take effect before the query is submitted and results are returned. 
+
+## Types
+
+There are several different types of rewrite rules to choose from depending on your use case.
+
+### Underperforming Queries
+
+An underperforming rewrite, also known as a tail query rewrite, replaces a poorly-defined search term with an improved one.
+For example, you can create a tail query rewrite that replaces the query `iphone case yellow` with `iphone case yellow +color:"yellow"`, which uses the color field in your search facets.
+
+### Misspelling Detections
+
+A misspelling query rewrite detects and corrects common spelling mistakes. 
+When a customer enters a search term containing a known misspelling, the incorrect spelling is replaced with the spelling correction.
+
+For example, if your customers frequently misspell or mistype the word `sweater` as `sweatre`, you can set up a query rewrite to automatically correct it.
+
+### Phrase Detections
+
+A phrase rewrite identifes phrases used in search terms so that products with matching phrases are boosted in the search results. 
+This is helpful when users do not use quotation marks to identify phrases in their search terms.
+
+For example, without phrase detection, a search for the words `remote control` would show results for both `remote` and `control`. 
+With phrase detection, this search would correctly boost results for `"remote control"`.
+
+### Synonym Detections
+
+You can specify synonyms for a query so that alternative words with the same meaning are automatically used in the search query. 
+When a customer enters a search term with a synonym match, the alternative words are used instead of, or in addition to, the original search term.
+
+For example, the search term `sweater` could have the synonyms `pullover` and `jumper`.
+
+Synonym query rewrites can be one-directional or two-directional. 
+
+* One-directional synonyms replace the original query with the synonym. 
+
+  Use a one-directional synonym if you are confident the synonym is best for your product catalog. 
+  For example, a running specialty store may use a one-directional synonym to rewrite the term `sneakers` to `running shoes`.
+* Two-directional synonyms expand the query to include the original term and specified synonyms.
+
+  Use a two-directional synonym when terms are used interchangeably (`sweater` and `pullover`) to increase the volume of results.
+
+### Word Removal
+
+Use the remove words rewrite to simplify search queries and increase results.
+
+For example, rewrite the query `best wireless headphones` to remove the word `best`, which restricts the number of results returned. The improved query, `wireless headphones`, returns more results. 
+
+<dl><dt><strong>💡 TIP: When should I use a remove words query rewrite instead of an underperforming rewrite?</strong></dt><dd>
+
+Use a remove words query rewrite to broaden a query to include more results. Use an underperforming query rewrite to simplify a complex query (head) or expand a short query (tail).
+</dd></dl>
+
+## Manage rewrites
+
+To get started working with query rewrites, navigate to Commerce Studio and click **Rewrite** to display the Query Rewrites screen. 
+
+### Create a query rewrite
+
+The general steps to create a query rewrite are as follows:
+
+1. Locate the tab specific to the query rewrite type. 
+2. Click **Add new**. 
+3. Enter the required information for your rewrite type as explained below and then click **Save**.
+
+To view the steps for a specific rewrite type, click the title tab.
+
+<div class="tab">
+  <button class="tablinks btn_primary" onclick="openPage(event, 'tailtab')" id="defaultOpen">Underperforming Queries</button>
+  <button class="tablinks btn_primary" onclick="openPage(event, 'misspelltab')">Misspelling Detections</button>
+  <button class="tablinks btn_primary" onclick="openPage(event, 'phrasetab')">Phrase Detections</button>
+  <button class="tablinks btn_primary" onclick="openPage(event, 'synonymtab')">Synonym Detections</button>
+  <button class="tablinks btn_primary" onclick="openPage(event, 'removetab')">Word Removal</button>
+</div>
+
+<div class="tabcontent" id="tailtab" style="display: block">
+1. In the **Tail Query** field, enter the text for an underperforming query. For example, `latest shoes`.
+2. Click **Add Improved Query** and enter new text for the query. For example, `new shoes`. To add another query, click **+ Add** and enter the text in the new field.
+3. Optional: In the **Description** field, enter user-defined text to describe the query. For example, `improve to display new shoes`.
+</div>
+
+<div class="tabcontent" id="misspelltab" style="display: none">
+1. In the **Misspelled Query** field, enter a common incorrect spelling. For example, `intertainment`.
+2. Click **Suggested Corrections** and enter corrected text. For example, `entertainment`. To add another correction, click **+ Add** and enter the text in the new field.
+3. Optional: In the **Description** field, enter user-defined text to describe the misspelled text. For example, `correcting for entertainment`.
+</div>
+
+<div class="tabcontent" id="phrasetab" style="display: none">
+1. In the **Phrase** field, enter text to search. For example, `new shoes with low heels`.
+2. Optional: In the **Description** field, enter user-defined text to describe the phrase. For example, `phrase for new, low-heeled shoes`.
+</div>
+
+<div class="tabcontent" id="synonymtab" style="display: none">
+1. In the **Search Query** field, enter text that will have synonyms. For example `shoes`.
+2. Click **Add Synonym** and enter a synonym for the **Search Query** value. For example, `sneakers`, `hightops`, `running`. To add another synonym, click **+ Add** and enter the text in the new field.
+3. Select a **Synonym Matching Method**:
+   * **One-directional**. This is also referred to as `ONEWAY`.
+   * **Two-directional** . This is also referred to as `SYMMETRIC`.
+4. Optional: In the **Description** field, enter user-defined text to describe the synonym. For example, `synonyms for shoes that are sneakers`.
+</div>
+
+<div class="tabcontent" id="removetab" style="display: none">
+1. In the **Words to Remove** field, enter text to remove from queries to improve results. For example, `retro`.
+2. Click **Trigger Phrases** and enter a phrase that would contain the words to remove. For example, `retro sneakers`. To add another phrase, click **+ Add** and enter the text in the new field.
+3. Optional: In the **Description** field, enter user-defined text to describe the word removal. For example, `remove retro to get all sneakers`.
+</div>
+
+### Edit a query rewrite
+
+To edit a query rewrite, hold the pointer over the entry and click the pencil icon. Enter the changes for the specific query rewrite and click **Save**.
+
+### Publish a query rewrite
+
+To publish a query rewrite, click the **Publish** toggle to the **Yes** position. To unpublish, click the toggle again.  
+
+Published query rewrites start working immediately. 
+
+To publish multiple query rewrites, select the checkbox for each of the rewrites to publish and then click the up arrow. The toggle switches for each of those entries changes to **Yes**.
+
+To unpublish multiple query rewrites, select the checkbox for each of the rewrites to unpublish and then click the down arrow. The toggle switches for each of those entries changes to **No**.
+
+### Delete a query rewrite
+
+1. Select the checkbox of the query rewrite to delete. 
+2. Click the trash can icon. 
+3. Confirm your choice in the dialog box that appears. 
+
+To delete multiple rewrites, select the checkbox for each of the rewrites to delete and then click the trash can icon.
+
+<dl><dt><strong>🔥 CAUTION</strong></dt><dd>
+
+Query rewrites are deleted permanently. There is no way to undo this action. 
+</dd></dl>
+
+## Effective workflows for teams
+
+Your team’s Data Analyst monitors Analytics Studio to identify low performing queries, recommends recommend which queries should be rewritten, and helps verify query rewrites are effective.
+
+Apart from the insights Analytics Studio provides, your team may start with existing industry knowledge. For example, some clothing brands prefer the term "pant" over "pants." Depending on your catalog, your team’s Product Manager may create a synonym query rewrite to treat the query `pants` the same as the query `pant`. 
+
+Your Customer Experience Manager creates query rewrites based on knowledge of your customers' intent. For example, the CX Manager rewrites the query term `cheap` to the query terms `discount` or `sale`. These rewritten queries trigger ranking rules that are used in a sales event.

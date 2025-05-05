@@ -1,0 +1,183 @@
+---
+subGroup: "ai"
+permalink: "g0ji3z"
+layout: default
+title: 'Use case training data'
+description: 'Needs description'
+icon: 'text-size'
+subtitle: 'Lucidworks AI custom embedding model training'
+order: 52
+doctype: reference
+---
+
+Training data for custom models requires both the index file and query file. The `dataset_config` contains the index and query files, which must:
+
+* Be in Parquet format. 
+* Contain specific column names or the model training will fail. You have the option to change the default value of the column name, but some of the column names must be the same in the index and query files. The requirements are detailed in the sections for those files.
+
+## Index file
+
+The index file, also referred to as the catalog index file, contains documents that will be searched during training. The file is stored in Google Cloud Storage (GCS).
+
+The index file content format is different based on the model type to be trained. Each use case describes the format to use. For more information, see [Training use cases](#training-use-cases).
+
+## Query file
+
+The query file, also referred to as the signals file, contains query data associated with the index file entries. The file is stored in Google Cloud Storage (GCS).
+
+For optimal results, the recommended practice is to include at least 500 rows of unique query column items in the query file. While it is possible to train a useful custom model with fewer rows, a [pre-trained model](/lw-platform/ai/3vqfxe/pre-trained-embedding-models) may be the best option. 
+
+Each use case describes the format to use. For more information, see [Training use cases](#training-use-cases).
+
+The query file must have a `pkid` column which refers to the relevant document or product ID. The file may contain multiple duplicates of any `pkid` because each document could be associated with several relevant queries.
+
+**📌 NOTE**\
+For evaluation purposes, 10% of unique queries (50 minimum and 5000 maximum) are automatically sampled into a validation set from the training query file.
+
+## Training use cases
+
+Lucidworks AI supports three types of training use cases that are targeted for different uses. The use case types are:
+
+* [General training use case type](#general-training-use-case-type)
+* [ecommerce training use case type](#ecommerce-training-use-case-type)
+* [Classification training use case type](#classification-training-use-case-type)
+
+### General training use case type
+
+The general training use case type is typically used by knowledge management sites that contain information such as news or documentation.
+
+#### General RNN index file format
+
+The general recurrent neural network (RNN) index file format contains:
+
+| Field | Default value | Description |
+| --- | --- | --- |
+| dataset_config.index_title_col_name | null | A column specifying the title or headline for a document. |
+| dataset_config.pkid_col_name | pkid | The unique product key ID. Required field. If this document is associated with a query, there is at least one matching entry in the query file. If this document is not associated with a query, it is still used in vocabulary creation and evaluation purposes in model training. |
+| dataset_config.index_desc_col_name | text | A freeform text field for the associated `pkid`. |
+| dataset_config.index_body_col_name | null | An optional column that contains additional text data used for vocabulary creation in case of word-based model training. |
+
+
+Training requires at least one entry for `dataset_config.index_title_col_name` or `dataset_config.index_desc_col_name`. If both are provided, they are concatenated into one content column that is used during the model training. Because of this, Lucidworks recommends these two columns be concatenated at index time for encoding.
+
+#### General RNN query file format
+
+The general RNN query file format contains:
+
+| Field | Default value | Description |
+| --- | --- | --- |
+| dataset_config.pkid_col_name | pkid | The unique product key ID. Required field. This must match an entry in the index file. |
+| dataset_config.query_col_name | query | A freeform text field. |
+| dataset_config.weight_col_name | null | A column specifying the weight or importance of each query. |
+
+#### Evaluation metric training use case
+
+The `mrr@3` metric is monitored for the general use case.
+
+#### Recommended model type to use
+
+The following model types are recommended. For more information, see:
+
+* [Transformer RNN models](/lw-platform/ai/gmhy47/custom-embedding-transformer-rnn-models)
+* [RNN models](/lw-platform/ai/b18rw1/custom-embedding-rnn-models)
+
+### Ecommerce training use case type
+
+The ecommerce training use case type is typically used by sites that provide products for purchase.
+
+#### Ecommerce RNN index file format
+
+The ecommerce RNN index file format contains:
+
+| Field | Default value | Description |
+| --- | --- | --- |
+| dataset_config.index_title_col_name | Freeform text field containing the product name. | Training data may be higher quality using this optional field. To determine the highest quality results for your organization, perform training using `dataset_config.pkid_col_name` (`pkid`) with and without including this field. |
+| dataset_config.pkid_col_name | pkid | The unique product key ID. Required field. If this document is associated with a query, there is at least one matching entry in the query file. If this document is not associated with a query, it is still used in vocabulary creation and evaluation purposes in model training. |
+| dataset_config.index_desc_col_name | null | A freeform text field for the associated `pkid`. |
+| dataset_config.index_body_col_name | null | An optional column that contains additional text data used for vocabulary creation in case of word-based model training. |
+
+
+Training requires at least one entry for `dataset_config.index_title_col_name` or `dataset_config.index_desc_col_name`. If both are provided, they are concatenated into one content column that is used during the model training. Because of this, Lucidworks recommends these two columns be concatenated at index time for encoding.
+
+#### Ecommerce RNN query file format
+
+The ecommerce RNN query file format contains:
+
+| Field | Default value | Description |
+| --- | --- | --- |
+| dataset_config.pkid_col_name | pkid | The unique product key ID. Required field. This must match an entry in the index file. |
+| dataset_config.query_col_name | query | A freeform text field. |
+| dataset_config.weight_col_name | aggr_count | The `aggr_count` is number of documents that match the query criteria, which is the weight of the query in relation to the document. In most cases, this value is used as a weight and must be greater than zero (0). If you do not use weights or there is no value, set this value to **1**. The weight is used for training pairs sampling and to compute normalized discounted cumulative gain (NDCG) metrics. If all values are **1.0**, binary NDCG is computed. |
+
+#### Evaluation metric training use case
+
+The `ndcg@5` metric is monitored for the eommerce use case, which can use weight to provide signal aggregation information.
+
+If your ecommerce data does not have a weight value set, or if the value is 1.0, binary NDCG is calculated.
+
+#### Recommended model type to use
+
+The ecommerce model type is recommended. For more information, see [RNN models](/lw-platform/ai/b18rw1/custom-embedding-rnn-models).
+
+### Classification training use case type
+
+The classification training use case type is used to classify binary or multilabel data.
+
+#### Classification index file format
+
+The classification index file format contains:
+
+| Field | Default value | Description |
+| --- | --- | --- |
+| dataset_config.index_title_col_name | label | A column specifying the label for a document. This is optional if the `dataset_config.pkid_col_name` is the classification label. |
+| dataset_config.pkid_col_name | pkid or label | The unique product key ID or unique classification label. Required field. If this document is associated with a query, there is at least one matching entry in the query file. If this document is not associated with a query, it is still used in vocabulary creation and evaluation purposes in model training. |
+| dataset_config.index_desc_col_name | null | A freeform text field for the associated `pkid`. |
+| dataset_config.index_body_col_name | null | An optional column that contains additional text data used for vocabulary creation in case of word-based model training. |
+
+
+Training requires at least one entry for `dataset_config.index_title_col_name` or `dataset_config.index_desc_col_name`. If both are provided, they are concatenated into one content column that is used during the model training. Because of this, Lucidworks recommends these two columns be concatenated at index time for encoding.
+
+#### Classification RNN query file format
+
+The classification query file format contains:
+
+| Field | Default value | Description |
+| --- | --- | --- |
+| dataset_config.pkid_col_name | pkid or label | The unique product key ID or unique classification label. Required field. This must match an entry in the index file. |
+| dataset_config.query_col_name | text | A freeform text field. |
+| dataset_config.weight_col_name | null | A column specifying the weight or importance of each query. |
+
+#### Evaluation metric training use case
+
+The `f@1` metric is monitored for the classification use case.
+
+#### Recommended model type to use
+
+The following model types are recommended for general classification. For more information, see:
+
+* [Transformer RNN models](/lw-platform/ai/gmhy47/custom-embedding-transformer-rnn-models)
+* [General RNN model](/lw-platform/ai/b18rw1/custom-embedding-rnn-models)
+
+The ecommerce model type is recommended for ecommerce classification. For more information, see [Ecommerce RNN model](/lw-platform/ai/b18rw1/custom-embedding-rnn-models).
+
+#### Additional information
+
+For more information, see [Using the Lucidworks AI embeddings and side-car collection in the Classification use case](/lw-platform/ai/u4a59o/classification-use-case#using-the-lucidworks-ai-embeddings-and-side-car-collection).
+
+## How to acquire training data
+
+To acquire training data, you can:
+
+* Extract from signals, which are user interactions on your site. Examples include:
+  * Clicks in documents after the search query on knowledge management sites
+  * Add-to-cart and purchase signals in a specific query on ecommerce sites
+  * Interactions after abandoning search results or rephrasing the query
+
+    Signals can be aggregated by query, `pkid` pair, and aggregation count.
+
+    **💡 TIP**\
+    An effective method for ecommerce queries is to use validation based on a time series. Before aggregation, split signals based on a timestamp and then aggregate both splits. This yields training and test sets based on a time series. For example, `N-1` months of signals can be used for training and `Nth` (last) month for testing and evaluation.
+* Generate from your site’s client forum and call center logs with real user questions and answers
+* Build from frequently asked questions posed in queries, with answers contained in the documents from the index
+* Use information from documents in the index, such as titles, descriptions, and body text
+* Use datasets, labels returned in queries, and manual labels on your website
