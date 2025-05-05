@@ -1,22 +1,20 @@
 {
   "$schema": "https://mintlify.com/docs.json",
   "theme": "mint",
-  "name": "Mint Starter Kit",
+  "name": "Lucidworks Developers",
   "colors": {
-    "primary": "#16A34A",
-    "light": "#07C983",
-    "dark": "#15803D"
+    "primary": "#2b3c79",
+    "light": "#a4c6f7",
+    "dark": "#44578D"
   },
-  "favicon": "/favicon.svg",
+  "favicon": "/favicon.png",
   "navigation": {
-    "tabs": [
-      {
+    "tabs": [{
         "tab": "Guides",
-        "groups": [
-          {
+        "groups": [{
             "group": "Get Started",
             "pages": [
-              "index",
+              "introduction",
               "quickstart",
               "development"
             ]
@@ -24,7 +22,42 @@
           {
             "group": "Essentials",
             "pages": [
-              "essentials/markdown",
+              {
+                "group": "Markdown",
+                "pages": [
+                  {
+                    "group": "Level 1",
+                    "pages": [
+                      {
+                        "group": "Level 2",
+                        "pages": [
+                          {
+                            "group": "Level 3",
+                            "pages": [
+                              {
+                                "group": "Level 4",
+                                "pages": [
+                                  {
+                                    "group": "Level 5",
+                                    "pages": [
+                                      "essentials/markdown/doc1",
+                                      "essentials/markdown/doc2",
+                                      "essentials/markdown/doc3",
+                                      "essentials/markdown/doc4",
+                                      "essentials/markdown/doc5"
+                                    ]
+                                  }
+                                ]
+                              }
+                            ]
+                          }
+                        ]
+                      }
+                    ]
+                  }
+                ]
+              },
+              "essentials/api-keys",
               "essentials/code",
               "essentials/images",
               "essentials/settings",
@@ -36,8 +69,7 @@
       },
       {
         "tab": "API Reference",
-        "groups": [
-          {
+        "groups": [{
             "group": "API Documentation",
             "pages": [
               "api-reference/introduction"
@@ -53,11 +85,123 @@
             ]
           }
         ]
+      },
+      {
+        "tab": "Lucidworks AI APIs",
+        "groups": [{
+            "group": "Authentication",
+            "openapi": {
+              "source": "api-reference/api-specs/lucidworks-ai/authentication.json",
+              "directory": "api-reference"
+            }
+          },
+          {
+            "group": "Models",
+            "openapi": {
+              "source": "api-reference/api-specs/lucidworks-ai/machine-learning-models.json",
+              "directory": "api-reference"
+            }
+          },
+          {
+            "group": "Use Case",
+            "openapi": {
+              "source": "api-reference/api-specs/lucidworks-ai/machine-learning-platform-use-case.json",
+              "directory": "api-reference"
+            }
+          },
+          {
+            "group": "Predict",
+            "openapi": {
+              "source": "api-reference/api-specs/lucidworks-ai/machine-learning-platform-predict.json",
+              "directory": "api-reference"
+            }
+          },
+          {
+            "group": "Async Predict",
+            "openapi": {
+              "source": "api-reference/api-specs/lucidworks-ai/machine-learning-platform-async-prediction.json",
+              "directory": "api-reference"
+            }
+          }
+        ]
+      },
+      {
+        "tab": "Fusion APIs",
+        "groups": [{
+            "group": "Apps Manager",
+            "openapi": {
+              "source": "api-reference/api-specs/fusion-5/fusion-api-apps-manager.json",
+              "directory": "api-reference"
+            }
+          },
+          {
+            "group": "Async Parsing",
+            "openapi": {
+              "source": "api-reference/api-specs/fusion-5/fusion-api-async-parsing.json",
+              "directory": "api-reference"
+            }
+          },
+          {
+            "group": "Connectors",
+            "openapi": {
+              "source": "api-reference/api-specs/fusion-5/fusion-api-connectors.json",
+              "directory": "api-reference"
+            }
+          },
+          {
+            "group": "Indexing",
+            "openapi": {
+              "source": "api-reference/api-specs/fusion-5/fusion-api-indexing.json",
+              "directory": "api-reference"
+            }
+          },
+          {
+            "group": "Job Launcher",
+            "openapi": {
+              "source": "api-reference/api-specs/fusion-5/fusion-api-job-launcher.json",
+              "directory": "api-reference"
+            }
+          },
+          {
+            "group": "Job Rest Server",
+            "openapi": {
+              "source": "api-reference/api-specs/fusion-5/fusion-api-job-rest-server.json",
+              "directory": "api-reference"
+            }
+          },
+          {
+            "group": "ML Model Service",
+            "openapi": {
+              "source": "api-reference/api-specs/fusion-5/fusion-api-ml-model-service.json",
+              "directory": "api-reference"
+            }
+          },
+          {
+            "group": "Query",
+            "openapi": {
+              "source": "api-reference/api-specs/fusion-5/fusion-api-query.json",
+              "directory": "api-reference"
+            }
+          },
+          {
+            "group": "Admin",
+            "openapi": {
+              "source": "api-reference/api-specs/fusion-5/fusion-api-swagger.json",
+              "directory": "api-reference"
+            }
+          },
+          {
+            "group": "Templating",
+            "openapi": {
+              "source": "api-reference/api-specs/fusion-5/fusion-api-templating.json",
+              "directory": "api-reference"
+            }
+          }
+        ]
       }
     ],
     "global": {
-      "anchors": [
-        {
+      "anchors": [{
           "anchor": "Documentation",
           "href": "https://mintlify.com/docs",
           "icon": "book-open-cover"
@@ -80,12 +224,10 @@
     "dark": "/logo/dark.svg"
   },
   "navbar": {
-    "links": [
-      {
-        "label": "Support",
-        "href": "mailto:hi@mintlify.com"
-      }
-    ],
+    "links": [{
+      "label": "Support",
+      "href": "mailto:hi@mintlify.com"
+    }],
     "primary": {
       "type": "button",
       "label": "Dashboard",
