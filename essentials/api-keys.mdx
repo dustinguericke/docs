@@ -63,24 +63,29 @@ Again, these can be either attributes or text nodes, as in these examples:
   <div class="product">12345</div>
   ```
 
-  **💡 TIP**\
-  A field’s path might be different on different pages of your site.
-  The signals beacon supports multiple paths per field to accommodate this.
+
+<Tip>
+A field’s path might be different on different pages of your site. The signals beacon supports multiple paths per field to accommodate this.
+</Tip>
+
 * Create the [signals store](/lw-platform/analytics/88pjp2/signals-store) where the signals will be stored.
 
 ### Install the beacon
 
 1. Click the signal store where you want to configure the signals beacon, then click **Integrations**.
-2. If the beacon has never been configured for this app, you’ll see "No embed token found" on the Signals Using Beacon screen.
+1. If the beacon has never been configured for this app, you’ll see "No embed token found" on the Signals Using Beacon screen.
 In that case, click the **Generate** button.
 It can take a few moments to generate the token.
-3. In the **Allowed Origins** field, enter the domains where you want to use the signals beacon. The format is `<scheme>://<hostname>[:<port>]`. For example, `https://domain.your_company_name.com`.
-4. Set the **Signals Beacon** toggle to **On**.
-5. Click **Copy** to copy the script and insert that script into the `<head>` tag of your website’s HTML file.
+1. In the **Allowed Origins** field, enter the domains where you want to use the signals beacon. The format is `<scheme>://<hostname>[:<port>]`. For example, `https://domain.your_company_name.com`.
+1. Set the **Signals Beacon** toggle to **On**.
+1. Click **Copy** to copy the script and insert that script into the `<head>` tag of your website’s HTML file.
 
-   **💡 TIP**\
-   This also enables the `window.logBeaconInfo()` function which you can use with your browser’s developer tools to inspect the fields captured by the beacon so that you can validate and refine your configuration.
-   See [Development and troubleshooting](#development-and-troubleshooting) below.
+<Tip>
+This also enables the `window.logBeaconInfo()` function which you can use with your browser’s developer tools to inspect the fields captured by the beacon so that you can validate and refine your configuration.
+
+See [Development and troubleshooting](#development-and-troubleshooting) below.
+</Tip>
+   
 6. Edit the JSON configuration to process the signals you need for analytics. 
 For more details, see:
 
@@ -88,10 +93,11 @@ For more details, see:
    * [Example signals script](#example-signals-script)
    * [Field path configuration](#field-path-configuration)
    * [Beacon Configuration Interface](/lw-platform/analytics/k6vyeq/beacon-configuration-interface) for detailed configuration property information
-7. Click **Apply**. The configuration is applied to your website and it begins to send signals instantly based on that configuration. 
+1. Click **Apply**. The configuration is applied to your website and it begins to send signals instantly based on that configuration. 
 
-   **📌 NOTE**\
-   You can edit the configuration at any time. When you edit the JSON configuration and click **Apply**, the changes are applied in real time and signals are sent and processed using that configuration until it is modified.
+<Note>
+You can edit the configuration at any time. When you edit the JSON configuration and click **Apply**, the changes are applied in real time and signals are sent and processed using that configuration until it is modified.
+</Note>
 
 After the script is implemented and the signals are sent, you can access consolidated metrics. The [Analytics Studio metrics](/lw-platform/analytics/xcd2n5/metrics) provide valuable customer behavior insights, which can be used to improve your business.
 
