@@ -1,0 +1,124 @@
+.lw-modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: rgba(0, 0, 0, 0.6);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 10000;
+  }
+  
+  .lw-modal-container {
+    background: white;
+    border-radius: 8px;
+    width: 90%;
+    max-width: 640px;
+    box-shadow: 0 0 30px rgba(0, 0, 0, 0.4);
+    display: flex;
+    flex-direction: column;
+    transition: height 0.2s ease;
+    overflow: hidden;
+    padding: 16px;
+    box-sizing: border-box;
+  }
+  
+  .lw-modal-container.collapsed {
+    height: 96px;
+  }
+  
+  .lw-modal-container.expanded {
+    height: 80vh;
+  }
+  
+  .lw-search-input {
+    width: 100%;
+    padding: 12px;
+    font-size: 16px;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    outline: none;
+    box-sizing: border-box;
+  }
+  
+  .lw-search-input:focus {
+    border-color: #888;
+  }
+  
+  #lucidworks-search-results-wrapper {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    overflow: hidden;
+    margin-top: 16px;
+  }
+  
+  .lw-results-container {
+    flex: 1;
+    overflow-y: auto;
+    padding-right: 4px;
+  }
+  
+  .lw-result-item {
+    margin-bottom: 16px;
+  }
+  
+  .lw-result-title {
+    display: inline-block;
+    font-weight: 600;
+    color: #0056d2;
+    text-decoration: none;
+    font-size: 16px;
+  }
+  
+  .lw-result-description {
+    color: #444;
+    margin-top: 4px;
+    font-size: 14px;
+  }
+  
+  .lw-pagination {
+    margin-top: 12px;
+    display: flex;
+    justify-content: center;
+    gap: 12px;
+    flex-shrink: 0;
+  }
+  
+  .lw-page-button {
+    padding: 6px 12px;
+    font-size: 14px;
+    border: 1px solid #ccc;
+    background-color: #f8f8f8;
+    color: #333;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.2s;
+  }
+  
+  .lw-page-button:hover {
+    background-color: #e0e0e0;
+  }
+  
+  .lw-skeleton {
+    background-color: #e0e0e0;
+    border-radius: 4px;
+    animation: pulse 1.2s ease-in-out infinite;
+    margin-bottom: 16px;
+    height: 48px;
+  }
+  
+  @keyframes pulse {
+    0% {
+      opacity: 1;
+    }
+    50% {
+      opacity: 0.4;
+    }
+    100% {
+      opacity: 1;
+    }
+  }
+  
