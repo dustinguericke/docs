@@ -25,8 +25,9 @@ function launchLucidworksModal() {
 
   modal.innerHTML = `
     <div class="lw-modal-container collapsed" id="lucidworks-modal-container">
-      <input id="lucidworks-search-input" class="lw-search-input" type="text" placeholder="Search..." />
+      <input id="lucidworks-search-input" class="lw-search-input" type="text" placeholder="Search or ask Lucidworks AI" />
       <div id="lucidworks-search-results-wrapper">
+        <div id="lw-ai-toggle-btn-container"></div>
         <div id="lucidworks-search-results" class="lw-results-container"></div>
         <div id="lucidworks-pagination" class="lw-pagination"></div>
       </div>
@@ -41,8 +42,13 @@ function launchLucidworksModal() {
 
   const input = document.getElementById('lucidworks-search-input');
   const modalContainer = document.getElementById('lucidworks-modal-container');
+  const resultsContainer = document.getElementById('lucidworks-search-results');
+  const paginationContainer = document.getElementById('lucidworks-pagination');
+  const aiToggleBtnContainer = document.getElementById('lw-ai-toggle-btn-container');
+
   input.focus();
 
+  let currentMode = 'search';
   let currentQuery = '';
   let currentStart = 0;
   const rows = 10;
@@ -56,17 +62,46 @@ function launchLucidworksModal() {
     }
   }
 
-  async function fetchAndRenderResults(query, start = 0) {
+  function setMode(mode) {
+    currentMode = mode;
+    resultsContainer.innerHTML = '';
+    paginationContainer.innerHTML = '';
+    aiToggleBtnContainer.innerHTML = '';
+
+    const button = document.createElement('button');
+    button.className = 'lw-mode-toggle-button';
+
+    if (mode === 'ai') {
+      resultsContainer.innerHTML = '<div class="lw-ai-placeholder">Lucidworks AI is ready. (API integration pending)</div>';
+      modalContainer.classList.remove('collapsed');
+      modalContainer.classList.add('expanded');
+      button.textContent = 'Lucidworks Search';
+      button.addEventListener('click', () => {
+        setMode('search');
+        if (currentQuery.trim()) {
+          fetchAndRenderSearch(currentQuery, currentStart);
+        }
+      });
+    } else {
+      modalContainer.classList.add('collapsed');
+      modalContainer.classList.remove('expanded');
+      button.textContent = 'Ask Lucidworks AI';
+      button.addEventListener('click', () => setMode('ai'));
+    }
+
+    aiToggleBtnContainer.appendChild(button);
+  }
+
+  async function fetchAndRenderSearch(query, start = 0) {
     currentQuery = query;
     currentStart = start;
 
     const url = `https://docs.b.lucidworks.cloud/api/apps/Docs_Site_2/query/Docs_Site_2?start=${start}&rows=${rows}&q=${encodeURIComponent(query)}`;
     const auth = btoa('dustin-readonly:rkJqpLsyAf9Dbu]TVRm6DT%N');
 
-    const resultsContainer = document.getElementById('lucidworks-search-results');
-    const paginationContainer = document.getElementById('lucidworks-pagination');
     renderSkeletons(resultsContainer, rows);
     paginationContainer.innerHTML = '';
+    aiToggleBtnContainer.innerHTML = '';
 
     modalContainer.classList.remove('collapsed');
     modalContainer.classList.add('expanded');
@@ -122,9 +157,15 @@ function launchLucidworksModal() {
       paginationContainer.querySelectorAll('.lw-page-button').forEach(btn => {
         btn.addEventListener('click', (e) => {
           const newStart = parseInt(e.target.getAttribute('data-start'), 10);
-          fetchAndRenderResults(currentQuery, newStart);
+          fetchAndRenderSearch(currentQuery, newStart);
         });
       });
+
+      const aiToggleButton = document.createElement('button');
+      aiToggleButton.className = 'lw-mode-toggle-button';
+      aiToggleButton.textContent = 'Ask Lucidworks AI';
+      aiToggleButton.addEventListener('click', () => setMode('ai'));
+      aiToggleBtnContainer.appendChild(aiToggleButton);
 
     } catch (err) {
       console.error('Fetch error:', err);
@@ -135,9 +176,16 @@ function launchLucidworksModal() {
   input.addEventListener('keydown', (e) => {
     if (e.key === 'Enter') {
       const query = input.value.trim();
-      if (query) fetchAndRenderResults(query, 0);
+      if (!query) return;
+      if (currentMode === 'search') {
+        fetchAndRenderSearch(query, 0);
+      } else {
+        resultsContainer.innerHTML = 'Sending to Lucidworks AI... (pending integration)';
+      }
     }
   });
+
+  setMode('search');
 }
 
 function init() {
