@@ -1,1 +1,1 @@
-console.log('Lucidworks Search script loaded');
+console.log('Lucidworks Search script loaded.');

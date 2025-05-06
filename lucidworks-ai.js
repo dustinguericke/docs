@@ -1,1 +1,1 @@
-console.log('Lucidworks AI script loaded');
+console.log('Lucidworks AI script loaded.');
