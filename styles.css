@@ -152,4 +152,30 @@
   .lw-mode-toggle-button:hover {
     background-color: #003c9e;
   }
-  
+
+  .lw-no-results {
+    padding: 20px;
+    text-align: center;
+    color: #666;
+    font-size: 16px;
+    margin-bottom: 20px;
+    border: 1px dashed #ccc;
+    border-radius: 6px;
+    background-color: #f9f9f9;
+  }
+
+  .lw-sources-heading {
+    font-weight: 600;
+    margin-top: 24px;
+    margin-bottom: 8px;
+    padding-top: 16px;
+    border-top: 1px solid #e0e0e0;
+    color: #666;
+    font-size: 14px;
+  }
+
+  .lw-sources-container {
+    margin-left: 8px;
+    padding-left: 8px;
+    border-left: 3px solid #0056d2;
+  }
