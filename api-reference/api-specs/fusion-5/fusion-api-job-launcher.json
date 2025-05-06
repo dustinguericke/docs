@@ -1,0 +1,315 @@
+{
+    "openapi": "3.0.1",
+    "info": {
+        "title": "Job Launcher Service API",
+        "description": "job-launcher provides API for running and managing Fusion spark jobs",
+        "contact": {
+            "name": "Lucidworks",
+            "url": "www.lucidworks.com",
+            "email": "support@lucidworks.com"
+        },
+        "license": {
+            "name": "License of the API",
+            "url": "https://lucidworks.com/legal/developer-license-agreement/"
+        },
+        "version": "5.1.0"
+    },
+    "externalDocs": {
+        "description": "Lucidworks Documentation",
+        "url": "https://doc.lucidworks.com/"
+    },
+    "servers": [{
+        "url": "FUSION_HOST.com/api/job-launcher"
+    }],
+    "paths": {
+        "/launcher": {
+            "post": {
+                "tags": ["job-launcher-controller"],
+                "operationId": "launchJob",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/SparkJobConfig"
+                            }
+                        }
+                    },
+                    "required": true
+                },
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "application/hal+json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/SparkJobStatus"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/launcher/status": {
+            "get": {
+                "tags": ["job-launcher-controller"],
+                "operationId": "getJobStatuses",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "application/hal+json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/schemas/SparkJobStatus"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "post": {
+                "tags": ["job-launcher-controller"],
+                "operationId": "setJobStatus",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/SparkJobStatus"
+                            }
+                        }
+                    },
+                    "required": true
+                },
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                }
+            }
+        },
+        "/launcher/status/{id}": {
+            "get": {
+                "tags": ["job-launcher-controller"],
+                "operationId": "getJobStatus",
+                "parameters": [{
+                    "name": "id",
+                    "in": "path",
+                    "required": true,
+                    "schema": {
+                        "type": "string"
+                    }
+                }],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "application/hal+json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/SparkJobStatus"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/launcher/status/{id}/all": {
+            "get": {
+                "tags": ["job-launcher-controller"],
+                "operationId": "getJobStatuses_1",
+                "parameters": [{
+                    "name": "id",
+                    "in": "path",
+                    "required": true,
+                    "schema": {
+                        "type": "string"
+                    }
+                }],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "application/hal+json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/schemas/SparkJobStatus"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/launcher/driver/log/{jobId}": {
+            "get": {
+                "tags": ["job-launcher-controller"],
+                "operationId": "getLogsFromDefaultDriver",
+                "parameters": [{
+                    "name": "rows",
+                    "in": "query",
+                    "required": false,
+                    "schema": {
+                        "type": "integer",
+                        "format": "int32",
+                        "default": 100
+                    }
+                }, {
+                    "name": "jobId",
+                    "in": "path",
+                    "required": true,
+                    "schema": {
+                        "type": "string"
+                    }
+                }],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "text/plain": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/LogLineList"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/launcher/{id}": {
+            "delete": {
+                "tags": ["job-launcher-controller"],
+                "operationId": "cancelJob",
+                "parameters": [{
+                    "name": "id",
+                    "in": "path",
+                    "required": true,
+                    "schema": {
+                        "type": "string"
+                    }
+                }],
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                }
+            }
+        }
+    },
+    "components": {
+        "schemas": {
+            "KeyValue": {
+                "type": "object",
+                "properties": {
+                    "key": {
+                        "type": "string"
+                    },
+                    "value": {
+                        "type": "string"
+                    }
+                }
+            },
+            "SparkJobConfig": {
+                "type": "object",
+                "properties": {
+                    "id": {
+                        "type": "string"
+                    },
+                    "sparkConfig": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/KeyValue"
+                        }
+                    },
+                    "type": {
+                        "type": "string"
+                    }
+                },
+                "discriminator": {
+                    "propertyName": "type"
+                }
+            },
+            "SparkJobResult": {
+                "type": "object",
+                "properties": {
+                    "jobConfigId": {
+                        "type": "string"
+                    },
+                    "jobRunId": {
+                        "type": "string"
+                    },
+                    "exception": {
+                        "type": "object",
+                        "additionalProperties": {
+                            "type": "object"
+                        }
+                    }
+                }
+            },
+            "SparkJobStatus": {
+                "type": "object",
+                "properties": {
+                    "state": {
+                        "type": "string",
+                        "enum": ["unknown", "idle", "starting", "running", "finishing", "cancelling", "finished", "cancelled", "error", "skipped"]
+                    },
+                    "jobId": {
+                        "type": "string"
+                    },
+                    "jobConfig": {
+                        "$ref": "#/components/schemas/SparkJobConfig"
+                    },
+                    "hostname": {
+                        "type": "string"
+                    },
+                    "result": {
+                        "$ref": "#/components/schemas/SparkJobResult"
+                    },
+                    "startTime": {
+                        "type": "string"
+                    },
+                    "endTime": {
+                        "type": "string"
+                    },
+                    "duration": {
+                        "type": "integer",
+                        "format": "int64"
+                    }
+                }
+            },
+            "LogLine": {
+                "type": "object",
+                "properties": {
+                    "line": {
+                        "type": "string"
+                    },
+                    "date": {
+                        "type": "string",
+                        "format": "date-time"
+                    }
+                }
+            },
+            "LogLineList": {
+                "type": "array",
+                "properties": {
+                    "first": {
+                        "$ref": "#/components/schemas/LogLine"
+                    },
+                    "last": {
+                        "$ref": "#/components/schemas/LogLine"
+                    },
+                    "empty": {
+                        "type": "boolean"
+                    }
+                },
+                "items": {
+                    "$ref": "#/components/schemas/LogLine"
+                }
+            }
+        }
+    }
+}

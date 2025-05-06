@@ -1,9 +1,12 @@
 {
   "openapi": "3.0.1",
+  "x-stoplight": {
+    "id": "ob6ig5qv6o57h"
+  },
   "info": {
-    "title": "Lucidworks AI Prediction API",
+    "title": "Lucidworks AI Async Prediction API",
     "version": "v0",
-    "description": "The Lucidworks AI Prediction API is used to send synchronous API calls that run predictions from pre-trained models or custom models.\n\nLucidworks created and deployed the `mistral-7b-instruct` and `llama-3-8b-instruct` models. The Use Case API returns a list of all supported models.\n\nThe `prediction` endpoints require an authentication token with scope `machinelearning.predict`.",
+    "description": "The Lucidworks AI Async Prediction API contains two requests:\n\n* POST Request: This request is used to submit a prediction task for a specific `useCase` and `modelId`. Upon submission, the API responds with the following information:\n\n    * `predictionId` that is a unique UUID for the submitted prediction task, and can be used later to retrieve the results. \n\n    * `status` that indicates the current state of the prediction task. \n \n* GET Request: This request is used to retrieve the results of a previously-submitted prediction request. You must provide the unique `predictionId` received from the POST request. The API then returns the results of the prediction request associated with that `predictionId`.\n\nLucidworks created and deployed the `mistral-7b-instruct` and `llama-3-8b-instruct` models. The Use Case API returns a list of all supported models.\n\nThe `async-prediction` endpoints require an authentication token with scope `machinelearning.predict`.",
     "contact": {
       "name": "Lucidworks",
       "url": "https://lucidworks.com/",
@@ -22,25 +25,16 @@
     }
   ],
   "paths": {
-    "/ai/prediction/{USE_CASE}/{MODEL_ID}": {
+    "/ai/async-prediction/{USE_CASE}/{MODEL_ID}": {
       "post": {
         "summary": "Model predictions by use case",
-        "description": "This is a basic example of a model that returns predictions from pre-trained models or custom models for the specified use case. \n\nIMPORTANT: The available use cases are detailed in their own section in this specification.",
-        "operationId": "post-ai-prediction-usecase-modelId",
+        "description": "This is a basic example to submit a prediction task for a specific `useCase` and `modelId`. Upon submission, the API responds with a unique `predictionId` and a `status`. The `predictionId` can be used later in the GET request to retrieve the results.\n\nIMPORTANT: The available use cases are detailed in their own section in this specification.",
+        "operationId": "post-ai-async-prediction-usecase-modelId",
         "parameters": [
           {
             "name": "USE_CASE",
             "in": "path",
             "description": "The name of the use case for the model.",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "name": "MODEL_ID",
-            "in": "path",
-            "description": "The unique identifier of the model.",
             "required": true,
             "schema": {
               "type": "string"
@@ -81,18 +75,18 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/BasicGenericResponse"
+                  "$ref": "#/components/schemas/POSTresponse"
                 },
                 "examples": {}
               }
             }
           },
-          "201": {
-            "description": "Created"
+          "4XX": {
+            "$ref": "#/components/responses/Error"
           }
         },
         "x-stoplight": {
-          "id": "xd0hbcgmpoh07"
+          "id": "z3dobtc99bwhw"
         }
       },
       "parameters": [
@@ -112,267 +106,31 @@
           "name": "MODEL_ID",
           "in": "path",
           "required": true,
-          "description": "The unique identifier of the model."
+          "description": "The unique identifier for the model."
         }
       ]
     },
-    "/ai/prediction/embedding/text-encoder": {
-      "post": {
-        "summary": "English language model text encoder",
-        "operationId": "post-ai-prediction-embedding-text-encoder",
-        "responses": {
-          "200": {
-            "description": "OK",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/EmbeddingEncodersResponse"
-                },
-                "examples": {}
-              }
-            }
-          }
-        },
-        "x-stoplight": {
-          "id": "9sr7wid5brb19"
-        },
-        "description": "The English language encoder is an embedding use that takes in plain English text and returns a 768-dimensional vector encoding of that text. This model powers this semantic search.\n\nThe API truncates incoming text to approximately 256 words before the model encodes it and returns a vector. An example usage pattern is to encode all the texts and descriptions in a website and then use this encoder on query text, supporting natural language queries such as \"1990s children’s fiction\".\n\nEach API request includes one batch containing up to 32 text strings.",
-        "parameters": [
-          {
-            "schema": {
-              "type": "string"
-            },
-            "in": "header",
-            "name": "Authorization: Bearer ACCESS_TOKEN",
-            "description": "The authentication and authorization access token."
-          },
-          {
-            "schema": {
-              "type": "string",
-              "example": "application/json"
-            },
-            "in": "header",
-            "name": "Content-Type",
-            "description": "application/json"
-          }
-        ],
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/BatchEmbeddingEncoders"
-              }
-            }
-          }
-        }
-      },
-      "parameters": []
-    },
-    "/ai/prediction/embedding/multilingual{MODEL_ID}": {
-      "post": {
-        "summary": "Multilingual language model text encoder",
-        "operationId": "post-ai-prediction-embedding-multilingual-modelId",
-        "responses": {
-          "200": {
-            "description": "OK",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/EmbeddingEncodersResponse"
-                },
-                "examples": {}
-              }
-            }
-          }
-        },
-        "description": "The multilingual encoder is an embedding use case takes in plain text and returns a 384-dimensional vector encoding of that text. The API truncates incoming text to approximately 256 words before the model encodes it and returns a vector.\n\nEach API request includes one batch containing up to 32 text strings.\n\nThe text strings in a batch do not have to be in the same language. You can also use words from multiple languages with each text value. Because long text strings are truncated to approximately 256 words, the order and length of the value affects the return results.",
-        "parameters": [
-          {
-            "schema": {
-              "type": "string"
-            },
-            "in": "header",
-            "name": "Authorization: Bearer ACCESS_TOKEN",
-            "description": "The authentication and authorization access token."
-          },
-          {
-            "schema": {
-              "type": "string",
-              "example": "application/json"
-            },
-            "in": "header",
-            "name": "Content-Type",
-            "description": "application/json"
-          }
-        ],
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/BatchEmbeddingEncoders"
-              }
-            }
-          }
-        },
-        "x-stoplight": {
-          "id": "3ny4cfy7nxxgz"
-        }
-      },
-      "parameters": [
-        {
-          "schema": {
-            "type": "string"
-          },
-          "name": "MODEL_ID",
-          "in": "path",
-          "required": true,
-          "description": "The unique identifier of the model."
-        }
-      ]
-    },
-    "/ai/prediction/embedding/{MODEL_ID}": {
-      "parameters": [
-        {
-          "schema": {
-            "type": "string"
-          },
-          "name": "MODEL_ID",
-          "in": "path",
-          "required": true
-        }
-      ],
-      "post": {
-        "summary": "Custom model prediction",
-        "operationId": "post-ai-prediction-embedding-modelId",
-        "responses": {
-          "200": {
-            "description": "OK",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/EmbeddingEncodersResponse"
-                },
-                "examples": {}
-              }
-            }
-          }
-        },
-        "description": "The custom model prediction is an embedding use case. If a custom model is trained and deployed using the Lucidworks AI Models API, the 'DEPLOYMENT_ID' in the Models API is the same value as the MODEL_ID you enter in the custom model to return a prediction.",
-        "parameters": [
-          {
-            "schema": {
-              "type": "string"
-            },
-            "in": "header",
-            "name": "Authorization: Bearer ACCESS_TOKEN",
-            "description": "The authentication and authorization access token."
-          },
-          {
-            "schema": {
-              "type": "string",
-              "example": "application/json"
-            },
-            "in": "header",
-            "name": "Content-Type",
-            "description": "application/json"
-          }
-        ],
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/BatchEmbeddingEncoders"
-              }
-            }
-          }
-        },
-        "x-stoplight": {
-          "id": "lko2kjbypvd44"
-        }
-      }
-    },
-    "/ai/prediction/classification/{MODEL_ID}": {
-      "post": {
-        "summary": "Classification use case",
-        "operationId": "post-ai-prediction-classification-modelId",
-        "responses": {
-          "200": {
-            "description": "OK",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ClassificationResponse"
-                },
-                "examples": {}
-              }
-            }
-          }
-        },
-        "description": "The classification use case lets you use embedding models to compute similarity scores between the incoming text and the labels. It returns the labels ranked in order of most similar to least similar. \n\nThe classification use case is compatible with all Lucidworks hosted pre-trained and custom embedding models. The default behavior of embedding models is to always have a score returned.\n \n The `topK` and `similarityCutoff` parameters can be used to achieve behaviors where only the following are returned:\n\n * The single most applicable label\n\n * Labels with similarities that exceed a threshold\n \n * A set number of items\n\n * A set number if it exceeds the threshold\n\n\n",
-        "parameters": [
-          {
-            "schema": {
-              "type": "string"
-            },
-            "in": "header",
-            "name": "Authorization: Bearer ACCESS_TOKEN",
-            "description": "The authentication and authorization access token."
-          },
-          {
-            "schema": {
-              "type": "string",
-              "example": "application/json"
-            },
-            "in": "header",
-            "name": "Content-Type",
-            "description": "application/json"
-          }
-        ],
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/ClassificationRequest"
-              },
-              "examples": {}
-            }
-          }
-        },
-        "x-stoplight": {
-          "id": "sj36a4e8d1g4s"
-        }
-      },
-      "parameters": [
-        {
-          "schema": {
-            "type": "string",
-            "example": "6a092bd4-5098-466c-94aa-40bf6829430\""
-          },
-          "name": "MODEL_ID",
-          "in": "path",
-          "required": true,
-          "description": "Unique identifier for the model."
-        }
-      ]
-    },
-    "/ai/prediction/passthrough/{MODEL_ID}": {
+    "/ai/async-prediction/passthrough/{MODEL_ID}": {
       "post": {
         "summary": "Passthrough use case",
-        "operationId": "post-ai-prediction-passthrough-modelId",
+        "operationId": "post-ai-async-prediction-passthrough-modelId",
         "responses": {
           "200": {
             "description": "OK",
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/PassthroughResponse"
+                  "$ref": "#/components/schemas/POSTresponse"
                 },
                 "examples": {}
               }
             }
+          },
+          "4XX": {
+            "$ref": "#/components/responses/Error"
           }
         },
-        "description": "The passthrough use case lets you use the service as a proxy to the large language model (LLM). The service sends text (no additional prompts or other information) to the LLM and returns a response.",
+        "description": "The passthrough use case lets you use the service as a proxy to the large language model (LLM). The service sends text (no additional prompts or other information) to the LLM. \n\nThe POST request obtains and indexes prediction information related to the specified use case, and returns a unique `predictionId` and `status` of the request. The `predictionId` can be used later in the GET request to retrieve the results.",
         "parameters": [
           {
             "schema": {
@@ -403,7 +161,7 @@
           }
         },
         "x-stoplight": {
-          "id": "mn4ru2bkvon8v"
+          "id": "ce2ejgsvrwy8o"
         }
       },
       "parameters": [
@@ -419,7 +177,7 @@
         }
       ]
     },
-    "/ai/prediction/rag/{MODEL_ID}": {
+    "/ai/async-prediction/rag/{MODEL_ID}": {
       "post": {
         "summary": "RAG use case",
         "operationId": "post-ai-prediction-rag-modelId-external-documents",
@@ -429,14 +187,17 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/RagExtDocResponse"
+                  "$ref": "#/components/schemas/POSTresponse"
                 },
                 "examples": {}
               }
             }
+          },
+          "4XX": {
+            "$ref": "#/components/responses/Error"
           }
         },
-        "description": "The rag use case uses candidate documents that are inserted into a LLM’s context to ground the generated response to those documents instead of generating an answer from details stored in the LLM’s trained weights. This type of search adds guardrails so the LLM can search private data collections.\n\nThe RAG search can perform queries against external documents passed in as part of the request.",
+        "description": "The rag use case uses candidate documents that are inserted into a LLM’s context to ground the generated response to those documents instead of generating an answer from details stored in the LLM’s trained weights. This type of search adds guardrails so the LLM can search private data collections.\n\nThe RAG search can perform queries against external documents passed in as part of the request.\n\nThe POST request obtains and indexes prediction information related to the specified use case, and returns a unique `predictionId` and `status` of the request. The `predictionId` can be used later in the GET request to retrieve the results.\n",
         "parameters": [
           {
             "schema": {
@@ -467,7 +228,7 @@
           }
         },
         "x-stoplight": {
-          "id": "02emjxuwuk3k6"
+          "id": "oqzil7g3yk237"
         }
       },
       "parameters": [
@@ -483,7 +244,7 @@
         }
       ]
     },
-    "/ai/prediction/standalone_query_rewriter/{MODEL_ID}": {
+    "/ai/async-prediction/standalone_query_rewriter/{MODEL_ID}": {
       "post": {
         "summary": "Standalone query rewriter",
         "operationId": "post-ai-prediction-standalone-query-rewriter-modelId",
@@ -493,14 +254,17 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/StandaloneResponse"
+                  "$ref": "#/components/schemas/POSTresponse"
                 },
                 "examples": {}
               }
             }
+          },
+          "4XX": {
+            "$ref": "#/components/responses/Error"
           }
         },
-        "description": "The standalone query rewriter use case rewrites the text in reference to the context based on the memoryUuid.",
+        "description": "The standalone query rewriter use case rewrites the text in reference to the context based on the memoryUuid.\n\nThe POST request obtains and indexes prediction information related to the specified use case, and returns a unique `predictionId` and `status` of the request. The `predictionId` can be used later in the GET request to retrieve the results.\n",
         "parameters": [
           {
             "schema": {
@@ -531,7 +295,7 @@
           }
         },
         "x-stoplight": {
-          "id": "hd2f7h2nlef1n"
+          "id": "tl3w5vqma3ung"
         }
       },
       "parameters": [
@@ -547,7 +311,7 @@
         }
       ]
     },
-    "/ai/prediction/summarization/{MODEL_ID}": {
+    "/ai/async-prediction/summarization/{MODEL_ID}": {
       "post": {
         "summary": "Summarization use case",
         "operationId": "post-ai-prediction-summarization-modelId",
@@ -557,14 +321,17 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/SummarizationResponse"
+                  "$ref": "#/components/schemas/POSTresponse"
                 },
                 "examples": {}
               }
             }
+          },
+          "4XX": {
+            "$ref": "#/components/responses/Error"
           }
         },
-        "description": "In the summarization use case, the LLM ingests text and returns a summary of the text as a response.\n\nThe context length is 2048 tokens. No options can be configured.",
+        "description": "In the summarization use case, the LLM ingests text and returns a summary of the text as a response.\n\nThe context length is 2048 tokens. No options can be configured.\n\nThe POST request obtains and indexes prediction information related to the specified use case, and returns a unique `predictionId` and `status` of the request. The `predictionId` can be used later in the GET request to retrieve the results.\n",
         "parameters": [
           {
             "schema": {
@@ -595,7 +362,7 @@
           }
         },
         "x-stoplight": {
-          "id": "p9vwepw0ut3ob"
+          "id": "iik43dur2pvus"
         }
       },
       "parameters": [
@@ -611,7 +378,7 @@
         }
       ]
     },
-    "/ai/prediction/keyword_extraction/{MODEL_ID}": {
+    "/ai/async-prediction/keyword_extraction/{MODEL_ID}": {
       "post": {
         "summary": "Keyword extraction use case",
         "operationId": "post-ai-prediction-keyword-extraction-modelId",
@@ -621,14 +388,17 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/KeywordExtractionResponse"
+                  "$ref": "#/components/schemas/POSTresponse"
                 },
                 "examples": {}
               }
             }
+          },
+          "4XX": {
+            "$ref": "#/components/responses/Error"
           }
         },
-        "description": "In the keyword_extraction use case, the LLM ingests text and returns a JSON response that contains a list of keywords extracted from the text. No options can be configured.",
+        "description": "In the keyword_extraction use case, the LLM ingests text and returns a JSON response that contains a list of keywords extracted from the text. No options can be configured.\n\nThe POST request obtains and indexes prediction information related to the specified use case, and returns a unique `predictionId` and `status` of the request. The `predictionId` can be used later in the GET request to retrieve the results.\n",
         "parameters": [
           {
             "schema": {
@@ -659,7 +429,7 @@
           }
         },
         "x-stoplight": {
-          "id": "wtsklr2fluhzb"
+          "id": "dslro5144lrh0"
         }
       },
       "parameters": [
@@ -675,7 +445,7 @@
         }
       ]
     },
-    "/ai/prediction/ner/{MODEL_ID}": {
+    "/ai/async-prediction/ner/{MODEL_ID}": {
       "post": {
         "summary": "Named Entity Recognition (NER) use case",
         "operationId": "post-ai-prediction-ner-modelId",
@@ -685,13 +455,16 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/NerResponse"
+                  "$ref": "#/components/schemas/POSTresponse"
                 }
               }
             }
+          },
+          "4XX": {
+            "$ref": "#/components/responses/Error"
           }
         },
-        "description": "In the Named Entity Recognition (NER) use case, the LLM ingests text and entities to extract and return a JSON response that contains a list of entities extracted from the text. No options can be configured.\n\nThis use case can be used to extract nouns and proper nouns such as Brand, Date, Company, Places, and Category in order to guide and refine searches.",
+        "description": "In the Named Entity Recognition (NER) use case, the LLM ingests text and entities to extract and return a JSON response that contains a list of entities extracted from the text. No options can be configured.\n\nThis use case can be used to extract nouns and proper nouns such as Brand, Date, Company, Places, and Category in order to guide and refine searches.\n\nThe POST request obtains and indexes prediction information related to the specified use case, and returns a unique `predictionId` and `status` of the request. The `predictionId` can be used later in the GET request to retrieve the results.\n",
         "parameters": [
           {
             "schema": {
@@ -721,7 +494,7 @@
           }
         },
         "x-stoplight": {
-          "id": "f278tt0zwpjmt"
+          "id": "0s1km6w8ct4u5"
         }
       },
       "parameters": [
@@ -736,6 +509,60 @@
           "description": "Unique identifier for the model."
         }
       ]
+    },
+    "/ai/async-prediction/{PREDICTION_ID}": {
+      "parameters": [
+        {
+          "schema": {
+            "type": "string"
+          },
+          "name": "PREDICTION_ID",
+          "in": "path",
+          "required": true
+        }
+      ],
+      "get": {
+        "summary": "Get results by predictionId",
+        "tags": [],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "oneOf": [
+                    {
+                      "$ref": "#/components/schemas/PassthroughResponse"
+                    },
+                    {
+                      "$ref": "#/components/schemas/RagExtDocResponse"
+                    },
+                    {
+                      "$ref": "#/components/schemas/StandaloneResponse"
+                    },
+                    {
+                      "$ref": "#/components/schemas/SummarizationResponse"
+                    },
+                    {
+                      "$ref": "#/components/schemas/KeywordExtractionResponse"
+                    },
+                    {
+                      "$ref": "#/components/schemas/NerResponse"
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "4XX": {
+            "$ref": "#/components/responses/Error"
+          }
+        },
+        "operationId": "get-ai-async-prediction-predictionId",
+        "x-stoplight": {
+          "id": "55gaaapz3hmhm"
+        }
+      }
     }
   },
   "components": {
@@ -743,7 +570,7 @@
       "BasicGenericRequest": {
         "title": "BasicGenericRequest",
         "x-stoplight": {
-          "id": "0gjkp36pbgx97"
+          "id": "2dx9sqiottkts"
         },
         "type": "object",
         "description": "",
@@ -769,104 +596,13 @@
           }
         }
       },
-      "BasicGenericResponse": {
-        "type": "object",
-        "x-stoplight": {
-          "id": "zo1upzh16onzp"
-        },
-        "x-examples": {},
-        "description": "IMPORTANT: This contains some of the information in a response to this use case. However, the response varies based on the use case and other information in the request. See the specific use case for valid information for that use case.",
-        "properties": {
-          "predictions": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/BasicGenericResponseTokens"
-            }
-          }
-        }
-      },
-      "BasicGenericResponseTokens": {
-        "type": "object",
-        "x-stoplight": {
-          "id": "h5npw5476i5mj"
-        },
-        "properties": {
-          "response": {
-            "type": "string",
-            "description": "The results returned from the request.",
-            "example": "The response varies based on the use case of the request. For valid information, see the individual use case documentation. "
-          }
-        }
-      },
-      "BatchEmbeddingEncoders": {
-        "title": "BatchEmbeddingEncoders",
-        "x-stoplight": {
-          "id": "14d7lt5z9rn24"
-        },
-        "type": "object",
-        "x-examples": {},
-        "properties": {
-          "batch": {
-            "x-stoplight": {
-              "id": "yh1il0d81f5se"
-            },
-            "type": "array",
-            "description": "The batch of key:value pairs used as inputs in the prediction. Up to 32 inputs per request are allowed.",
-            "maxItems": 32,
-            "items": {
-              "x-stoplight": {
-                "id": "uyznzxhqdfqbh"
-              },
-              "type": "object",
-              "properties": {
-                "text": {
-                  "type": "string",
-                  "x-stoplight": {
-                    "id": "r9joksr0pu8j8"
-                  },
-                  "description": "The content the model analyzes."
-                }
-              }
-            }
-          },
-          "useCaseConfig": {
-            "$ref": "#/components/schemas/UseCaseConfigEmbedding"
-          }
-        }
-      },
-      "BatchClassification": {
-        "title": "BatchClassification",
-        "x-stoplight": {
-          "id": "8ozav63il6vtg"
-        },
-        "type": "object",
-        "x-examples": {},
-        "properties": {
-          "batch": {
-            "type": "array",
-            "description": "The batch of key:value pairs used as inputs in the prediction. Up to 32 inputs per request are allowed.",
-            "maxItems": 32,
-            "items": {
-              "type": "object",
-              "properties": {
-                "text": {
-                  "type": "string",
-                  "description": "The content the model analyzes."
-                }
-              }
-            }
-          },
-          "useCaseConfig": {
-            "$ref": "#/components/schemas/UseCaseConfigClassification"
-          }
-        }
-      },
       "BatchRag": {
         "title": "BatchRag",
         "x-stoplight": {
-          "id": "1847784cc36d0"
+          "id": "3ewd5zlcro9fh"
         },
         "type": "array",
+        "description": "",
         "x-examples": {},
         "items": {
           "x-stoplight": {
@@ -929,32 +665,9 @@
             "example": "2022-01-31T19:31:34Z",
             "description": "The date and time the document was created, displayed in the required ISO-8601 format of `yyyy-mm-ddThh:mm:ssZ`."
           }
-        }
-      },
-      "EmbeddingEncodersResponse": {
-        "type": "object",
-        "x-stoplight": {
-          "id": "tvi7d1e1ye58v"
         },
-        "x-examples": {},
-        "properties": {
-          "predictions": {
-            "type": "array",
-            "x-stoplight": {
-              "id": "q2t9of73sdqec"
-            },
-            "items": {
-              "x-stoplight": {
-                "id": "bhc6bmrsmhisq"
-              },
-              "type": "object",
-              "properties": {
-                "vector": {
-                  "$ref": "#/components/schemas/JsonNode"
-                }
-              }
-            }
-          }
+        "x-stoplight": {
+          "id": "bkr03gtvoawvk"
         }
       },
       "JsonNode": {
@@ -967,12 +680,15 @@
           0.020428132265806198,
           0.11977626383304596
         ],
-        "items": {}
+        "items": {},
+        "x-stoplight": {
+          "id": "w6zrspbzq8se1"
+        }
       },
       "KeywordExtractionRequest": {
         "title": "KeywordExtractionRequest",
         "x-stoplight": {
-          "id": "6vt2wbize9zuf"
+          "id": "gnfyvpt0xzkyn"
         },
         "type": "object",
         "x-examples": {},
@@ -1003,10 +719,17 @@
       "KeywordExtractionResponse": {
         "type": "object",
         "x-stoplight": {
-          "id": "w7auajr75f7ir"
+          "id": "50i820dhx4lcl"
         },
         "x-examples": {},
+        "title": "Response: Keyword extraction",
         "properties": {
+          "predictionId": {
+            "$ref": "#/components/schemas/predictionId"
+          },
+          "status": {
+            "$ref": "#/components/schemas/status"
+          },
           "predictions": {
             "type": "array",
             "items": {
@@ -1018,7 +741,7 @@
       "KeywordExtractionResponseTokens": {
         "type": "object",
         "x-stoplight": {
-          "id": "l8itgvbgn07m8"
+          "id": "xm8zls0dgmm2r"
         },
         "x-examples": {},
         "properties": {
@@ -1043,7 +766,7 @@
       "NerRequest": {
         "title": "NerRequest",
         "x-stoplight": {
-          "id": "ulw8ar1ekp5zs"
+          "id": "16ozcq1jkgn4c"
         },
         "type": "object",
         "x-examples": {},
@@ -1074,10 +797,17 @@
       "NerResponse": {
         "type": "object",
         "x-stoplight": {
-          "id": "whwtrr40rlvjx"
+          "id": "q7r8avob0ipy3"
         },
         "x-examples": {},
+        "title": "Response: NER (Named Entity Recognition)",
         "properties": {
+          "predictionId": {
+            "$ref": "#/components/schemas/predictionId"
+          },
+          "status": {
+            "$ref": "#/components/schemas/status"
+          },
           "predictions": {
             "type": "array",
             "items": {
@@ -1089,7 +819,7 @@
       "NerResponseTokens": {
         "type": "object",
         "x-stoplight": {
-          "id": "j5pfrj4wemkqj"
+          "id": "wu5v2ry4eobtd"
         },
         "x-examples": {},
         "properties": {
@@ -1127,7 +857,7 @@
       "ModelConfig": {
         "title": "ModelConfig",
         "x-stoplight": {
-          "id": "qcyl3jdn5njdn"
+          "id": "6dvs9gawblqq4"
         },
         "type": "object",
         "description": "Provides fields and values that specify ranges for tokens. Fields used for specific use cases and models are specified. The default values are used if other values are not specified.",
@@ -1178,17 +908,17 @@
           "azureDeployment": {
             "type": "string",
             "x-stoplight": {
-              "id": "dmh603kvfecze"
+              "id": "k7om8x7fmdk2a"
             },
-            "example": "DEPLOYMENT_NAME",
-            "description": "This optional parameter is the name of the deployed Azure OpenAI model and is only required when a deployed Azure OpenAI model is used for prediction."
+            "description": "This optional parameter is the name of the deployed Azure OpenAI model and is only required when a deployed Azure OpenAI model is used for prediction.",
+            "example": "DEPLOYMENT_NAME"
           },
           "azureEndpoint": {
             "type": "string",
             "x-stoplight": {
-              "id": "j27rm7p97tksy"
+              "id": "igdfjnlqtdsto"
             },
-            "description": "\t\nThis optional parameter is the URL endpoint of the deployed Azure OpenAI model and is only required when a deployed Azure OpenAI model is used for prediction.",
+            "description": "\nThis optional parameter is the URL endpoint of the deployed Azure OpenAI model and is only required when a deployed Azure OpenAI model is used for prediction.",
             "example": "https://azure.endpoint.com"
           },
           "googleProjectId": {
@@ -1212,7 +942,7 @@
       "PassthroughRequest": {
         "title": "PassthroughRequest",
         "x-stoplight": {
-          "id": "c1e0yborohvoz"
+          "id": "u9ogmu5gwx88z"
         },
         "type": "object",
         "x-examples": {},
@@ -1230,7 +960,7 @@
                     "id": "t59at9anv3pt7"
                   },
                   "description": "The content the model analyzes.",
-                  "example": "Who was the first President of the United States?"
+                  "example": "[{\\\"role\\\": \\\"system\\\", \\\"content\\\": \\\"You are a helpful utility program instructed to accomplish a word correction task. Provide the most likely suggestion to the user without an preamble or elaboration.\\\"}, {\\\"role\\\": \\\"user\\\", \\\"content\\\": \\\"misspeled\\\"}, {\\\"role\\\": \\\"assistant\\\", \\\"content\\\": \\\"CORRECT:\\\"}]"
                 }
               }
             }
@@ -1243,105 +973,24 @@
           }
         }
       },
-      "ClassificationRequest": {
-        "title": "ClassificationRequest",
-        "x-stoplight": {
-          "id": "dewn4agy31qds"
-        },
-        "type": "object",
-        "x-examples": {},
-        "properties": {
-          "batch": {
-            "type": "array",
-            "description": "The batch of key:value pairs used as inputs in the prediction. Up to 32 inputs per request are allowed.",
-            "maxItems": 32,
-            "items": {
-              "type": "object",
-              "properties": {
-                "text": {
-                  "type": "string",
-                  "description": "The content the model analyzes.",
-                  "example": "Not all those who wander are lost."
-                }
-              }
-            }
-          },
-          "useCaseConfig": {
-            "$ref": "#/components/schemas/UseCaseConfigClassification"
-          }
-        }
-      },
       "PassthroughResponse": {
         "type": "object",
         "x-stoplight": {
-          "id": "warbkfk5hga3b"
+          "id": "1aybbpg2d8uzr"
         },
+        "x-examples": {},
+        "title": "Response: Passthrough",
         "properties": {
+          "predictionId": {
+            "$ref": "#/components/schemas/predictionId"
+          },
+          "status": {
+            "$ref": "#/components/schemas/status"
+          },
           "predictions": {
             "type": "array",
             "items": {
               "$ref": "#/components/schemas/PassthroughResponseTokens"
-            }
-          }
-        },
-        "x-examples": {}
-      },
-      "ClassificationResponse": {
-        "type": "array",
-        "x-stoplight": {
-          "id": "ueef27y8mdhym"
-        },
-        "x-examples": {},
-        "items": {
-          "x-stoplight": {
-            "id": "a8p34s8cgapkt"
-          },
-          "type": "object",
-          "properties": {
-            "predictions": {
-              "type": "array",
-              "x-stoplight": {
-                "id": "7317xl3q6wgdh"
-              },
-              "items": {
-                "x-stoplight": {
-                  "id": "rnw6r9p1ne4nj"
-                },
-                "type": "object",
-                "properties": {
-                  "tokensUsed": {
-                    "type": "object",
-                    "x-stoplight": {
-                      "id": "xiir66iyg7l09"
-                    },
-                    "properties": {
-                      "inputTokens": {
-                        "type": "integer",
-                        "x-stoplight": {
-                          "id": "q6lrg5j7hh3ow"
-                        },
-                        "example": 11,
-                        "description": "The number of tokens created from the text input into the model."
-                      },
-                      "labelTokens": {
-                        "type": "integer",
-                        "x-stoplight": {
-                          "id": "dw8x8ghlap7nj"
-                        },
-                        "description": "The number of tokens created from the labels entered in the request.",
-                        "example": 14
-                      }
-                    }
-                  },
-                  "labels": {
-                    "type": "string",
-                    "x-stoplight": {
-                      "id": "44cglrruuhpz9"
-                    },
-                    "description": "This is a list of strings that classify information.\n\nFor example:\n\n \"labels\": {\n       \"Lord of the Rings\": 0.7287280559539795,\n        \"Harry Potter\": 0.7193666100502014\n    }\n"
-                  }
-                }
-              }
             }
           }
         }
@@ -1349,7 +998,7 @@
       "PassthroughResponseTokens": {
         "type": "object",
         "x-stoplight": {
-          "id": "kiptne5qcr0gh"
+          "id": "v1hv9q4qf2lsm"
         },
         "properties": {
           "response": {
@@ -1358,7 +1007,7 @@
               "id": "9ddycxisvubki"
             },
             "description": "The results returned from the request.",
-            "example": "The first President of the United States was George Washington."
+            "example": "CORRECT: misspelled"
           },
           "tokensUsed": {
             "$ref": "#/components/schemas/Token"
@@ -1366,9 +1015,9 @@
         }
       },
       "RagExtDocRequest": {
-        "title": "RagExtDocRequest",
+        "title": "RAG Request",
         "x-stoplight": {
-          "id": "e4ifegrrje461"
+          "id": "h308ctw14c79g"
         },
         "type": "object",
         "properties": {
@@ -1386,28 +1035,36 @@
       "RagExtDocResponse": {
         "type": "object",
         "x-stoplight": {
-          "id": "5elkmnmg7h372"
+          "id": "6y5uyvmeql5ty"
         },
         "x-examples": {},
+        "title": "Response: RAG use case",
         "properties": {
+          "predictionId": {
+            "$ref": "#/components/schemas/predictionId"
+          },
+          "status": {
+            "$ref": "#/components/schemas/status"
+          },
           "predictions": {
             "type": "array",
             "items": {
               "$ref": "#/components/schemas/RagExtDocResponseTokens"
             }
           }
-        }
+        },
+        "description": ""
       },
       "RagExtDocResponseTokens": {
         "type": "object",
         "x-stoplight": {
-          "id": "zjaxpnvo6m4w7"
+          "id": "g45jjzwtkkd1e"
         },
         "properties": {
           "response": {
             "type": "string",
             "description": "The unparsed response returned from the request.",
-            "example": "ANSWER: \\\"Retrieval Augmented Generation, known as RAG, a framework promising to optimize generative AI.\"\\nSOURCES: [\\\"http://example.com/112\\\"]"
+            "example": "ANSWER: \\\"Retrieval Augmented Generation, known as RAG, a framework promising to optimize generative AI.\\\"\\nSOURCES: [\\\"http://example.com/112\\\"]"
           },
           "tokensUsed": {
             "$ref": "#/components/schemas/Token"
@@ -1415,7 +1072,7 @@
           "answer": {
             "type": "string",
             "x-stoplight": {
-              "id": "6829enopo79zh"
+              "id": "v6sanah1h9duk"
             },
             "description": "The parsed response text from the document. ",
             "example": "Retrieval Augmented Generation, known as RAG, a framework promising to optimize generative AI."
@@ -1423,7 +1080,7 @@
           "sources": {
             "type": "string",
             "x-stoplight": {
-              "id": "mu3bpvfzhqqwc"
+              "id": "b20fctme42z6s"
             },
             "description": "The URL that identifies the source of the document returned in the response. Multiple results may be returned.",
             "example": "http://example.com/112"
@@ -1441,7 +1098,7 @@
       "StandaloneQueryRewriterRequest": {
         "title": "StandaloneQueryRewriterRequest",
         "x-stoplight": {
-          "id": "6vxp8u47dr4kz"
+          "id": "xkmy6mirw6k0g"
         },
         "type": "object",
         "x-examples": {},
@@ -1472,10 +1129,17 @@
       "StandaloneResponse": {
         "type": "object",
         "x-stoplight": {
-          "id": "t4kkdox6cudhr"
+          "id": "lk858s1awuj5r"
         },
         "x-examples": {},
+        "title": "Response: Standalone query rewriter",
         "properties": {
+          "predictionId": {
+            "$ref": "#/components/schemas/predictionId"
+          },
+          "status": {
+            "$ref": "#/components/schemas/status"
+          },
           "predictions": {
             "type": "array",
             "items": {
@@ -1487,7 +1151,7 @@
       "StandaloneResponseTokens": {
         "type": "object",
         "x-stoplight": {
-          "id": "sya4c4o5z2lf8"
+          "id": "2viniqtddbvd1"
         },
         "properties": {
           "response": {
@@ -1503,7 +1167,7 @@
       "SummarizationRequest": {
         "title": "SummarizationRequest",
         "x-stoplight": {
-          "id": "bfyzfea48mfwr"
+          "id": "q6ho79v3mmz6s"
         },
         "type": "object",
         "x-examples": {},
@@ -1534,10 +1198,17 @@
       "SummarizationResponse": {
         "type": "object",
         "x-stoplight": {
-          "id": "vhs16mthiqxrq"
+          "id": "t58p30n714n34"
         },
         "x-examples": {},
+        "title": "Response: Summarization",
         "properties": {
+          "predictionId": {
+            "$ref": "#/components/schemas/predictionId"
+          },
+          "status": {
+            "$ref": "#/components/schemas/status"
+          },
           "predictions": {
             "type": "array",
             "items": {
@@ -1549,7 +1220,7 @@
       "SummarizationResponseTokens": {
         "type": "object",
         "x-stoplight": {
-          "id": "0b1cwn60o37yo"
+          "id": "ie77v9yhqcjxc"
         },
         "properties": {
           "tokensUsed": {
@@ -1584,12 +1255,15 @@
             "description": "The sum of the prompt and completion tokens used in the model.",
             "example": 175
           }
+        },
+        "x-stoplight": {
+          "id": "sfjfh8yzyjzjr"
         }
       },
       "UseCaseConfigKeywordExtraction": {
         "title": "UseCaseConfigKeywordExtraction",
         "x-stoplight": {
-          "id": "k0sxw4jgsd8ch"
+          "id": "ypfxmkgddq9ps"
         },
         "type": "object",
         "properties": {
@@ -1603,25 +1277,10 @@
           }
         }
       },
-      "UseCaseConfigEmbedding": {
-        "title": "UseCaseConfigKeywordEmbedding",
-        "x-stoplight": {
-          "id": "d7welx5e8vctk"
-        },
-        "type": "object",
-        "properties": {
-          "dataType": {
-            "type": "string",
-            "description": "This optional parameter enables model-specific handling in the Prediction API to help improve model accuracy. Use the most applicable fields based on available dataTypes and the dataType value that best aligns with the text sent to the Prediction API.\n\nThe two string values to use for embedding models are:\n\n* `\"dataType\": \"query\"` for the query. For query-to-query pairing, best practice is to use `dataType=query` on both API calls.\n\n* `\"dataType\": \"passage\"` for fields searched at query time.\n\nFor example, if questions and answers from a FAQ are indexed, the value for questions is `\"dataType\": \"query\"` and the value for the answers is `\"dataType\": \"passage\"`. ",
-            "default": "query",
-            "example": "query or passage"
-          }
-        }
-      },
       "UseCaseConfigNer": {
         "title": "UseCaseConfigNer",
         "x-stoplight": {
-          "id": "8r0w6mdyojens"
+          "id": "41rtokh4qfcps"
         },
         "type": "object",
         "properties": {
@@ -1652,7 +1311,7 @@
       "UseCaseConfigPassthrough": {
         "title": "UseCaseConfigPassthrough",
         "x-stoplight": {
-          "id": "ulzwvg0d33hck"
+          "id": "sr25b7exog1bh"
         },
         "type": "object",
         "properties": {
@@ -1663,18 +1322,17 @@
           "dataType": {
             "type": "string",
             "x-stoplight": {
-              "id": "p93jwon9l44nf"
+              "id": "5iw0tyg96y6g9"
             },
             "description": "This optional parameter enables model-specific handling in the Prediction API to help improve model accuracy. Use the most applicable fields based on available dataTypes and the dataType value that best aligns with the text sent to the Prediction API.\n\nThe values for `dataType` in the Passthrough use case are:\n\n* `\"dataType\": \"text\"` - This value is equivalent to `\"useSystemPrompt\": true` and is a pre-defined, generic prompt.\n\n* `\"dataType\": \"raw_prompt\"` - This value is equivalent to `\"useSystemPrompt\": false` and is passed directly to the model or third-party API.\n\n* `\"dataType\": \"json_prompt\"` - This value follows the generics that allow three roles:\n    - `system`\n\n    - `user` \n        - Only the last user message is truncated.\n        - If the API does not support system prompts, the user role is substituted for the system role.\n\n    - `assistant`\n        - If the last message role is `assistant`, it is used as a pre-fill for generation and is the first generated token the model uses. The pre-fill is prepended to the model output, which makes models less verbose and helps enforce specific outputs such as YAML.\n        - The Google VertexAI does not support generation pre-fills, so an exception error is generated.\n\n    - This follows the HuggingFace template contraints at https://huggingface.co/docs/transformers/main/en/chat_templating.\n\n    - Additional `json_prompt` information:\n\n        - Consecutive messages for the same role are merged.\n        - You can paste the information for a hosted model into the `json_prompt` value and change the model name in the stage. ",
-            "example": "json_prompt"
+            "example": "text"
           }
-        },
-        "description": "NOTE: If both `useSystemPrompt` and `dataType` are present, the value in `dataType` is used."
+        }
       },
       "UseCaseConfigRagExtDoc": {
         "title": "UseCaseConfigRagChat",
         "x-stoplight": {
-          "id": "7yf2yx2erom4n"
+          "id": "qp5eq4847udi8"
         },
         "type": "object",
         "properties": {
@@ -1690,24 +1348,10 @@
           }
         }
       },
-      "UseCaseConfigSummarization": {
-        "title": "UseCaseConfigSummarization",
-        "x-stoplight": {
-          "id": "j5hp1d8qrjsgq"
-        },
-        "type": "object",
-        "properties": {
-          "maxWords": {
-            "type": "integer",
-            "example": 100,
-            "description": "This parameter specifies the maximum number of words returned in the summary when generated by the model."
-          }
-        }
-      },
       "UseCaseConfigStandalone": {
         "title": "UseCaseConfigStandalone",
         "x-stoplight": {
-          "id": "l3u3dnrmujdka"
+          "id": "ra60bh957z7j9"
         },
         "type": "object",
         "properties": {
@@ -1718,45 +1362,56 @@
           }
         }
       },
-      "UseCaseConfigClassification": {
-        "title": "UseCaseConfigClassification",
+      "UseCaseConfigSummarization": {
+        "title": "UseCaseConfigSummarization",
         "x-stoplight": {
-          "id": "rifkbhgx6w93i"
+          "id": "g28n8g40ilnep"
         },
         "type": "object",
-        "required": [
-          "labels"
-        ],
         "properties": {
-          "labels": {
-            "type": "array",
-            "x-stoplight": {
-              "id": "joxq5vtj5o4iv"
-            },
-            "description": "This is a list of strings that classify information. \n\nFor example, \n\n\"labels\": [\"Harry Potter\", \"Lord of the Rings\"]",
-            "items": {
-              "x-stoplight": {
-                "id": "8vwj55810hhxb"
-              },
-              "type": "string"
-            }
-          },
-          "topK": {
+          "maxWords": {
             "type": "integer",
-            "x-stoplight": {
-              "id": "1v8l257hyc70p"
-            },
-            "description": "The data structure that identifies the most frequent items in a set of data.\n\nThis is the number of top-scored labels to return.",
-            "example": 10
+            "example": 100,
+            "description": "This parameter specifies the maximum number of words returned in the summary when generated by the model."
+          }
+        }
+      },
+      "predictionId": {
+        "title": "predictionId",
+        "x-stoplight": {
+          "id": "ldm419de0e7o7"
+        },
+        "type": "string",
+        "description": "The universal unique identifier (UUID) returned in the POST request. This UUID is required in the GET request to retrieve results.",
+        "format": "uuid",
+        "example": "fd110486-f168-47c0-a419-1518a4840589"
+      },
+      "status": {
+        "title": "status",
+        "x-stoplight": {
+          "id": "zqgjt7snebql4"
+        },
+        "type": "string",
+        "description": "The current status of the prediction. Allowed values are:\n\n* SUBMITTED - The POST request was successful and the response has returned the `predictionId` and `status` that is used by the GET request.\n\n* READY - The results associated with the `predictionId` are available and ready to be retrieved.\n\n* ERROR - An error was generated when the GET request was sent.\n\n* RETRIEVED - The results associated with the `predicitonId` are returned successfully when the GET request was sent.",
+        "example": "READY"
+      },
+      "POSTresponse": {
+        "title": "POST response",
+        "x-stoplight": {
+          "id": "syk5kziwrvbls"
+        },
+        "type": "object",
+        "description": "This is the response to the POST prediction request submitted for a specific `useCase` and `modelId`. ",
+        "properties": {
+          "predictionId": {
+            "type": "string",
+            "format": "uuid",
+            "description": "The universal unique identifier (UUID) returned in the POST request. This UUID is required in the GET request to retrieve results."
           },
-          "similarityCutoff": {
-            "x-stoplight": {
-              "id": "yoq65m59sgkbr"
-            },
-            "type": "number",
-            "example": 1,
-            "description": "This decimal field is the similarity score cutoff to filter out less similar fields.",
-            "format": "float"
+          "status": {
+            "type": "string",
+            "example": "SUBMITTED",
+            "description": "The current status of the prediction. Allowed values are:\n\n* SUBMITTED - The POST request was successful and the response has returned the `predictionId` and `status` that is used by the GET request.\n\n* ERROR - An error was generated when the GET request was sent.\n\n* READY - The results associated with the `predictionId` are available and ready to be retrieved.\n\n* RETRIEVED - The results associated with the `predicitonId` are returned successfully when the GET request was sent."
           }
         }
       }
@@ -1768,6 +1423,32 @@
         "in": "query"
       }
     },
-    "responses": {}
+    "responses": {
+      "Error": {
+        "description": "The error varies based on the issue encountered regarding the `predictionId` or related information.",
+        "content": {
+          "application/json": {
+            "schema": {
+              "type": "object",
+              "properties": {
+                "predictionId": {
+                  "$ref": "#/components/schemas/predictionId"
+                },
+                "status": {
+                  "$ref": "#/components/schemas/status"
+                },
+                "message": {
+                  "type": "string",
+                  "x-stoplight": {
+                    "id": "ord78ao578txs"
+                  },
+                  "description": "The error generated if the `predictionId` cannot be located or the related information cannot be retrieved. For example, \"System prompt exceeded the maximum number of allowed input tokens.\""
+                }
+              }
+            }
+          }
+        }
+      }
+    }
   }
 }

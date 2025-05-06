@@ -1,0 +1,3105 @@
+{
+  "openapi": "3.0.1",
+  "info": {
+    "title": "Fusion Async Parsing API",
+    "description": "The Async Parsing CRUD API provides async parsing services for parsers. It replaces the Parsers API.\n\nTo configure an index pipeline to use a specific parser, see the Index Pipelines API.",
+    "contact": {
+      "name": "Lucidworks",
+      "url": "www.lucidworks.com",
+      "email": "support@lucidworks.com"
+    },
+    "license": {
+      "name": "License of API",
+      "url": "https://lucidworks.com/legal/developer-license-agreement/"
+    },
+    "version": "main-37530d48-1710278916587"
+  },
+  "externalDocs": {
+    "description": "Lucidworks Documentation",
+    "url": "https://doc.lucidworks.com/"
+  },
+  "servers": [
+    {
+      "url": "https://{FUSION HOST}",
+      "description": "Fusion",
+      "variables": {
+        "FUSION HOST": {
+          "default": "FUSION_HOST",
+          "description": "Your environment host."
+        }
+      }
+    },
+    {
+      "url": "https://{FUSION HOST}/api/apps/{APP_NAME}",
+      "description": "Fusion app",
+      "variables": {
+        "FUSION HOST": {
+          "default": "FUSION_HOST",
+          "description": "Your environment host."
+        },
+        "APP_NAME": {
+          "default": "APP_NAME",
+          "description": "The name of your Fusion application."
+        }
+      }
+    }
+  ],
+  "tags": [
+    {
+      "name": "Failed Documents API",
+      "description": "Endpoints to get details about and remove documents that failed the parsing process."
+    },
+    {
+      "name": "Parsers CRUD API",
+      "description": "Endpoints to perform Create-Read-Update-Delete operations on parsers."
+    },
+    {
+      "name": "Parsers Schema API",
+      "description": "Endpoints to get the schema of parsers."
+    }
+  ],
+  "paths": {
+    "/async-parsing/parsers": {
+      "get": {
+        "tags": [
+          "Parsers CRUD API"
+        ],
+        "summary": "List all parsers",
+        "description": "Get all parser configurations, with optional params to filter the results.",
+        "operationId": "getAllEntities",
+        "parameters": [
+          {
+            "name": "context",
+            "description": "Filter the results by app, formatted as `app:SomeApp`.  Results are empty if there is no matching app.",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "default": []
+            },
+            "example": "app:api-test-app"
+          },
+          {
+            "name": "hidden",
+            "description": "Objects marked as hidden are only returned when this parameter is set to `true`.",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "boolean"
+            },
+            "example": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ParserConfig"
+                  },
+                  "example": [
+                  {
+                      "id": "_system",
+                      "enableMediaTypeDetection": true,
+                      "detectMediaTypeBasedOnExtension": true,
+                      "maxParserDepth": 16,
+                      "maxFieldLength": -1,
+                      "parserStages": [
+                          {
+                              "type": "archive",
+                              "enabled": true,
+                              "mediaTypes": [],
+                              "pathPatterns": [],
+                              "errorHandling": "mark",
+                              "id": "769b0235-2e17-4686-bf47-8ba426f74e69",
+                              "alwaysDetect": true,
+                              "inheritMediaTypes": true,
+                              "ignoredMediaTypes": [],
+                              "outputFieldPrefix": ""
+                          },
+                          {
+                              "type": "csv",
+                              "enabled": true,
+                              "mediaTypes": [],
+                              "pathPatterns": [],
+                              "errorHandling": "mark",
+                              "id": "7b0bf674-07e0-4d64-9e49-b36bee122a06",
+                              "charset": "detect",
+                              "ignoreBOM": false,
+                              "autoDetect": true,
+                              "hasHeaders": true,
+                              "headers": [],
+                              "fillValue": "<FILL>",
+                              "trimWhitespace": true,
+                              "skipEmptyLines": true,
+                              "includeRowNumber": true,
+                              "commentHandling": "ignore",
+                              "maxRowLength": 10485760,
+                              "maxNumColumns": 1000,
+                              "maxColumnChars": 10485760,
+                              "columnHandling": "default",
+                              "inheritMediaTypes": true,
+                              "ignoredMediaTypes": [],
+                              "outputFieldPrefix": ""
+                          },
+                          {
+                              "type": "json",
+                              "enabled": true,
+                              "mediaTypes": [],
+                              "pathPatterns": [],
+                              "errorHandling": "mark",
+                              "id": "677f3546-8d45-495a-9596-5d59c3f3fd22",
+                              "splitArrays": true,
+                              "includePath": false,
+                              "mappings": [],
+                              "listHandling": "multivalued",
+                              "expectJsonL": false,
+                              "maxLineSize": 8192,
+                              "inheritMediaTypes": true,
+                              "ignoredMediaTypes": [],
+                              "outputFieldPrefix": ""
+                          },
+                          {
+                              "type": "xml",
+                              "enabled": true,
+                              "mediaTypes": [],
+                              "pathPatterns": [],
+                              "errorHandling": "mark",
+                              "id": "87f3712c-6a5b-4505-991a-1dfef7e48ebd",
+                              "rootPaths": [
+                                  "/async-parsing/"
+                              ],
+                              "maxSize": 65536,
+                              "listHandling": "multivalued",
+                              "inheritMediaTypes": true,
+                              "ignoredMediaTypes": [],
+                              "outputFieldPrefix": ""
+                          },
+                          {
+                              "type": "html",
+                              "enabled": true,
+                              "mediaTypes": [],
+                              "pathPatterns": [],
+                              "errorHandling": "mark",
+                              "id": "dc7e6cb1-797f-4544-b510-d47ce9e0ee48",
+                              "charset": "detect",
+                              "excludeFilters": [],
+                              "filterBeforeMapping": false,
+                              "filterBeforeExtractingLinks": false,
+                              "mappings": [],
+                              "keepParent": true,
+                              "extractHtmlLinks": false,
+                              "extractBodyText": true,
+                              "metatagsPrefix": "",
+                              "inheritMediaTypes": true,
+                              "ignoredMediaTypes": [],
+                              "outputFieldPrefix": ""
+                          },
+                          {
+                              "type": "text",
+                              "enabled": true,
+                              "mediaTypes": [],
+                              "pathPatterns": [],
+                              "errorHandling": "mark",
+                              "id": "bd914d01-ba1e-4d0d-b1c8-befe5e5f08bb",
+                              "charset": "detect",
+                              "ignoreBOM": false,
+                              "maxLength": 1048576,
+                              "maxLineLength": 1048576,
+                              "outputField": "body",
+                              "splitLines": false,
+                              "skipEmptyLines": false,
+                              "skipHeaderLines": 0,
+                              "trimWhitespace": false,
+                              "commentHandling": "include",
+                              "comment": "#",
+                              "commentField": "comment",
+                              "inheritMediaTypes": true,
+                              "ignoredMediaTypes": [],
+                              "outputFieldPrefix": ""
+                          },
+                          {
+                              "type": "tika",
+                              "enabled": true,
+                              "mediaTypes": [],
+                              "pathPatterns": [],
+                              "errorHandling": "mark",
+                              "id": "61bcd6a9-a95c-48ab-94c7-74503deffe4a",
+                              "includeImages": false,
+                              "flattenCompound": true,
+                              "addFailedDocs": false,
+                              "addOriginalContent": false,
+                              "contentEncoding": "binary",
+                              "returnXml": false,
+                              "keepOriginalStructure": false,
+                              "extractHtmlLinks": false,
+                              "extractOtherLinks": false,
+                              "excludeContentTypes": [],
+                              "zipBombCompressionRatio": 200,
+                              "zipBombMaxDepth": 200,
+                              "zipBombMaxPackageEntryDepth": 20,
+                              "inheritMediaTypes": true,
+                              "ignoredMediaTypes": [],
+                              "outputFieldPrefix": ""
+                          },
+                          {
+                              "type": "fallback",
+                              "enabled": true,
+                              "mediaTypes": [],
+                              "pathPatterns": [],
+                              "errorHandling": "mark",
+                              "id": "c3494af0-78c7-4374-82d2-3d2f735af140",
+                              "metadataOnly": false,
+                              "maxBytesToKeep": 1048576,
+                              "inheritMediaTypes": true,
+                              "ignoredMediaTypes": [],
+                              "outputFieldPrefix": ""
+                          }
+                      ]
+                  },
+                  {
+                      "id": "solr-update-parser",
+                      "enableMediaTypeDetection": true,
+                      "detectMediaTypeBasedOnExtension": true,
+                      "maxParserDepth": 16,
+                      "maxFieldLength": -1,
+                      "parserStages": [
+                          {
+                              "type": "solr-update",
+                              "enabled": true,
+                              "mediaTypes": [],
+                              "pathPatterns": [],
+                              "errorHandling": "mark",
+                              "id": "afa870ac-7829-426e-812e-d966e383c8e1",
+                              "enableXml": true,
+                              "enableJson": true,
+                              "enableCsv": true,
+                              "inheritMediaTypes": true,
+                              "ignoredMediaTypes": [],
+                              "outputFieldPrefix": ""
+                          }
+                      ]
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Parsers CRUD API"
+        ],
+        "summary": "Create a parser",
+        "description": "Create a new parser configuration from JSON",
+        "operationId": "createEntity",
+        "parameters": [
+          {
+            "name": "context",
+            "description": "The app to which this parser belongs, formatted as `app:SomeApp`.  Any other comma-separated contexts in the context parameter are allowed but ignored.",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "example": "app:api-test-app"
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ParserConfig"
+              },
+              "example": {
+                "id": "my-test-parser",
+                "enableMediaTypeDetection": true,
+                "detectMediaTypeBasedOnExtension": true,
+                "maxParserDepth": 16,
+                "maxFieldLength": -1,
+                "parserStages": [
+                    {
+                        "type": "json",
+                        "enabled": true,
+                        "mediaTypes": [],
+                        "pathPatterns": [],
+                        "errorHandling": "mark",
+                        "id": "f08ef428-ed61-42b1-acd1-8f0ae8fb916d",
+                        "splitArrays": true,
+                        "includePath": false,
+                        "mappings": [],
+                        "listHandling": "multivalued",
+                        "expectJsonL": false,
+                        "maxLineSize": 8192,
+                        "inheritMediaTypes": true,
+                        "ignoredMediaTypes": [],
+                        "outputFieldPrefix": ""
+                    },
+                    {
+                        "type": "text",
+                        "enabled": true,
+                        "charset": "detect",
+                        "ignoreBOM": false,
+                        "maxLength": 1048576,
+                        "maxLineLength": 1048576,
+                        "outputField": "body",
+                        "splitLines": false,
+                        "skipEmptyLines": false,
+                        "skipHeaderLines": 0,
+                        "trimWhitespace": false,
+                        "commentHandling": "include",
+                        "comment": "#",
+                        "commentField": "comment",
+                        "inheritMediaTypes": true
+                    },
+                    {
+                        "type": "fallback",
+                        "enabled": true,
+                        "errorHandling": "mark",
+                        "metadataOnly": false,
+                        "maxBytesToKeep": 1048576,
+                        "inheritMediaTypes": true
+                    }
+                ]
+              }            
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "description": "Created",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/ParserConfig"
+                },
+                "example": {
+                  "id": "my-test-parser",
+                  "enableMediaTypeDetection": true,
+                  "detectMediaTypeBasedOnExtension": true,
+                  "maxParserDepth": 16,
+                  "maxFieldLength": -1,
+                  "parserStages": [
+                      {
+                          "type": "json",
+                          "enabled": true,
+                          "mediaTypes": [],
+                          "pathPatterns": [],
+                          "errorHandling": "mark",
+                          "id": "f08ef428-ed61-42b1-acd1-8f0ae8fb916d",
+                          "splitArrays": true,
+                          "includePath": false,
+                          "mappings": [],
+                          "listHandling": "multivalued",
+                          "expectJsonL": false,
+                          "maxLineSize": 8192,
+                          "inheritMediaTypes": true,
+                          "ignoredMediaTypes": [],
+                          "outputFieldPrefix": ""
+                      },
+                      {
+                          "type": "text",
+                          "enabled": true,
+                          "mediaTypes": [],
+                          "pathPatterns": [],
+                          "errorHandling": "mark",
+                          "id": "b3f1fabb-6730-41f8-adbc-cde05c604a06",
+                          "charset": "detect",
+                          "ignoreBOM": false,
+                          "maxLength": 1048576,
+                          "maxLineLength": 1048576,
+                          "outputField": "body",
+                          "splitLines": false,
+                          "skipEmptyLines": false,
+                          "skipHeaderLines": 0,
+                          "trimWhitespace": false,
+                          "commentHandling": "include",
+                          "comment": "#",
+                          "commentField": "comment",
+                          "inheritMediaTypes": true,
+                          "ignoredMediaTypes": [],
+                          "outputFieldPrefix": ""
+                      },
+                      {
+                          "type": "fallback",
+                          "enabled": true,
+                          "mediaTypes": [],
+                          "pathPatterns": [],
+                          "errorHandling": "mark",
+                          "id": "a8c6d6e2-ce79-426a-99d5-532ac9ff043e",
+                          "metadataOnly": false,
+                          "maxBytesToKeep": 1048576,
+                          "inheritMediaTypes": true,
+                          "ignoredMediaTypes": [],
+                          "outputFieldPrefix": ""
+                      }
+                  ]
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/async-parsing/parsers/{id}": {
+      "get": {
+        "tags": [
+          "Parsers CRUD API"
+        ],
+        "summary": "Get a parser",
+        "description": "Fetch the parser configuration as JSON by unique ID.",
+        "operationId": "getEntity",
+        "parameters": [
+          {
+            "name": "id",
+            "description": "The ID of the parser to fetch.",
+            "in": "path",
+            "required": true,
+            "schema":{
+              "type": "string"
+            },
+            "example": "solr-update-parser"
+          },
+          {
+            "name": "context",
+            "description": "Validates which app the entity should be part of by specifying, for example, `app:SomeApp`. If the entity is not part of the app, this request fails.  Any other comma-separated contexts in the context parameter are allowed but ignored.",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "example": "app:api-test-app"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/ParserConfig"
+                },
+                "example": {
+                  "id": "solr-update-parser",
+                  "enableMediaTypeDetection": true,
+                  "detectMediaTypeBasedOnExtension": true,
+                  "maxParserDepth": 16,
+                  "maxFieldLength": -1,
+                  "parserStages": [
+                      {
+                          "type": "solr-update",
+                          "enabled": true,
+                          "mediaTypes": [],
+                          "pathPatterns": [],
+                          "errorHandling": "mark",
+                          "id": "0a61cc5c-aa0c-4e1a-8099-2c5d30d64996",
+                          "enableXml": true,
+                          "enableJson": true,
+                          "enableCsv": true,
+                          "inheritMediaTypes": true,
+                          "ignoredMediaTypes": [],
+                          "outputFieldPrefix": ""
+                      }
+                  ]
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "Parsers CRUD API"
+        ],
+        "summary": "Update a parser",
+        "description": "Update a parser configuration from JSON.",
+        "operationId": "updateEntity",
+        "parameters": [
+          {
+            "name": "id",
+            "description": "The ID of the parser to update.",
+            "in": "path",
+            "required": true,
+            "schema":{
+              "type": "string"
+            },
+            "example": "solr-update-parser"
+          },
+          {
+            "name": "ifMatch",
+            "description": "An entity tag to match",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "$ref": "#/components/schemas/IfMatchHeader"
+            }
+          },
+          {
+            "name": "context",
+            "description": "Validates which app the entity should be part of by specifying, for example, `app:SomeApp`. If the entity is not part of the app, this request fails.  Any other comma-separated contexts in the context parameter are allowed but ignored.",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "example": "app:api-test-app"
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ParserConfig"
+              },
+              "example": {
+                "id": "solr-update-parser",
+                "maxParserDepth": 8
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/ParserConfig"
+                },
+                "example": {
+                  "id": "solr-update-parser",
+                  "enableMediaTypeDetection": true,
+                  "detectMediaTypeBasedOnExtension": true,
+                  "maxParserDepth": 8,
+                  "maxFieldLength": 1048576,
+                  "parserStages": []
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Parsers CRUD API"
+        ],
+        "summary": "Delete a parser",
+        "description": "Delete a parser configuration by unique ID.",
+        "operationId": "deleteEntity",
+        "parameters": [
+          {
+            "name": "id",
+            "description": "The ID of the parser to delete.",
+            "in": "path",
+            "required": true,
+            "schema":{
+              "type": "string"
+            },
+            "example": "api-test-parser"
+          },
+          {
+            "name": "ifMatch",
+            "description": "An entity tag to match",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "$ref": "#/components/schemas/IfMatchHeader"
+            }
+          },
+          {
+            "name": "context",
+            "description": "Validates which app the entity should be part of by specifying, for example, `app:SomeApp`. If the entity is not part of the app, this request fails.  Any other comma-separated contexts in the context parameter are allowed but ignored.",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "No Content"
+          }
+        }
+      }
+    },
+    "/async-parsing/failed-datasource": {
+      "get": {
+        "tags": [
+          "Failed Documents API"
+        ],
+        "summary": "List datasources with failed documents",
+        "description": "Get a list of datasource IDs that have failed documents",
+        "operationId": "getDataSourcesWithFailedDocs",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "x-internal": true
+      }
+    },
+    "/async-parsing/failed-datasource/{datasourceId}": {
+      "get": {
+        "tags": [
+          "Failed Documents API"
+        ],
+        "summary": "List all failed documents",
+        "description": "Returns a list of failed documents for a given datasource ID",
+        "operationId": "getFailedDocsForDatasource",
+        "parameters": [
+          {
+            "name": "datasourceId",
+            "description": "The unique ID for the datasource that produced the failed document.",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Document"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "x-internal": true
+      },
+      "delete": {
+        "tags": [
+          "Failed Documents API"
+        ],
+        "summary": "Delete all failed documents",
+        "description": "Delete all failed documents for a given datasource ID.",
+        "operationId": "deleteFailedDocumentsInDatasource",
+        "parameters": [
+          {
+            "name": "datasourceId",
+            "description": "The unique ID for the datasource that produced the failed document.",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          }
+        },
+        "x-internal": true
+      }
+    },
+    "/async-parsing/failed-datasource/{datasourceId}/id/{id}": {
+      "get": {
+        "tags": [
+          "Failed Documents API"
+        ],
+        "summary": "Get failed document details",
+        "description": "Get details of a failed document by datasource ID and document ID.",
+        "operationId": "getFailedDocument",
+        "parameters": [
+          {
+            "name": "datasourceId",
+            "description": "The unique ID for the datasource that produced the failed document.",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "id",
+            "description": "The unique ID for the failed document.",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Document"
+                }
+              }
+            }
+          }
+        },
+        "x-internal": true
+      },
+      "delete": {
+        "tags": [
+          "Failed Documents API"
+        ],
+        "summary": "Delete a failed document",
+        "description": "Delete a failed document by datasource ID and document ID.",
+        "operationId": "deleteFailedDocument",
+        "parameters": [
+          {
+            "name": "datasourceId",
+            "description": "The unique ID for the datasource that produced the failed document.",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "id",
+            "description": "The unique ID for the failed document.",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          }
+        },
+        "x-internal": true
+      }
+    },
+    "/async-parsing/failed-datasource/{datasourceId}/id/{id}/download": {
+      "get": {
+        "tags": [
+          "Failed Documents API"
+        ],
+        "summary": "Get a failed document",
+        "description": "Download a failed document by datasource ID and document ID.",
+        "operationId": "downloadFailedDocument",
+        "parameters": [
+          {
+            "name": "datasourceId",
+            "description": "The unique ID for the datasource that produced the failed document.",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "id",
+            "description": "The unique ID for the failed document.",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/DataBuffer"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "x-internal": true
+      }
+    },
+    "/async-parsing/_schema/parsers": {
+      "get": {
+        "tags": [
+          "Parsers Schema API"
+        ],
+        "summary": "Get the JSON schema",
+        "description": "Fetch the JSON schema for parsers API.",
+        "operationId": "getSchema",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ObjectType"
+                },
+                "example": {
+                  "type": "object",
+                  "title": "Parser Configuration",
+                  "description": "List of parser stages to use for handling incoming streams",
+                  "required": [
+                      "id"
+                  ],
+                  "properties": {
+                      "id": {
+                          "type": "string",
+                          "title": "Parser ID",
+                          "default": "182d49be-fc4b-4afe-9657-4bbaef34569d",
+                          "maxLength": 128,
+                          "pattern": "^[A-Za-z0-9_\\-]+$"
+                      },
+                      "idField": {
+                          "type": "string",
+                          "title": "Document ID Source Field",
+                          "description": "A document field to use as the document ID"
+                      },
+                      "enableMediaTypeDetection": {
+                          "type": "boolean",
+                          "title": "Enable automatic media type detection",
+                          "description": "Automatically detect the Content-Type of each document; disable this to use `application/octet-stream`.",
+                          "default": true
+                      },
+                      "detectMediaTypeBasedOnExtension": {
+                          "type": "boolean",
+                          "title": "Detect media type based on extension",
+                          "description": "Use file extension to detect Content-Type of a document before attempting to detect type based on content.",
+                          "default": true
+                      },
+                      "maxParserDepth": {
+                          "type": "integer",
+                          "title": "Maximum Parser Recursion Depth",
+                          "description": "Maximum number of times a parser may recurse over any document before proceeding to the next parser.",
+                          "default": 16,
+                          "minimum": 0,
+                          "exclusiveMinimum": false
+                      },
+                      "maxFieldLength": {
+                          "type": "integer",
+                          "title": "Maximum Document Field Length",
+                          "description": "Maximum allowed document field length in bytes. Field values exceeding this limit will be truncated.",
+                          "default": 1048576,
+                          "maximum": 2147483647,
+                          "exclusiveMaximum": false,
+                          "minimum": -1,
+                          "exclusiveMinimum": false
+                      },
+                      "parserStages": {
+                          "type": "array",
+                          "items": {
+                              "type": "object",
+                              "properties": {},
+                              "oneOf": [
+                                  {
+                                      "type": "object",
+                                      "title": "Apache Tika Container Parser",
+                                      "description": "Parse documents using the tika-server container 'only when async-parsing is configured.' This parser is a wrapper around the tika-server REST API. It sends the document to the tika-server container and receives the parsed content.",
+                                      "required": [
+                                          "type"
+                                      ],
+                                      "properties": {
+                                          "id": {
+                                              "type": "string",
+                                              "title": "Parser ID",
+                                              "default": "c180a1f1-f4aa-4193-8b55-55367c971f18"
+                                          },
+                                          "label": {
+                                              "type": "string",
+                                              "title": "Label",
+                                              "description": "A label for this Parser Stage",
+                                              "maxLength": 255
+                                          },
+                                          "enabled": {
+                                              "type": "boolean",
+                                              "title": "Enable this Parser Stage",
+                                              "default": true
+                                          },
+                                          "mediaTypes": {
+                                              "type": "array",
+                                              "title": "Media Types to match",
+                                              "description": "Documents with a media type on this list will be matched by this parser stage. See inheritMediaTypes / use default media types for more.",
+                                              "items": {
+                                                  "type": "string",
+                                                  "pattern": "^[^\/]+\/[^\/]+$",
+                                                  "format": "rfc2646"
+                                              }
+                                          },
+                                          "inheritMediaTypes": {
+                                              "type": "boolean",
+                                              "title": "Match default media types in this Parser Stage",
+                                              "description": "Each parser stage has a built-in list of media types it handles by default. If this setting is true, that list will be used along with any optional additional types provided in the mediaTypes list. If this setting is false, this stage will only be selected for media types in the mediaTypes list, and the mediaTypes list becomes a mandatory property which must have at least one valid media type.",
+                                              "default": true
+                                          },
+                                          "ignoredMediaTypes": {
+                                              "type": "array",
+                                              "title": "Media Types to ignore",
+                                              "description": "Documents with a media type on this list will be not be processed by this parser stage.",
+                                              "items": {
+                                                  "type": "string",
+                                                  "pattern": "^[^\/]+\/[^\/]+$",
+                                                  "format": "rfc2646"
+                                              }
+                                          },
+                                          "pathPatterns": {
+                                              "type": "array",
+                                              "title": "File names to parse",
+                                              "description": "Specify a file name or pattern that must be matched for this parser stage to run. Forward slashes (\"/\") are used to join names of files inside archives with the archive name.",
+                                              "items": {
+                                                  "type": "object",
+                                                  "properties": {
+                                                      "syntax": {
+                                                          "type": "string",
+                                                          "title": "Pattern type",
+                                                          "description": "glob uses bash shell-style wildcards; regex uses Java (PCRE-style) regex",
+                                                          "enum": [
+                                                              "glob",
+                                                              "regex"
+                                                          ],
+                                                          "default": "glob"
+                                                      },
+                                                      "pattern": {
+                                                          "type": "string",
+                                                          "title": "File name or pattern",
+                                                          "description": "e.g.: \"z.txt\" or \"*.md\" or \"/a/*/b/f.txt\" for glob; \"z.txt$\" or \".*\\.txt$\" or \"^/a/[^\/]*/b/f.txt$\" for regex"
+                                                      }
+                                                  }
+                                              }
+                                          },
+                                          "errorHandling": {
+                                              "type": "string",
+                                              "title": "Error Handling",
+                                              "enum": [
+                                                  "ignore",
+                                                  "log",
+                                                  "fail",
+                                                  "mark"
+                                              ],
+                                              "default": "mark"
+                                          },
+                                          "outputFieldPrefix": {
+                                              "type": "string",
+                                              "title": "Prefix parsed fields with",
+                                              "description": "Fields extracted by this parser will be prefixed with this string. The remainder of the field name will be as detected in the stream",
+                                              "maxLength": 20,
+                                              "pattern": "^$|^[A-Za-z_][A-Za-z0-9_\\-\\.]+$"
+                                          },
+                                          "includeImages": {
+                                              "type": "boolean",
+                                              "title": "Include images",
+                                              "default": false
+                                          },
+                                          "excludeContentTypes": {
+                                              "type": "array",
+                                              "title": "Content types to exclude",
+                                              "description": "List of content types to exclude from parsing",
+                                              "items": {
+                                                  "type": "string",
+                                                  "minLength": 1
+                                              }
+                                          },
+                                          "embeddedDocumentHandling": {
+                                              "type": "string",
+                                              "title": "Embedded document handling",
+                                              "description": "Controls the handling of embedded documents: generate a different one each time, merge all in a single document or skip embedded documents",
+                                              "enum": [
+                                                  "split_documents",
+                                                  "merge_documents",
+                                                  "skip_embedded_documents"
+                                              ],
+                                              "default": "split_documents"
+                                          },
+                                          "addImageOriginalContent": {
+                                              "type": "boolean",
+                                              "title": "Add original image content (raw bytes)",
+                                              "description": "For images only. When true, the original image content is added to the document. Default is false.",
+                                              "default": false
+                                          },
+                                          "type": {
+                                              "type": "string",
+                                              "enum": [
+                                                  "tika-container"
+                                              ],
+                                              "default": "tika-container"
+                                          }
+                                      },
+                                      "additionalProperties": false,
+                                      "category": "Other",
+                                      "categoryPriority": 1,
+                                      "unsafe": false
+                                  },
+                                  {
+                                      "type": "object",
+                                      "title": "Solr Update",
+                                      "description": "Parser for Solr \"update\" messages (xml, json, csv and javabin).",
+                                      "required": [
+                                          "type"
+                                      ],
+                                      "properties": {
+                                          "id": {
+                                              "type": "string",
+                                              "title": "Parser ID",
+                                              "default": "467a05c9-035d-4db4-8288-b63b814ac016"
+                                          },
+                                          "label": {
+                                              "type": "string",
+                                              "title": "Label",
+                                              "description": "A label for this Parser Stage",
+                                              "maxLength": 255
+                                          },
+                                          "enabled": {
+                                              "type": "boolean",
+                                              "title": "Enable this Parser Stage",
+                                              "default": true
+                                          },
+                                          "mediaTypes": {
+                                              "type": "array",
+                                              "title": "Media Types to match",
+                                              "description": "Documents with a media type on this list will be matched by this parser stage. See inheritMediaTypes / use default media types for more.",
+                                              "items": {
+                                                  "type": "string",
+                                                  "pattern": "^[^\/]+\/[^\/]+$",
+                                                  "format": "rfc2646"
+                                              }
+                                          },
+                                          "inheritMediaTypes": {
+                                              "type": "boolean",
+                                              "title": "Match default media types in this Parser Stage",
+                                              "description": "Each parser stage has a built-in list of media types it handles by default. If this setting is true, that list will be used along with any optional additional types provided in the mediaTypes list. If this setting is false, this stage will only be selected for media types in the mediaTypes list, and the mediaTypes list becomes a mandatory property which must have at least one valid media type.",
+                                              "default": true
+                                          },
+                                          "ignoredMediaTypes": {
+                                              "type": "array",
+                                              "title": "Media Types to ignore",
+                                              "description": "Documents with a media type on this list will be not be processed by this parser stage.",
+                                              "items": {
+                                                  "type": "string",
+                                                  "pattern": "^[^\/]+\/[^\/]+$",
+                                                  "format": "rfc2646"
+                                              }
+                                          },
+                                          "pathPatterns": {
+                                              "type": "array",
+                                              "title": "File names to parse",
+                                              "description": "Specify a file name or pattern that must be matched for this parser stage to run. Forward slashes (\"/\") are used to join names of files inside archives with the archive name.",
+                                              "items": {
+                                                  "type": "object",
+                                                  "properties": {
+                                                      "syntax": {
+                                                          "type": "string",
+                                                          "title": "Pattern type",
+                                                          "description": "glob uses bash shell-style wildcards; regex uses Java (PCRE-style) regex",
+                                                          "enum": [
+                                                              "glob",
+                                                              "regex"
+                                                          ],
+                                                          "default": "glob"
+                                                      },
+                                                      "pattern": {
+                                                          "type": "string",
+                                                          "title": "File name or pattern",
+                                                          "description": "e.g.: \"z.txt\" or \"*.md\" or \"/a/*/b/f.txt\" for glob; \"z.txt$\" or \".*\\.txt$\" or \"^/a/[^\/]*/b/f.txt$\" for regex"
+                                                      }
+                                                  }
+                                              }
+                                          },
+                                          "errorHandling": {
+                                              "type": "string",
+                                              "title": "Error Handling",
+                                              "enum": [
+                                                  "ignore",
+                                                  "log",
+                                                  "fail",
+                                                  "mark"
+                                              ],
+                                              "default": "mark"
+                                          },
+                                          "outputFieldPrefix": {
+                                              "type": "string",
+                                              "title": "Prefix parsed fields with",
+                                              "description": "Fields extracted by this parser will be prefixed with this string. The remainder of the field name will be as detected in the stream",
+                                              "maxLength": 20,
+                                              "pattern": "^$|^[A-Za-z_][A-Za-z0-9_\\-\\.]+$"
+                                          },
+                                          "enableCsv": {
+                                              "type": "boolean",
+                                              "title": "Enable CSV",
+                                              "description": "Enables the parser to recognize and parse, CSV based Solr update messages.",
+                                              "default": true
+                                          },
+                                          "enableXml": {
+                                              "type": "boolean",
+                                              "title": "Enable XML",
+                                              "description": "Enables the parser to recognize and parse, XML based Solr update messages.",
+                                              "default": true
+                                          },
+                                          "enableJson": {
+                                              "type": "boolean",
+                                              "title": "Enable JSON",
+                                              "description": "Enables the parser to recognize and parse, JSON based Solr update messages.",
+                                              "default": true
+                                          },
+                                          "type": {
+                                              "type": "string",
+                                              "enum": [
+                                                  "solr-update"
+                                              ],
+                                              "default": "solr-update"
+                                          }
+                                      },
+                                      "additionalProperties": false,
+                                      "category": "Other",
+                                      "categoryPriority": 1,
+                                      "unsafe": false
+                                  },
+                                  {
+                                      "type": "object",
+                                      "title": "XML",
+                                      "description": "Parse xml content with optional splitting",
+                                      "required": [
+                                          "type"
+                                      ],
+                                      "properties": {
+                                          "id": {
+                                              "type": "string",
+                                              "title": "Parser ID",
+                                              "default": "bb871790-9481-4372-adb3-3962faa132b3"
+                                          },
+                                          "label": {
+                                              "type": "string",
+                                              "title": "Label",
+                                              "description": "A label for this Parser Stage",
+                                              "maxLength": 255
+                                          },
+                                          "enabled": {
+                                              "type": "boolean",
+                                              "title": "Enable this Parser Stage",
+                                              "default": true
+                                          },
+                                          "mediaTypes": {
+                                              "type": "array",
+                                              "title": "Media Types to match",
+                                              "description": "Documents with a media type on this list will be matched by this parser stage. See inheritMediaTypes / use default media types for more.",
+                                              "items": {
+                                                  "type": "string",
+                                                  "pattern": "^[^\/]+\/[^\/]+$",
+                                                  "format": "rfc2646"
+                                              }
+                                          },
+                                          "inheritMediaTypes": {
+                                              "type": "boolean",
+                                              "title": "Match default media types in this Parser Stage",
+                                              "description": "Each parser stage has a built-in list of media types it handles by default. If this setting is true, that list will be used along with any optional additional types provided in the mediaTypes list. If this setting is false, this stage will only be selected for media types in the mediaTypes list, and the mediaTypes list becomes a mandatory property which must have at least one valid media type.",
+                                              "default": true
+                                          },
+                                          "ignoredMediaTypes": {
+                                              "type": "array",
+                                              "title": "Media Types to ignore",
+                                              "description": "Documents with a media type on this list will be not be processed by this parser stage.",
+                                              "items": {
+                                                  "type": "string",
+                                                  "pattern": "^[^\/]+\/[^\/]+$",
+                                                  "format": "rfc2646"
+                                              }
+                                          },
+                                          "pathPatterns": {
+                                              "type": "array",
+                                              "title": "File names to parse",
+                                              "description": "Specify a file name or pattern that must be matched for this parser stage to run. Forward slashes (\"/\") are used to join names of files inside archives with the archive name.",
+                                              "items": {
+                                                  "type": "object",
+                                                  "properties": {
+                                                      "syntax": {
+                                                          "type": "string",
+                                                          "title": "Pattern type",
+                                                          "description": "glob uses bash shell-style wildcards; regex uses Java (PCRE-style) regex",
+                                                          "enum": [
+                                                              "glob",
+                                                              "regex"
+                                                          ],
+                                                          "default": "glob"
+                                                      },
+                                                      "pattern": {
+                                                          "type": "string",
+                                                          "title": "File name or pattern",
+                                                          "description": "e.g.: \"z.txt\" or \"*.md\" or \"/a/*/b/f.txt\" for glob; \"z.txt$\" or \".*\\.txt$\" or \"^/a/[^\/]*/b/f.txt$\" for regex"
+                                                      }
+                                                  }
+                                              }
+                                          },
+                                          "errorHandling": {
+                                              "type": "string",
+                                              "title": "Error Handling",
+                                              "enum": [
+                                                  "ignore",
+                                                  "log",
+                                                  "fail",
+                                                  "mark"
+                                              ],
+                                              "default": "mark"
+                                          },
+                                          "outputFieldPrefix": {
+                                              "type": "string",
+                                              "title": "Prefix parsed fields with",
+                                              "description": "Fields extracted by this parser will be prefixed with this string. The remainder of the field name will be as detected in the stream",
+                                              "maxLength": 20,
+                                              "pattern": "^$|^[A-Za-z_][A-Za-z0-9_\\-\\.]+$"
+                                          },
+                                          "rootPaths": {
+                                              "type": "array",
+                                              "title": "Root paths",
+                                              "description": "Read XML elements that can be found on specified XML paths and parse them into separate documents",
+                                              "default": [
+                                                  "/"
+                                              ],
+                                              "items": {
+                                                  "type": "string"
+                                              }
+                                          },
+                                          "maxSize": {
+                                              "type": "integer",
+                                              "title": "Maximum output size for each document",
+                                              "description": "Maximum number of XML characters, excluding extra whitespace, that will be processed from each source document node to produce an output document",
+                                              "default": 65536
+                                          },
+                                          "listHandling": {
+                                              "type": "string",
+                                              "title": "XML List handling",
+                                              "description": "Create a single multivalued field containing all items, or a separate index-numbered field per list item?",
+                                              "enum": [
+                                                  "multivalued",
+                                                  "index_numbered"
+                                              ],
+                                              "default": "multivalued",
+                                              "hints": [
+                                                  "advanced"
+                                              ]
+                                          },
+                                          "type": {
+                                              "type": "string",
+                                              "enum": [
+                                                  "xml"
+                                              ],
+                                              "default": "xml"
+                                          }
+                                      },
+                                      "additionalProperties": false,
+                                      "category": "Other",
+                                      "categoryPriority": 1,
+                                      "unsafe": false
+                                  },
+                                  {
+                                      "type": "object",
+                                      "title": "Grok",
+                                      "description": "Parses semi structured content using Grok patterns (like Regex, see https://github.com/thekrakken/java-grok).  This is often ideal for understanding log files, but can be used for other purposes.",
+                                      "required": [
+                                          "charset",
+                                          "ignoreBOM",
+                                          "type"
+                                      ],
+                                      "properties": {
+                                          "id": {
+                                              "type": "string",
+                                              "title": "Parser ID",
+                                              "default": "59174804-dcb2-4d9e-86bf-92762866e44a"
+                                          },
+                                          "label": {
+                                              "type": "string",
+                                              "title": "Label",
+                                              "description": "A label for this Parser Stage",
+                                              "maxLength": 255
+                                          },
+                                          "enabled": {
+                                              "type": "boolean",
+                                              "title": "Enable this Parser Stage",
+                                              "default": true
+                                          },
+                                          "mediaTypes": {
+                                              "type": "array",
+                                              "title": "Media Types to match",
+                                              "description": "Documents with a media type on this list will be matched by this parser stage. See inheritMediaTypes / use default media types for more.",
+                                              "items": {
+                                                  "type": "string",
+                                                  "pattern": "^[^\/]+\/[^\/]+$",
+                                                  "format": "rfc2646"
+                                              }
+                                          },
+                                          "inheritMediaTypes": {
+                                              "type": "boolean",
+                                              "title": "Match default media types in this Parser Stage",
+                                              "description": "Each parser stage has a built-in list of media types it handles by default. If this setting is true, that list will be used along with any optional additional types provided in the mediaTypes list. If this setting is false, this stage will only be selected for media types in the mediaTypes list, and the mediaTypes list becomes a mandatory property which must have at least one valid media type.",
+                                              "default": true
+                                          },
+                                          "ignoredMediaTypes": {
+                                              "type": "array",
+                                              "title": "Media Types to ignore",
+                                              "description": "Documents with a media type on this list will be not be processed by this parser stage.",
+                                              "items": {
+                                                  "type": "string",
+                                                  "pattern": "^[^\/]+\/[^\/]+$",
+                                                  "format": "rfc2646"
+                                              }
+                                          },
+                                          "pathPatterns": {
+                                              "type": "array",
+                                              "title": "File names to parse",
+                                              "description": "Specify a file name or pattern that must be matched for this parser stage to run. Forward slashes (\"/\") are used to join names of files inside archives with the archive name.",
+                                              "items": {
+                                                  "type": "object",
+                                                  "properties": {
+                                                      "syntax": {
+                                                          "type": "string",
+                                                          "title": "Pattern type",
+                                                          "description": "glob uses bash shell-style wildcards; regex uses Java (PCRE-style) regex",
+                                                          "enum": [
+                                                              "glob",
+                                                              "regex"
+                                                          ],
+                                                          "default": "glob"
+                                                      },
+                                                      "pattern": {
+                                                          "type": "string",
+                                                          "title": "File name or pattern",
+                                                          "description": "e.g.: \"z.txt\" or \"*.md\" or \"/a/*/b/f.txt\" for glob; \"z.txt$\" or \".*\\.txt$\" or \"^/a/[^\/]*/b/f.txt$\" for regex"
+                                                      }
+                                                  }
+                                              }
+                                          },
+                                          "errorHandling": {
+                                              "type": "string",
+                                              "title": "Error Handling",
+                                              "enum": [
+                                                  "ignore",
+                                                  "log",
+                                                  "fail",
+                                                  "mark"
+                                              ],
+                                              "default": "mark"
+                                          },
+                                          "outputFieldPrefix": {
+                                              "type": "string",
+                                              "title": "Prefix parsed fields with",
+                                              "description": "Fields extracted by this parser will be prefixed with this string. The remainder of the field name will be as detected in the stream",
+                                              "maxLength": 20,
+                                              "pattern": "^$|^[A-Za-z_][A-Za-z0-9_\\-\\.]+$"
+                                          },
+                                          "charset": {
+                                              "type": "string",
+                                              "title": "Character Set",
+                                              "description": "Example: \"UTF-8\"",
+                                              "default": "detect"
+                                          },
+                                          "ignoreBOM": {
+                                              "type": "boolean",
+                                              "title": "Ignore BOM",
+                                              "description": "Ignore Byte-Order Mark (BOM) if present and always use the configured character set. When set to false a valid BOM character set overrides the configured default character set.",
+                                              "default": false
+                                          },
+                                          "grokDefinition": {
+                                              "type": "string",
+                                              "title": "Grok Definition",
+                                              "description": "Custom Grok definition",
+                                              "hints": [
+                                                  "code/javascript"
+                                              ]
+                                          },
+                                          "grokPattern": {
+                                              "type": "string",
+                                              "title": "Grok Pattern",
+                                              "description": "Grok parsing pattern",
+                                              "hints": [
+                                                  "code/javascript"
+                                              ]
+                                          },
+                                          "type": {
+                                              "type": "string",
+                                              "enum": [
+                                                  "grok"
+                                              ],
+                                              "default": "grok"
+                                          }
+                                      },
+                                      "additionalProperties": false,
+                                      "category": "Other",
+                                      "categoryPriority": 1,
+                                      "unsafe": false
+                                  },
+                                  {
+                                      "type": "object",
+                                      "title": "CSV",
+                                      "description": "Parse CSV content",
+                                      "required": [
+                                          "charset",
+                                          "ignoreBOM",
+                                          "type"
+                                      ],
+                                      "properties": {
+                                          "id": {
+                                              "type": "string",
+                                              "title": "Parser ID",
+                                              "default": "2982cdab-c07e-4a3d-ae9c-f774f48a40c6"
+                                          },
+                                          "label": {
+                                              "type": "string",
+                                              "title": "Label",
+                                              "description": "A label for this Parser Stage",
+                                              "maxLength": 255
+                                          },
+                                          "enabled": {
+                                              "type": "boolean",
+                                              "title": "Enable this Parser Stage",
+                                              "default": true
+                                          },
+                                          "mediaTypes": {
+                                              "type": "array",
+                                              "title": "Media Types to match",
+                                              "description": "Documents with a media type on this list will be matched by this parser stage. See inheritMediaTypes / use default media types for more.",
+                                              "items": {
+                                                  "type": "string",
+                                                  "pattern": "^[^\/]+\/[^\/]+$",
+                                                  "format": "rfc2646"
+                                              }
+                                          },
+                                          "inheritMediaTypes": {
+                                              "type": "boolean",
+                                              "title": "Match default media types in this Parser Stage",
+                                              "description": "Each parser stage has a built-in list of media types it handles by default. If this setting is true, that list will be used along with any optional additional types provided in the mediaTypes list. If this setting is false, this stage will only be selected for media types in the mediaTypes list, and the mediaTypes list becomes a mandatory property which must have at least one valid media type.",
+                                              "default": true
+                                          },
+                                          "ignoredMediaTypes": {
+                                              "type": "array",
+                                              "title": "Media Types to ignore",
+                                              "description": "Documents with a media type on this list will be not be processed by this parser stage.",
+                                              "items": {
+                                                  "type": "string",
+                                                  "pattern": "^[^\/]+\/[^\/]+$",
+                                                  "format": "rfc2646"
+                                              }
+                                          },
+                                          "pathPatterns": {
+                                              "type": "array",
+                                              "title": "File names to parse",
+                                              "description": "Specify a file name or pattern that must be matched for this parser stage to run. Forward slashes (\"/\") are used to join names of files inside archives with the archive name.",
+                                              "items": {
+                                                  "type": "object",
+                                                  "properties": {
+                                                      "syntax": {
+                                                          "type": "string",
+                                                          "title": "Pattern type",
+                                                          "description": "glob uses bash shell-style wildcards; regex uses Java (PCRE-style) regex",
+                                                          "enum": [
+                                                              "glob",
+                                                              "regex"
+                                                          ],
+                                                          "default": "glob"
+                                                      },
+                                                      "pattern": {
+                                                          "type": "string",
+                                                          "title": "File name or pattern",
+                                                          "description": "e.g.: \"z.txt\" or \"*.md\" or \"/a/*/b/f.txt\" for glob; \"z.txt$\" or \".*\\.txt$\" or \"^/a/[^\/]*/b/f.txt$\" for regex"
+                                                      }
+                                                  }
+                                              }
+                                          },
+                                          "errorHandling": {
+                                              "type": "string",
+                                              "title": "Error Handling",
+                                              "enum": [
+                                                  "ignore",
+                                                  "log",
+                                                  "fail",
+                                                  "mark"
+                                              ],
+                                              "default": "mark"
+                                          },
+                                          "outputFieldPrefix": {
+                                              "type": "string",
+                                              "title": "Prefix parsed fields with",
+                                              "description": "Fields extracted by this parser will be prefixed with this string. The remainder of the field name will be as detected in the stream",
+                                              "maxLength": 20,
+                                              "pattern": "^$|^[A-Za-z_][A-Za-z0-9_\\-\\.]+$"
+                                          },
+                                          "charset": {
+                                              "type": "string",
+                                              "title": "Character Set",
+                                              "description": "Example: \"UTF-8\"",
+                                              "default": "detect"
+                                          },
+                                          "ignoreBOM": {
+                                              "type": "boolean",
+                                              "title": "Ignore BOM",
+                                              "description": "Ignore Byte-Order Mark (BOM) if present and always use the configured character set. When set to false a valid BOM character set overrides the configured default character set.",
+                                              "default": false
+                                          },
+                                          "delimiter": {
+                                              "type": "string",
+                                              "title": "Delimiter",
+                                              "description": "Delimiter character between fields. Any single character, including an escaped character, is valid, e.g. , (comma), \\t (tab), or | (pipe). Default is comma if auto-detection is disabled",
+                                              "minLength": 1
+                                          },
+                                          "quote": {
+                                              "type": "string",
+                                              "title": "Quote",
+                                              "description": "Quote character, default is a double quote (\") if auto-detection is disabled",
+                                              "maxLength": 1
+                                          },
+                                          "quoteEscape": {
+                                              "type": "string",
+                                              "title": "Quote escape",
+                                              "description": "Quote escape character, default is a double quote (\") if auto-detection is disabled ",
+                                              "maxLength": 1
+                                          },
+                                          "autoDetect": {
+                                              "type": "boolean",
+                                              "title": "Auto-detect CSV Format",
+                                              "description": "Attempt to guess the delimiter, quote, quote escape, and comment characters",
+                                              "default": true
+                                          },
+                                          "trimWhitespace": {
+                                              "type": "boolean",
+                                              "title": "Trim whitespace",
+                                              "description": "Trim off leading and trailing whitespace from columns, default true",
+                                              "default": true
+                                          },
+                                          "hasHeaders": {
+                                              "type": "boolean",
+                                              "title": "Headers in file",
+                                              "description": "Treat the first row as column headers, default true",
+                                              "default": true
+                                          },
+                                          "headers": {
+                                              "type": "array",
+                                              "title": "Header list",
+                                              "description": "List of column headers, overrides file headers if present",
+                                              "items": {
+                                                  "type": "string"
+                                              }
+                                          },
+                                          "skipEmptyLines": {
+                                              "type": "boolean",
+                                              "title": "Skip empty lines",
+                                              "description": "Skip any empty lines encountered, default true",
+                                              "default": true
+                                          },
+                                          "lineSeparator": {
+                                              "type": "string",
+                                              "title": "Line Separator",
+                                              "description": "Line separator character",
+                                              "minLength": 1
+                                          },
+                                          "nullValue": {
+                                              "type": "string",
+                                              "title": "Null value",
+                                              "description": "A string value to replace nulls with, no default"
+                                          },
+                                          "emptyValue": {
+                                              "type": "string",
+                                              "title": "Empty string replacement",
+                                              "description": "A string value to replace empty strings with, no default"
+                                          },
+                                          "includeRowNumber": {
+                                              "type": "boolean",
+                                              "title": "Include row number",
+                                              "description": "Include the row number (line number) in the emitted documents, default true",
+                                              "default": true
+                                          },
+                                          "comment": {
+                                              "type": "string",
+                                              "title": "Comment character",
+                                              "description": "Character at start of row to indicate a comment, default is hash (#) if auto-detection is disabled",
+                                              "maxLength": 1
+                                          },
+                                          "commentHandling": {
+                                              "type": "string",
+                                              "title": "Comment Handling",
+                                              "description": "How to handle comments: ignore, add as field to next document, or add a separate documents, default ignore",
+                                              "enum": [
+                                                  "ignore",
+                                                  "as_field",
+                                                  "as_document"
+                                              ],
+                                              "default": "ignore"
+                                          },
+                                          "maxRowLength": {
+                                              "type": "integer",
+                                              "title": "Maximum line length",
+                                              "description": "Maximum number of characters to allow for a single read line, default 10MB",
+                                              "default": 10485760,
+                                              "maximum": 2147483647,
+                                              "exclusiveMaximum": false,
+                                              "minimum": 0,
+                                              "exclusiveMinimum": false
+                                          },
+                                          "maxNumColumns": {
+                                              "type": "integer",
+                                              "title": "Maximum number of columns",
+                                              "description": "Maximum number of columns to allow for a single row, default 1000",
+                                              "default": 1000,
+                                              "maximum": 2147483647,
+                                              "exclusiveMaximum": false,
+                                              "minimum": 0,
+                                              "exclusiveMinimum": false
+                                          },
+                                          "maxColumnChars": {
+                                              "type": "integer",
+                                              "title": "Maximum number or characters per column",
+                                              "description": "Maximum number of characters a single column value can have, default 10MB",
+                                              "default": 10485760,
+                                              "maximum": 2147483647,
+                                              "exclusiveMaximum": false,
+                                              "minimum": 0,
+                                              "exclusiveMinimum": false
+                                          },
+                                          "columnHandling": {
+                                              "type": "string",
+                                              "title": "Column mismatch handling",
+                                              "description": "What to do when a row has too many or too few columns: Can throw an error, align the column, or do nothing special (default)",
+                                              "enum": [
+                                                  "error",
+                                                  "align",
+                                                  "default"
+                                              ],
+                                              "default": "default"
+                                          },
+                                          "fillValue": {
+                                              "type": "string",
+                                              "title": "Column fill value",
+                                              "description": "A string value to use when aligning the columns (when Column Mismatch Handling is \"align\")",
+                                              "default": "<FILL>"
+                                          },
+                                          "type": {
+                                              "type": "string",
+                                              "enum": [
+                                                  "csv"
+                                              ],
+                                              "default": "csv"
+                                          }
+                                      },
+                                      "additionalProperties": false,
+                                      "category": "Other",
+                                      "categoryPriority": 1,
+                                      "unsafe": false
+                                  },
+                                  {
+                                      "type": "object",
+                                      "title": "JSON",
+                                      "description": "Parses JSON documents with optional splitting and mappings",
+                                      "required": [
+                                          "type"
+                                      ],
+                                      "properties": {
+                                          "id": {
+                                              "type": "string",
+                                              "title": "Parser ID",
+                                              "default": "4dc1da64-64f3-4b7c-93d3-07b46df3f864"
+                                          },
+                                          "label": {
+                                              "type": "string",
+                                              "title": "Label",
+                                              "description": "A label for this Parser Stage",
+                                              "maxLength": 255
+                                          },
+                                          "enabled": {
+                                              "type": "boolean",
+                                              "title": "Enable this Parser Stage",
+                                              "default": true
+                                          },
+                                          "mediaTypes": {
+                                              "type": "array",
+                                              "title": "Media Types to match",
+                                              "description": "Documents with a media type on this list will be matched by this parser stage. See inheritMediaTypes / use default media types for more.",
+                                              "items": {
+                                                  "type": "string",
+                                                  "pattern": "^[^\/]+\/[^\/]+$",
+                                                  "format": "rfc2646"
+                                              }
+                                          },
+                                          "inheritMediaTypes": {
+                                              "type": "boolean",
+                                              "title": "Match default media types in this Parser Stage",
+                                              "description": "Each parser stage has a built-in list of media types it handles by default. If this setting is true, that list will be used along with any optional additional types provided in the mediaTypes list. If this setting is false, this stage will only be selected for media types in the mediaTypes list, and the mediaTypes list becomes a mandatory property which must have at least one valid media type.",
+                                              "default": true
+                                          },
+                                          "ignoredMediaTypes": {
+                                              "type": "array",
+                                              "title": "Media Types to ignore",
+                                              "description": "Documents with a media type on this list will be not be processed by this parser stage.",
+                                              "items": {
+                                                  "type": "string",
+                                                  "pattern": "^[^\/]+\/[^\/]+$",
+                                                  "format": "rfc2646"
+                                              }
+                                          },
+                                          "pathPatterns": {
+                                              "type": "array",
+                                              "title": "File names to parse",
+                                              "description": "Specify a file name or pattern that must be matched for this parser stage to run. Forward slashes (\"/\") are used to join names of files inside archives with the archive name.",
+                                              "items": {
+                                                  "type": "object",
+                                                  "properties": {
+                                                      "syntax": {
+                                                          "type": "string",
+                                                          "title": "Pattern type",
+                                                          "description": "glob uses bash shell-style wildcards; regex uses Java (PCRE-style) regex",
+                                                          "enum": [
+                                                              "glob",
+                                                              "regex"
+                                                          ],
+                                                          "default": "glob"
+                                                      },
+                                                      "pattern": {
+                                                          "type": "string",
+                                                          "title": "File name or pattern",
+                                                          "description": "e.g.: \"z.txt\" or \"*.md\" or \"/a/*/b/f.txt\" for glob; \"z.txt$\" or \".*\\.txt$\" or \"^/a/[^\/]*/b/f.txt$\" for regex"
+                                                      }
+                                                  }
+                                              }
+                                          },
+                                          "errorHandling": {
+                                              "type": "string",
+                                              "title": "Error Handling",
+                                              "enum": [
+                                                  "ignore",
+                                                  "log",
+                                                  "fail",
+                                                  "mark"
+                                              ],
+                                              "default": "mark"
+                                          },
+                                          "outputFieldPrefix": {
+                                              "type": "string",
+                                              "title": "Prefix parsed fields with",
+                                              "description": "Fields extracted by this parser will be prefixed with this string. The remainder of the field name will be as detected in the stream",
+                                              "maxLength": 20,
+                                              "pattern": "^$|^[A-Za-z_][A-Za-z0-9_\\-\\.]+$"
+                                          },
+                                          "rootPath": {
+                                              "type": "string",
+                                              "title": "Root path",
+                                              "description": "Use only children of this JSON pointer."
+                                          },
+                                          "includePath": {
+                                              "type": "boolean",
+                                              "title": "Include root path",
+                                              "description": "Include parent element names when using a root path.",
+                                              "default": false
+                                          },
+                                          "splitArrays": {
+                                              "type": "boolean",
+                                              "title": "Split arrays",
+                                              "description": "First split top-level arrays into multiple documents, and then apply other rules.",
+                                              "default": true
+                                          },
+                                          "expectJsonL": {
+                                              "type": "boolean",
+                                              "title": "Expect JSONL",
+                                              "description": "Expect the input to contain multiple line separated JSON documents",
+                                              "default": false
+                                          },
+                                          "maxLineSize": {
+                                              "type": "integer",
+                                              "title": "Max line size",
+                                              "description": "Set maximum size of a line in bytes. This is important for processing JsonL with large documents.",
+                                              "default": 8192
+                                          },
+                                          "mappings": {
+                                              "type": "array",
+                                              "title": "Mapping rules",
+                                              "description": "Extract parts of the document into specified fields",
+                                              "items": {
+                                                  "type": "object",
+                                                  "required": [
+                                                      "path",
+                                                      "target"
+                                                  ],
+                                                  "properties": {
+                                                      "path": {
+                                                          "type": "string",
+                                                          "title": "JSONPath expression"
+                                                      },
+                                                      "target": {
+                                                          "type": "string",
+                                                          "title": "Target field"
+                                                      }
+                                                  }
+                                              }
+                                          },
+                                          "listHandling": {
+                                              "type": "string",
+                                              "title": "JSON List handling",
+                                              "description": "Create a single multivalued field containing all items, or a separate index-numbered field per list item?",
+                                              "enum": [
+                                                  "multivalued",
+                                                  "index_numbered"
+                                              ],
+                                              "default": "multivalued",
+                                              "hints": [
+                                                  "advanced"
+                                              ]
+                                          },
+                                          "type": {
+                                              "type": "string",
+                                              "enum": [
+                                                  "json"
+                                              ],
+                                              "default": "json"
+                                          }
+                                      },
+                                      "additionalProperties": false,
+                                      "category": "Other",
+                                      "categoryPriority": 1,
+                                      "unsafe": false
+                                  },
+                                  {
+                                      "type": "object",
+                                      "title": "Archive",
+                                      "description": "Decompress and extract common archive and compression formats, e.g. zip, tar, 7z, GZip, BZip2, etc",
+                                      "required": [
+                                          "type"
+                                      ],
+                                      "properties": {
+                                          "id": {
+                                              "type": "string",
+                                              "title": "Parser ID",
+                                              "default": "600ded51-7210-46e4-bfc4-10b12306565f"
+                                          },
+                                          "label": {
+                                              "type": "string",
+                                              "title": "Label",
+                                              "description": "A label for this Parser Stage",
+                                              "maxLength": 255
+                                          },
+                                          "enabled": {
+                                              "type": "boolean",
+                                              "title": "Enable this Parser Stage",
+                                              "default": true
+                                          },
+                                          "mediaTypes": {
+                                              "type": "array",
+                                              "title": "Media Types to match",
+                                              "description": "Documents with a media type on this list will be matched by this parser stage. See inheritMediaTypes / use default media types for more.",
+                                              "items": {
+                                                  "type": "string",
+                                                  "pattern": "^[^\/]+\/[^\/]+$",
+                                                  "format": "rfc2646"
+                                              }
+                                          },
+                                          "inheritMediaTypes": {
+                                              "type": "boolean",
+                                              "title": "Match default media types in this Parser Stage",
+                                              "description": "Each parser stage has a built-in list of media types it handles by default. If this setting is true, that list will be used along with any optional additional types provided in the mediaTypes list. If this setting is false, this stage will only be selected for media types in the mediaTypes list, and the mediaTypes list becomes a mandatory property which must have at least one valid media type.",
+                                              "default": true
+                                          },
+                                          "ignoredMediaTypes": {
+                                              "type": "array",
+                                              "title": "Media Types to ignore",
+                                              "description": "Documents with a media type on this list will be not be processed by this parser stage.",
+                                              "items": {
+                                                  "type": "string",
+                                                  "pattern": "^[^\/]+\/[^\/]+$",
+                                                  "format": "rfc2646"
+                                              }
+                                          },
+                                          "pathPatterns": {
+                                              "type": "array",
+                                              "title": "File names to parse",
+                                              "description": "Specify a file name or pattern that must be matched for this parser stage to run. Forward slashes (\"/\") are used to join names of files inside archives with the archive name.",
+                                              "items": {
+                                                  "type": "object",
+                                                  "properties": {
+                                                      "syntax": {
+                                                          "type": "string",
+                                                          "title": "Pattern type",
+                                                          "description": "glob uses bash shell-style wildcards; regex uses Java (PCRE-style) regex",
+                                                          "enum": [
+                                                              "glob",
+                                                              "regex"
+                                                          ],
+                                                          "default": "glob"
+                                                      },
+                                                      "pattern": {
+                                                          "type": "string",
+                                                          "title": "File name or pattern",
+                                                          "description": "e.g.: \"z.txt\" or \"*.md\" or \"/a/*/b/f.txt\" for glob; \"z.txt$\" or \".*\\.txt$\" or \"^/a/[^\/]*/b/f.txt$\" for regex"
+                                                      }
+                                                  }
+                                              }
+                                          },
+                                          "errorHandling": {
+                                              "type": "string",
+                                              "title": "Error Handling",
+                                              "enum": [
+                                                  "ignore",
+                                                  "log",
+                                                  "fail",
+                                                  "mark"
+                                              ],
+                                              "default": "mark"
+                                          },
+                                          "outputFieldPrefix": {
+                                              "type": "string",
+                                              "title": "Prefix parsed fields with",
+                                              "description": "Fields extracted by this parser will be prefixed with this string. The remainder of the field name will be as detected in the stream",
+                                              "maxLength": 20,
+                                              "pattern": "^$|^[A-Za-z_][A-Za-z0-9_\\-\\.]+$"
+                                          },
+                                          "alwaysDetect": {
+                                              "type": "boolean",
+                                              "title": "Always detect type",
+                                              "description": "Forces content-type detection. Most compression and archive formats use a magic byte to indicate their type. This can be more reliable than user input.",
+                                              "default": true
+                                          },
+                                          "type": {
+                                              "type": "string",
+                                              "enum": [
+                                                  "archive"
+                                              ],
+                                              "default": "archive"
+                                          }
+                                      },
+                                      "additionalProperties": false,
+                                      "category": "Other",
+                                      "categoryPriority": 1,
+                                      "unsafe": false
+                                  },
+                                  {
+                                      "type": "object",
+                                      "title": "HTML",
+                                      "description": "Parse html content",
+                                      "required": [
+                                          "charset",
+                                          "type"
+                                      ],
+                                      "properties": {
+                                          "id": {
+                                              "type": "string",
+                                              "title": "Parser ID",
+                                              "default": "c49468d4-7ecf-408f-b1d8-bc2b6e04ea85"
+                                          },
+                                          "label": {
+                                              "type": "string",
+                                              "title": "Label",
+                                              "description": "A label for this Parser Stage",
+                                              "maxLength": 255
+                                          },
+                                          "enabled": {
+                                              "type": "boolean",
+                                              "title": "Enable this Parser Stage",
+                                              "default": true
+                                          },
+                                          "mediaTypes": {
+                                              "type": "array",
+                                              "title": "Media Types to match",
+                                              "description": "Documents with a media type on this list will be matched by this parser stage. See inheritMediaTypes / use default media types for more.",
+                                              "items": {
+                                                  "type": "string",
+                                                  "pattern": "^[^\/]+\/[^\/]+$",
+                                                  "format": "rfc2646"
+                                              }
+                                          },
+                                          "inheritMediaTypes": {
+                                              "type": "boolean",
+                                              "title": "Match default media types in this Parser Stage",
+                                              "description": "Each parser stage has a built-in list of media types it handles by default. If this setting is true, that list will be used along with any optional additional types provided in the mediaTypes list. If this setting is false, this stage will only be selected for media types in the mediaTypes list, and the mediaTypes list becomes a mandatory property which must have at least one valid media type.",
+                                              "default": true
+                                          },
+                                          "ignoredMediaTypes": {
+                                              "type": "array",
+                                              "title": "Media Types to ignore",
+                                              "description": "Documents with a media type on this list will be not be processed by this parser stage.",
+                                              "items": {
+                                                  "type": "string",
+                                                  "pattern": "^[^\/]+\/[^\/]+$",
+                                                  "format": "rfc2646"
+                                              }
+                                          },
+                                          "pathPatterns": {
+                                              "type": "array",
+                                              "title": "File names to parse",
+                                              "description": "Specify a file name or pattern that must be matched for this parser stage to run. Forward slashes (\"/\") are used to join names of files inside archives with the archive name.",
+                                              "items": {
+                                                  "type": "object",
+                                                  "properties": {
+                                                      "syntax": {
+                                                          "type": "string",
+                                                          "title": "Pattern type",
+                                                          "description": "glob uses bash shell-style wildcards; regex uses Java (PCRE-style) regex",
+                                                          "enum": [
+                                                              "glob",
+                                                              "regex"
+                                                          ],
+                                                          "default": "glob"
+                                                      },
+                                                      "pattern": {
+                                                          "type": "string",
+                                                          "title": "File name or pattern",
+                                                          "description": "e.g.: \"z.txt\" or \"*.md\" or \"/a/*/b/f.txt\" for glob; \"z.txt$\" or \".*\\.txt$\" or \"^/a/[^\/]*/b/f.txt$\" for regex"
+                                                      }
+                                                  }
+                                              }
+                                          },
+                                          "errorHandling": {
+                                              "type": "string",
+                                              "title": "Error Handling",
+                                              "enum": [
+                                                  "ignore",
+                                                  "log",
+                                                  "fail",
+                                                  "mark"
+                                              ],
+                                              "default": "mark"
+                                          },
+                                          "outputFieldPrefix": {
+                                              "type": "string",
+                                              "title": "Prefix parsed fields with",
+                                              "description": "Fields extracted by this parser will be prefixed with this string. The remainder of the field name will be as detected in the stream",
+                                              "maxLength": 20,
+                                              "pattern": "^$|^[A-Za-z_][A-Za-z0-9_\\-\\.]+$"
+                                          },
+                                          "charset": {
+                                              "type": "string",
+                                              "title": "Character Set",
+                                              "description": "Example: \"UTF-8\"",
+                                              "default": "detect"
+                                          },
+                                          "recordSelector": {
+                                              "type": "string",
+                                              "title": "Record Selector"
+                                          },
+                                          "keepParent": {
+                                              "type": "boolean",
+                                              "title": "Keep Parent Document?",
+                                              "description": "Keep or discard parent document with selected records. Has no effect if Record Selector is not specified.",
+                                              "default": true
+                                          },
+                                          "excludeFilters": {
+                                              "type": "array",
+                                              "title": "Exclude filters",
+                                              "description": "Jsoup-formatted selectors for elements to exclude from the HTML document.",
+                                              "items": {
+                                                  "type": "string"
+                                              }
+                                          },
+                                          "filterBeforeMapping": {
+                                              "type": "boolean",
+                                              "title": "Filter before mapping",
+                                              "description": "Apply exclude filters before performing HTML field mapping.",
+                                              "default": false
+                                          },
+                                          "filterBeforeExtractingLinks": {
+                                              "type": "boolean",
+                                              "title": "Filter before extracting links",
+                                              "description": "Apply exclude filters before performing link extraction.",
+                                              "default": false
+                                          },
+                                          "mappings": {
+                                              "type": "array",
+                                              "title": "HTML Element Mappings",
+                                              "items": {
+                                                  "type": "object",
+                                                  "required": [
+                                                      "selectRule",
+                                                      "field"
+                                                  ],
+                                                  "properties": {
+                                                      "selectRule": {
+                                                          "type": "string",
+                                                          "title": "Select Rule",
+                                                          "description": "A jsoup selection rule, for example 'div#foo' to select '<div id=\"foo\">...</div>'"
+                                                      },
+                                                      "attribute": {
+                                                          "type": "string",
+                                                          "title": "Attribute to map",
+                                                          "description": "What attribute of the selected element to map. For example 'href' to get the link URL from an '<a>' tag. Special values are '.outerText', '.html', '.outerHtml' and '.data'. If left blank, the text within this element will be mapped."
+                                                      },
+                                                      "field": {
+                                                          "type": "string",
+                                                          "title": "Target Field",
+                                                          "description": "The field in which to save the mapped element"
+                                                      },
+                                                      "multivalued": {
+                                                          "type": "boolean",
+                                                          "title": "Multi-valued",
+                                                          "description": "Set to true to map multiple elements if there is more than one match for the select rule",
+                                                          "default": false
+                                                      }
+                                                  }
+                                              }
+                                          },
+                                          "extractHtmlLinks": {
+                                              "type": "boolean",
+                                              "title": "Extract HTML links",
+                                              "description": "Collect links explicitly declared in HTML document",
+                                              "default": false
+                                          },
+                                          "extractBodyText": {
+                                              "type": "boolean",
+                                              "title": "Extract body as a text",
+                                              "description": "Extract body as a text",
+                                              "default": true
+                                          },
+                                          "contentExtractionConfig": {
+                                              "type": "object",
+                                              "title": "Content Extraction (Experimental)",
+                                              "description": "Attempt to extract the content that matters using advanced heuristics. Might not work for your website.",
+                                              "properties": {
+                                                  "extractContent": {
+                                                      "type": "boolean",
+                                                      "title": "Extract page content",
+                                                      "default": true
+                                                  },
+                                                  "extractMetadata": {
+                                                      "type": "boolean",
+                                                      "title": "Extract metadata",
+                                                      "default": true
+                                                  },
+                                                  "preserveContentFormat": {
+                                                      "type": "boolean",
+                                                      "title": "Store readable html version of body content",
+                                                      "default": false
+                                                  },
+                                                  "metadataPrefix": {
+                                                      "type": "string",
+                                                      "title": "Optional prefix for rich content and extracted metadata"
+                                                  }
+                                              }
+                                          },
+                                          "metatagsPrefix": {
+                                              "type": "string",
+                                              "title": "Optional prefix for metatags captured html document",
+                                              "description": "Optional prefix to add to metatags (except id and charset) captured from an html document to used as a fields as-is (id and charset get prefix) from document",
+                                              "default": "false"
+                                          },
+                                          "type": {
+                                              "type": "string",
+                                              "enum": [
+                                                  "html"
+                                              ],
+                                              "default": "html"
+                                          }
+                                      },
+                                      "additionalProperties": false,
+                                      "category": "Other",
+                                      "categoryPriority": 1,
+                                      "unsafe": false
+                                  },
+                                  {
+                                      "type": "object",
+                                      "title": "Text",
+                                      "description": "Parses plain text content with optional trimming and splitting. Character encoding can be specified or automatically detected",
+                                      "required": [
+                                          "charset",
+                                          "ignoreBOM",
+                                          "type"
+                                      ],
+                                      "properties": {
+                                          "id": {
+                                              "type": "string",
+                                              "title": "Parser ID",
+                                              "default": "bb65fd64-7156-4951-aeb8-11de68bde8f1"
+                                          },
+                                          "label": {
+                                              "type": "string",
+                                              "title": "Label",
+                                              "description": "A label for this Parser Stage",
+                                              "maxLength": 255
+                                          },
+                                          "enabled": {
+                                              "type": "boolean",
+                                              "title": "Enable this Parser Stage",
+                                              "default": true
+                                          },
+                                          "mediaTypes": {
+                                              "type": "array",
+                                              "title": "Media Types to match",
+                                              "description": "Documents with a media type on this list will be matched by this parser stage. See inheritMediaTypes / use default media types for more.",
+                                              "items": {
+                                                  "type": "string",
+                                                  "pattern": "^[^\/]+\/[^\/]+$",
+                                                  "format": "rfc2646"
+                                              }
+                                          },
+                                          "inheritMediaTypes": {
+                                              "type": "boolean",
+                                              "title": "Match default media types in this Parser Stage",
+                                              "description": "Each parser stage has a built-in list of media types it handles by default. If this setting is true, that list will be used along with any optional additional types provided in the mediaTypes list. If this setting is false, this stage will only be selected for media types in the mediaTypes list, and the mediaTypes list becomes a mandatory property which must have at least one valid media type.",
+                                              "default": true
+                                          },
+                                          "ignoredMediaTypes": {
+                                              "type": "array",
+                                              "title": "Media Types to ignore",
+                                              "description": "Documents with a media type on this list will be not be processed by this parser stage.",
+                                              "items": {
+                                                  "type": "string",
+                                                  "pattern": "^[^\/]+\/[^\/]+$",
+                                                  "format": "rfc2646"
+                                              }
+                                          },
+                                          "pathPatterns": {
+                                              "type": "array",
+                                              "title": "File names to parse",
+                                              "description": "Specify a file name or pattern that must be matched for this parser stage to run. Forward slashes (\"/\") are used to join names of files inside archives with the archive name.",
+                                              "items": {
+                                                  "type": "object",
+                                                  "properties": {
+                                                      "syntax": {
+                                                          "type": "string",
+                                                          "title": "Pattern type",
+                                                          "description": "glob uses bash shell-style wildcards; regex uses Java (PCRE-style) regex",
+                                                          "enum": [
+                                                              "glob",
+                                                              "regex"
+                                                          ],
+                                                          "default": "glob"
+                                                      },
+                                                      "pattern": {
+                                                          "type": "string",
+                                                          "title": "File name or pattern",
+                                                          "description": "e.g.: \"z.txt\" or \"*.md\" or \"/a/*/b/f.txt\" for glob; \"z.txt$\" or \".*\\.txt$\" or \"^/a/[^\/]*/b/f.txt$\" for regex"
+                                                      }
+                                                  }
+                                              }
+                                          },
+                                          "errorHandling": {
+                                              "type": "string",
+                                              "title": "Error Handling",
+                                              "enum": [
+                                                  "ignore",
+                                                  "log",
+                                                  "fail",
+                                                  "mark"
+                                              ],
+                                              "default": "mark"
+                                          },
+                                          "outputFieldPrefix": {
+                                              "type": "string",
+                                              "title": "Prefix parsed fields with",
+                                              "description": "Fields extracted by this parser will be prefixed with this string. The remainder of the field name will be as detected in the stream",
+                                              "maxLength": 20,
+                                              "pattern": "^$|^[A-Za-z_][A-Za-z0-9_\\-\\.]+$"
+                                          },
+                                          "charset": {
+                                              "type": "string",
+                                              "title": "Character Set",
+                                              "description": "Example: \"UTF-8\"",
+                                              "default": "detect"
+                                          },
+                                          "ignoreBOM": {
+                                              "type": "boolean",
+                                              "title": "Ignore BOM",
+                                              "description": "Ignore Byte-Order Mark (BOM) if present and always use the configured character set. When set to false a valid BOM character set overrides the configured default character set.",
+                                              "default": false
+                                          },
+                                          "splitLines": {
+                                              "type": "boolean",
+                                              "title": "Split lines",
+                                              "description": "Split text into lines to create multiple records, default false",
+                                              "default": false
+                                          },
+                                          "skipHeaderLines": {
+                                              "type": "integer",
+                                              "title": "Skip header lines",
+                                              "description": "Skip a number of header lines, default 0",
+                                              "default": 0
+                                          },
+                                          "trimWhitespace": {
+                                              "type": "boolean",
+                                              "title": "Trim whitespace",
+                                              "description": "Trim off leading and trailing whitespace from lines, default false",
+                                              "default": false
+                                          },
+                                          "skipEmptyLines": {
+                                              "type": "boolean",
+                                              "title": "Skip empty lines",
+                                              "description": "Skip any empty lines encountered, default false",
+                                              "default": false
+                                          },
+                                          "outputField": {
+                                              "type": "string",
+                                              "title": "Output field",
+                                              "description": "Name of the output field where text is stored, default 'body'",
+                                              "default": "body",
+                                              "minLength": 1
+                                          },
+                                          "maxLength": {
+                                              "type": "integer",
+                                              "title": "Maximum length",
+                                              "description": "Maximum number of characters to allow for the body, -1 for unlimited, default 1MB",
+                                              "default": 1048576,
+                                              "maximum": 2147483647,
+                                              "exclusiveMaximum": false,
+                                              "minimum": 0,
+                                              "exclusiveMinimum": false
+                                          },
+                                          "maxLineLength": {
+                                              "type": "integer",
+                                              "title": "Maximum line length",
+                                              "description": "Maximum number of characters to allow for any single line, default 1MB",
+                                              "default": 1048576,
+                                              "maximum": 2147483647,
+                                              "exclusiveMaximum": false,
+                                              "minimum": 0,
+                                              "exclusiveMinimum": false
+                                          },
+                                          "commentField": {
+                                              "type": "string",
+                                              "title": "Comment field",
+                                              "description": "Name of the output field where comment is stored, default 'comment'",
+                                              "default": "comment",
+                                              "minLength": 1
+                                          },
+                                          "comment": {
+                                              "type": "string",
+                                              "title": "Comment character",
+                                              "description": "Characters at start of line to indicate a comment, default # (hash)",
+                                              "default": "#",
+                                              "minLength": 1
+                                          },
+                                          "commentHandling": {
+                                              "type": "string",
+                                              "title": "Comment Handling",
+                                              "description": "How to handle comments: include as-is, ignore (and remove from text), add as field (and remove from text), default include",
+                                              "enum": [
+                                                  "ignore",
+                                                  "include",
+                                                  "as_field"
+                                              ],
+                                              "default": "include"
+                                          },
+                                          "type": {
+                                              "type": "string",
+                                              "enum": [
+                                                  "text"
+                                              ],
+                                              "default": "text"
+                                          }
+                                      },
+                                      "additionalProperties": false,
+                                      "category": "Other",
+                                      "categoryPriority": 1,
+                                      "unsafe": false
+                                  },
+                                  {
+                                      "type": "object",
+                                      "title": "Fallback",
+                                      "description": "If no previous parser stage was able to handle the stream, the fallback parser will copy the data into the _raw_content_ field for later parsing and analysis.",
+                                      "required": [
+                                          "type"
+                                      ],
+                                      "properties": {
+                                          "id": {
+                                              "type": "string",
+                                              "title": "Parser ID",
+                                              "default": "89d78ae5-048e-49f3-891e-5910e9d0fafc"
+                                          },
+                                          "label": {
+                                              "type": "string",
+                                              "title": "Label",
+                                              "description": "A label for this Parser Stage",
+                                              "maxLength": 255
+                                          },
+                                          "enabled": {
+                                              "type": "boolean",
+                                              "title": "Enable this Parser Stage",
+                                              "default": true
+                                          },
+                                          "mediaTypes": {
+                                              "type": "array",
+                                              "title": "Media Types to match",
+                                              "description": "Documents with a media type on this list will be matched by this parser stage. See inheritMediaTypes / use default media types for more.",
+                                              "items": {
+                                                  "type": "string",
+                                                  "pattern": "^[^\/]+\/[^\/]+$",
+                                                  "format": "rfc2646"
+                                              }
+                                          },
+                                          "inheritMediaTypes": {
+                                              "type": "boolean",
+                                              "title": "Match default media types in this Parser Stage",
+                                              "description": "Each parser stage has a built-in list of media types it handles by default. If this setting is true, that list will be used along with any optional additional types provided in the mediaTypes list. If this setting is false, this stage will only be selected for media types in the mediaTypes list, and the mediaTypes list becomes a mandatory property which must have at least one valid media type.",
+                                              "default": true
+                                          },
+                                          "ignoredMediaTypes": {
+                                              "type": "array",
+                                              "title": "Media Types to ignore",
+                                              "description": "Documents with a media type on this list will be not be processed by this parser stage.",
+                                              "items": {
+                                                  "type": "string",
+                                                  "pattern": "^[^\/]+\/[^\/]+$",
+                                                  "format": "rfc2646"
+                                              }
+                                          },
+                                          "pathPatterns": {
+                                              "type": "array",
+                                              "title": "File names to parse",
+                                              "description": "Specify a file name or pattern that must be matched for this parser stage to run. Forward slashes (\"/\") are used to join names of files inside archives with the archive name.",
+                                              "items": {
+                                                  "type": "object",
+                                                  "properties": {
+                                                      "syntax": {
+                                                          "type": "string",
+                                                          "title": "Pattern type",
+                                                          "description": "glob uses bash shell-style wildcards; regex uses Java (PCRE-style) regex",
+                                                          "enum": [
+                                                              "glob",
+                                                              "regex"
+                                                          ],
+                                                          "default": "glob"
+                                                      },
+                                                      "pattern": {
+                                                          "type": "string",
+                                                          "title": "File name or pattern",
+                                                          "description": "e.g.: \"z.txt\" or \"*.md\" or \"/a/*/b/f.txt\" for glob; \"z.txt$\" or \".*\\.txt$\" or \"^/a/[^\/]*/b/f.txt$\" for regex"
+                                                      }
+                                                  }
+                                              }
+                                          },
+                                          "errorHandling": {
+                                              "type": "string",
+                                              "title": "Error Handling",
+                                              "enum": [
+                                                  "ignore",
+                                                  "log",
+                                                  "fail",
+                                                  "mark"
+                                              ],
+                                              "default": "mark"
+                                          },
+                                          "outputFieldPrefix": {
+                                              "type": "string",
+                                              "title": "Prefix parsed fields with",
+                                              "description": "Fields extracted by this parser will be prefixed with this string. The remainder of the field name will be as detected in the stream",
+                                              "maxLength": 20,
+                                              "pattern": "^$|^[A-Za-z_][A-Za-z0-9_\\-\\.]+$"
+                                          },
+                                          "metadataOnly": {
+                                              "type": "boolean",
+                                              "title": "Only parse metadata",
+                                              "default": false
+                                          },
+                                          "maxBytesToKeep": {
+                                              "type": "integer",
+                                              "title": "Maximum bytes to keep",
+                                              "default": 1048576
+                                          },
+                                          "type": {
+                                              "type": "string",
+                                              "enum": [
+                                                  "fallback"
+                                              ],
+                                              "default": "fallback"
+                                          }
+                                      },
+                                      "additionalProperties": false,
+                                      "category": "Other",
+                                      "categoryPriority": 1,
+                                      "unsafe": false
+                                  },
+                                  {
+                                      "type": "object",
+                                      "title": "Apache Tika (Deprecated) ",
+                                      "description": "Parse Office documents (ppt/docx/pdf), HTML files, images (jpeg/tiff), and more. See \"Supported Formats\" at https://tika.apache.org/ for a full list. This stage is deprecated. Use 'Apache Tika Container Parser' instead. This stage doesn't work with async-parsing.",
+                                      "required": [
+                                          "type"
+                                      ],
+                                      "properties": {
+                                          "id": {
+                                              "type": "string",
+                                              "title": "Parser ID",
+                                              "default": "6c992ac7-d6ee-469a-af03-a6d0ed26638f"
+                                          },
+                                          "label": {
+                                              "type": "string",
+                                              "title": "Label",
+                                              "description": "A label for this Parser Stage",
+                                              "maxLength": 255
+                                          },
+                                          "enabled": {
+                                              "type": "boolean",
+                                              "title": "Enable this Parser Stage",
+                                              "default": true
+                                          },
+                                          "mediaTypes": {
+                                              "type": "array",
+                                              "title": "Media Types to match",
+                                              "description": "Documents with a media type on this list will be matched by this parser stage. See inheritMediaTypes / use default media types for more.",
+                                              "items": {
+                                                  "type": "string",
+                                                  "pattern": "^[^\/]+\/[^\/]+$",
+                                                  "format": "rfc2646"
+                                              }
+                                          },
+                                          "inheritMediaTypes": {
+                                              "type": "boolean",
+                                              "title": "Match default media types in this Parser Stage",
+                                              "description": "Each parser stage has a built-in list of media types it handles by default. If this setting is true, that list will be used along with any optional additional types provided in the mediaTypes list. If this setting is false, this stage will only be selected for media types in the mediaTypes list, and the mediaTypes list becomes a mandatory property which must have at least one valid media type.",
+                                              "default": true
+                                          },
+                                          "ignoredMediaTypes": {
+                                              "type": "array",
+                                              "title": "Media Types to ignore",
+                                              "description": "Documents with a media type on this list will be not be processed by this parser stage.",
+                                              "items": {
+                                                  "type": "string",
+                                                  "pattern": "^[^\/]+\/[^\/]+$",
+                                                  "format": "rfc2646"
+                                              }
+                                          },
+                                          "pathPatterns": {
+                                              "type": "array",
+                                              "title": "File names to parse",
+                                              "description": "Specify a file name or pattern that must be matched for this parser stage to run. Forward slashes (\"/\") are used to join names of files inside archives with the archive name.",
+                                              "items": {
+                                                  "type": "object",
+                                                  "properties": {
+                                                      "syntax": {
+                                                          "type": "string",
+                                                          "title": "Pattern type",
+                                                          "description": "glob uses bash shell-style wildcards; regex uses Java (PCRE-style) regex",
+                                                          "enum": [
+                                                              "glob",
+                                                              "regex"
+                                                          ],
+                                                          "default": "glob"
+                                                      },
+                                                      "pattern": {
+                                                          "type": "string",
+                                                          "title": "File name or pattern",
+                                                          "description": "e.g.: \"z.txt\" or \"*.md\" or \"/a/*/b/f.txt\" for glob; \"z.txt$\" or \".*\\.txt$\" or \"^/a/[^\/]*/b/f.txt$\" for regex"
+                                                      }
+                                                  }
+                                              }
+                                          },
+                                          "errorHandling": {
+                                              "type": "string",
+                                              "title": "Error Handling",
+                                              "enum": [
+                                                  "ignore",
+                                                  "log",
+                                                  "fail",
+                                                  "mark"
+                                              ],
+                                              "default": "mark"
+                                          },
+                                          "outputFieldPrefix": {
+                                              "type": "string",
+                                              "title": "Prefix parsed fields with",
+                                              "description": "Fields extracted by this parser will be prefixed with this string. The remainder of the field name will be as detected in the stream",
+                                              "maxLength": 20,
+                                              "pattern": "^$|^[A-Za-z_][A-Za-z0-9_\\-\\.]+$"
+                                          },
+                                          "includeImages": {
+                                              "type": "boolean",
+                                              "title": "Include images",
+                                              "default": false
+                                          },
+                                          "flattenCompound": {
+                                              "type": "boolean",
+                                              "title": "Flatten compound documents",
+                                              "default": false
+                                          },
+                                          "addFailedDocs": {
+                                              "type": "boolean",
+                                              "title": "Add failed documents",
+                                              "default": false
+                                          },
+                                          "addOriginalContent": {
+                                              "type": "boolean",
+                                              "title": "Add original document content (raw bytes)",
+                                              "default": false
+                                          },
+                                          "contentEncoding": {
+                                              "type": "string",
+                                              "title": "Content transport encoding of the content (per RFC1341)",
+                                              "enum": [
+                                                  "binary",
+                                                  "base64"
+                                              ],
+                                              "default": "binary"
+                                          },
+                                          "returnXml": {
+                                              "type": "boolean",
+                                              "title": "Return parsed content as XML",
+                                              "default": false
+                                          },
+                                          "keepOriginalStructure": {
+                                              "type": "boolean",
+                                              "title": "Return original XML and HTML instead of Tika XML output (only applies if 'Return parsed content as XML is true')",
+                                              "default": false
+                                          },
+                                          "extractHtmlLinks": {
+                                              "type": "boolean",
+                                              "title": "Extract XHTML links",
+                                              "description": "Collect links explicitly declared in document structure (e.g. using HTML tags, bookmarks, etc)",
+                                              "default": true
+                                          },
+                                          "extractOtherLinks": {
+                                              "type": "boolean",
+                                              "title": "Extract other links",
+                                              "description": "Use regex-based heuristic extractor to collect likely links from plain text content in all fields.",
+                                              "default": false
+                                          },
+                                          "excludeContentTypes": {
+                                              "type": "array",
+                                              "title": "Content types to exclude",
+                                              "description": "List of content types to exclude from parsing",
+                                              "items": {
+                                                  "type": "string",
+                                                  "minLength": 1
+                                              }
+                                          },
+                                          "zipBombCompressionRatio": {
+                                              "type": "integer",
+                                              "title": "Maximum input-to-output byte ratio",
+                                              "description": "Maximum number of output bytes fusion will generate per input byte. If you are indexing highly compressed files, you may increase this value to avoid triggering 'Zip Bomb' detection",
+                                              "default": 200
+                                          },
+                                          "zipBombMaxDepth": {
+                                              "type": "integer",
+                                              "title": "Maximum nesting depth",
+                                              "description": "Returns the maximum XML element nesting level. If you are indexing highly nested files, you may increase this value to avoid triggering 'Zip Bomb' detection",
+                                              "default": 200
+                                          },
+                                          "zipBombMaxPackageEntryDepth": {
+                                              "type": "integer",
+                                              "title": "Maximum package entry depth",
+                                              "description": "Sets the maximum package entry nesting level. If you are indexing highly nested files, you may increase this value to avoid triggering 'Zip Bomb' detection",
+                                              "default": 20
+                                          },
+                                          "type": {
+                                              "type": "string",
+                                              "enum": [
+                                                  "tika"
+                                              ],
+                                              "default": "tika"
+                                          }
+                                      },
+                                      "additionalProperties": false,
+                                      "category": "Other",
+                                      "categoryPriority": 1,
+                                      "unsafe": false
+                                  }
+                              ]
+                          }
+                      },
+                      "optionalTargetPipelineId": {
+                          "type": "string",
+                          "title": "Target Pipeline ID",
+                          "description": "Optional parameter. This property should be used only when parsing documents from connectors and whenthe async-parsing is enabled. When set, the documents produced in the asynchronous parsing process will be sent to the specified pipeline. If not set, the documents will be sent to the pipeline that was configured in the datasource configuration."
+                      },
+                      "hidden": {
+                          "type": "boolean",
+                          "title": "Hidden",
+                          "description": "Objects marked as hidden will only be returned in the API with hidden=true",
+                          "hints": [
+                              "hidden"
+                          ]
+                      }
+                  },
+                  "category": "Other",
+                  "categoryPriority": 1,
+                  "unsafe": false
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "IfMatchHeader": {
+        "type": "object"
+      },
+      "ParserConfig": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "idField": {
+            "type": "string"
+          },
+          "enableMediaTypeDetection": {
+            "type": "boolean"
+          },
+          "detectMediaTypeBasedOnExtension": {
+            "type": "boolean"
+          },
+          "maxParserDepth": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "maxFieldLength": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "parserStages": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ParserStageConfig"
+            }
+          }
+        }
+      },
+      "ParserStageConfig": {
+        "required": [
+          "type"
+        ],
+        "type": "object",
+        "properties": {
+          "label": {
+            "type": "string"
+          },
+          "enabled": {
+            "type": "boolean"
+          },
+          "mediaTypes": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "pathPatterns": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/SyntaxAndPattern"
+            }
+          },
+          "errorHandling": {
+            "type": "string",
+            "enum": [
+              "ignore",
+              "log",
+              "fail",
+              "mark"
+            ]
+          },
+          "id": {
+            "type": "string"
+          },
+          "inheritMediaTypes": {
+            "type": "boolean"
+          },
+          "ignoredMediaTypes": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "outputFieldPrefix": {
+            "type": "string"
+          },
+          "type": {
+            "type": "string"
+          }
+        },
+        "discriminator": {
+          "propertyName": "type"
+        }
+      },
+      "SyntaxAndPattern": {
+        "type": "object",
+        "properties": {
+          "syntax": {
+            "type": "string",
+            "enum": [
+              "glob",
+              "regex"
+            ]
+          },
+          "pattern": {
+            "type": "string"
+          }
+        }
+      },
+      "DataBuffer": {
+        "type": "object"
+      },
+      "Document": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "datasourceId": {
+            "type": "string"
+          },
+          "documentId": {
+            "type": "string"
+          },
+          "jobRunId": {
+            "type": "string"
+          },
+          "collectionId": {
+            "type": "string"
+          },
+          "pipelineId": {
+            "type": "string"
+          },
+          "connectorType": {
+            "type": "string"
+          },
+          "failures": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "contentType": {
+            "type": "string"
+          },
+          "metadata": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          },
+          "requestHeaders": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          },
+          "optionalContentType": {
+            "type": "string"
+          }
+        }
+      },
+      "AnyType": {
+        "type": "object",
+        "properties": {
+          "type": {
+            "type": "string",
+            "enum": [
+              "string",
+              "number",
+              "integer",
+              "boolean",
+              "object",
+              "array",
+              "null",
+              "ref"
+            ]
+          },
+          "title": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          },
+          "default": {
+            "type": "object"
+          },
+          "category": {
+            "type": "string"
+          },
+          "categoryPriority": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "hints": {
+            "uniqueItems": true,
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "unsafe": {
+            "type": "boolean"
+          },
+          "oneOf": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/AnyTypeObjectObject"
+            }
+          }
+        }
+      },
+      "AnyTypeObjectObject": {
+        "type": "object",
+        "properties": {
+          "type": {
+            "type": "string",
+            "enum": [
+              "string",
+              "number",
+              "integer",
+              "boolean",
+              "object",
+              "array",
+              "null",
+              "ref"
+            ]
+          },
+          "title": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          },
+          "default": {
+            "type": "object"
+          },
+          "category": {
+            "type": "string"
+          },
+          "categoryPriority": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "hints": {
+            "uniqueItems": true,
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "unsafe": {
+            "type": "boolean"
+          }
+        }
+      },
+      "ObjectType": {
+        "type": "object",
+        "properties": {
+          "type": {
+            "type": "string",
+            "enum": [
+              "string",
+              "number",
+              "integer",
+              "boolean",
+              "object",
+              "array",
+              "null",
+              "ref"
+            ]
+          },
+          "title": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          },
+          "required": {
+            "uniqueItems": true,
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "properties": {
+            "type": "object",
+            "additionalProperties": {
+              "$ref": "#/components/schemas/AnyType"
+            }
+          },
+          "additionalProperties": {
+            "type": "object"
+          },
+          "minProperties": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "maxProperties": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "definitions": {
+            "type": "object",
+            "additionalProperties": {
+              "$ref": "#/components/schemas/AnyType"
+            }
+          },
+          "category": {
+            "type": "string"
+          },
+          "categoryPriority": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "hints": {
+            "uniqueItems": true,
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "unsafe": {
+            "type": "boolean"
+          },
+          "default": {
+            "type": "object"
+          },
+          "oneOf": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/AnyTypeObjectObject"
+            }
+          },
+          "propertyGroups": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/PropertyGroup"
+            }
+          }
+        }
+      },
+      "PropertyGroup": {
+        "type": "object",
+        "properties": {
+          "label": {
+            "type": "string"
+          },
+          "properties": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,1664 @@
+{
+  "openapi": "3.1.0",
+  "x-stoplight": {
+    "id": "ejgyh4h7mph3y"
+  },
+  "info": {
+    "title": "Lucidworks AI Models API",
+    "version": "1.0",
+    "description": "The Lucidworks AI Models API is used to discover available pre-trained and custom models, as well as train and deploy those models.\n\nThe endpoints require an authentication token with scope `machinelearning.model`.",
+    "contact": {
+      "name": "Lucidworks",
+      "url": "https://lucidworks.com/",
+      "email": "support@lucidworks.com"
+    },
+    "termsOfService": "https://lucidworks.com/legal/developer-license-agreement/",
+    "license": {
+      "name": "Lucidworks",
+      "url": "https://lucidworks.com/legal/developer-license-agreement/"
+    }
+  },
+  "servers": [
+    {
+      "url": "https:/api.lucidworks.com"
+    }
+  ],
+  "paths": {
+    "/customers/{CUSTOMER_ID}/ai/models": {
+      "get": {
+        "summary": "GET Models",
+        "tags": [],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/responseGetModels"
+                }
+              }
+            }
+          }
+        },
+        "operationId": "get-models",
+        "description": "Returns a list of pre-trained and custom models.",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/getModels"
+              }
+            }
+          },
+          "description": ""
+        },
+        "x-stoplight": {
+          "id": "jxaem168edahf"
+        }
+      },
+      "post": {
+        "summary": "POST Models",
+        "operationId": "post-models",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/responsePostModels"
+                }
+              }
+            }
+          }
+        },
+        "description": "Creates a custom model and starts a training job. The custom model cannot be modified after it is created.",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/postModels"
+              }
+            }
+          }
+        },
+        "x-stoplight": {
+          "id": "xv77xz5qvk5p7"
+        }
+      },
+      "parameters": [
+        {
+          "schema": {
+            "type": "string"
+          },
+          "name": "CUSTOMER_ID",
+          "in": "path",
+          "required": true,
+          "description": "Unique identifier derived from confidential client information."
+        }
+      ]
+    },
+    "/customers/{CUSTOMER_ID}/ai/models/{MODEL_ID}": {
+      "get": {
+        "summary": "GET ModelId",
+        "tags": [],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "anyOf": [
+                    {
+                      "$ref": "#/components/schemas/responseGetModelIdShared"
+                    },
+                    {
+                      "$ref": "#/components/schemas/responseGetModelIdCustom",
+                      "x-stoplight": {
+                        "id": "swt8d9wxpp5jq"
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        },
+        "operationId": "get-modelId",
+        "description": "Returns information about a specific `modelId`.",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/getModelId"
+              }
+            }
+          },
+          "description": ""
+        },
+        "parameters": [
+          {
+            "schema": {
+              "type": "boolean"
+            },
+            "in": "query",
+            "name": "metrics",
+            "description": "Information about the metrics returned in the response."
+          }
+        ],
+        "x-stoplight": {
+          "id": "881vosg5mjhjh"
+        }
+      },
+      "parameters": [
+        {
+          "schema": {
+            "type": "string"
+          },
+          "name": "CUSTOMER_ID",
+          "in": "path",
+          "required": true,
+          "description": "Unique identifier derived from confidential client information."
+        },
+        {
+          "schema": {
+            "type": "string"
+          },
+          "name": "MODEL_ID",
+          "in": "path",
+          "required": true,
+          "description": "Unique identifier for the model."
+        }
+      ]
+    },
+    "/customers/{DEPLOYMENT_ID}/ai/deployments": {
+      "get": {
+        "summary": "GET Deployments",
+        "tags": [],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/responseGetDeployments"
+                }
+              }
+            }
+          }
+        },
+        "operationId": "get-deployments",
+        "description": "Returns a list of custom model deployments. Pre-trained models are not returned in the response because they are deployed in all available regions.",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/getDeployments"
+              }
+            }
+          }
+        },
+        "x-stoplight": {
+          "id": "uzw9hrnraecpz"
+        }
+      },
+      "post": {
+        "summary": "POST Deployments",
+        "operationId": "post-deployments",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/responsePostDeployments"
+                }
+              }
+            }
+          }
+        },
+        "description": "Deploys a custom model.",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/postDeployments"
+              }
+            }
+          }
+        },
+        "x-stoplight": {
+          "id": "obzqdiloxfp88"
+        }
+      },
+      "delete": {
+        "summary": "DELETE Deployments",
+        "operationId": "delete-deployments",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/responseDeleteDeployments"
+                }
+              }
+            }
+          }
+        },
+        "description": "Deletes the specified custom model deployment.",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/deleteDeployments"
+              }
+            }
+          },
+          "description": ""
+        },
+        "x-stoplight": {
+          "id": "fd7kpup50yha0"
+        }
+      },
+      "parameters": [
+        {
+          "schema": {
+            "type": "string"
+          },
+          "name": "DEPLOYMENT_ID",
+          "in": "path",
+          "required": true,
+          "description": "Unique identifier generated when the model is deployed."
+        }
+      ]
+    },
+    "/customers/{CUSTOMER_ID}/ai/models/{MODEL_ID}/deployments": {
+      "get": {
+        "summary": "GET ModelId Deployments",
+        "tags": [],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/responseGetModelIdDeployments"
+                }
+              }
+            }
+          }
+        },
+        "operationId": "get-models-modelId-deployments",
+        "description": "Returns a list of custom model deployments.",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/getModelIdDeployments"
+              }
+            }
+          }
+        },
+        "x-stoplight": {
+          "id": "p1iv86pggu5y2"
+        }
+      },
+      "parameters": [
+        {
+          "schema": {
+            "type": "string"
+          },
+          "name": "CUSTOMER_ID",
+          "in": "path",
+          "required": true,
+          "description": "Unique identifier derived from confidential client information."
+        },
+        {
+          "schema": {
+            "type": "string"
+          },
+          "name": "MODEL_ID",
+          "in": "path",
+          "required": true,
+          "description": "Unique identifier for the model."
+        }
+      ]
+    }
+  },
+  "components": {
+    "schemas": {
+      "getModels": {
+        "title": "getModels",
+        "x-stoplight": {
+          "id": "nb0gktio1gb18"
+        },
+        "type": "object",
+        "description": "GET https://api.lucidworks.com/customers/{CUSTOMER_ID}/ai/models"
+      },
+      "responseGetModels": {
+        "title": "responseGetModels",
+        "x-stoplight": {
+          "id": "autc83owb8w58"
+        },
+        "type": "array",
+        "items": {
+          "x-stoplight": {
+            "id": "672yhmo2f5sr6"
+          },
+          "type": "object",
+          "properties": {
+            "id": {
+              "type": "string",
+              "x-stoplight": {
+                "id": "m0c97m1pgy6od"
+              },
+              "description": "The identifier of the model. For:\n\n* Pre-trained models, the value options are `multilinguallm`, `text-encoder`, or `clip-encoder`.\n\n* Custom models, the value is the universally unique identified (UUID) that is the primary key for the model."
+            },
+            "name": {
+              "type": "string",
+              "x-stoplight": {
+                "id": "zov9ea2rsswaz"
+              },
+              "description": "The name of the custom model. This field only applies to custom models."
+            },
+            "category": {
+              "type": "string",
+              "x-stoplight": {
+                "id": "yz4mwszovsaqs"
+              },
+              "description": "The object that specifies if the model is pre-trained (shared) or custom. Valid options are `pre-trained (shared)` or `custom`."
+            },
+            "modelType": {
+              "type": "string",
+              "x-stoplight": {
+                "id": "n421ie771kqsi"
+              },
+              "description": "The name of the `modelType`. For:\n\n* Pre-trained models, the value is the same as the `id` value. The value options are `multilinguallm`, `text-encoder`, or `clip-encoder`.\n\n* Custom models, the value is the name of the model."
+            },
+            "description": {
+              "type": "string",
+              "x-stoplight": {
+                "id": "aq4wuqsku64vy"
+              },
+              "description": "The description of the model."
+            },
+            "region": {
+              "type": "string",
+              "x-stoplight": {
+                "id": "oel8bgc5gom5f"
+              },
+              "description": "The geographic region specified when the custom model was trained."
+            },
+            "vectorSize": {
+              "type": "string",
+              "x-stoplight": {
+                "id": "lnybpcgruda16"
+              },
+              "description": "The number of elements and objects in the custom model. This field only applies to custom models."
+            },
+            "trainingData": {
+              "$ref": "#/components/schemas/trainingData",
+              "x-stoplight": {
+                "id": "8wvevwouv2pl7"
+              },
+              "description": "The location of the training data in Google Cloud Storage (GCS)."
+            },
+            "config": {
+              "$ref": "#/components/schemas/modelConfig",
+              "x-stoplight": {
+                "id": "sabdztoaxqzj0"
+              },
+              "description": "The configuration parameters passed to the model training job."
+            },
+            "state": {
+              "type": "string",
+              "x-stoplight": {
+                "id": "h64668fua17t0"
+              },
+              "description": "This field specifies the current status of the model. For:\n\n  * Pre-trained (shared) models, the only value is:\n    \n    * `AVAILABLE` - The model was successfully trained and is ready to be deployed.\n\n  * Custom models, the value can be:\n\n    * `TRAINING` - The custom model is being trained.\n\n    * `TRAINING_FAILED` - The model training failed.\n\n    * `AVAILABLE` - The model was successfully trained and is ready to be deployed."
+            },
+            "trainingStarted": {
+              "type": "string",
+              "x-stoplight": {
+                "id": "2cydoamq9ey4i"
+              },
+              "description": "The date and time the training started. This field only applies to custom models.",
+              "format": "date-time"
+            },
+            "trainingCompleted": {
+              "type": "string",
+              "x-stoplight": {
+                "id": "27fagdnfz7ebz"
+              },
+              "description": "The date and time the training completed. This field only applies to custom models.",
+              "format": "date-time"
+            },
+            "createdBy": {
+              "type": "string",
+              "x-stoplight": {
+                "id": "yqo1eiokps6zj"
+              },
+              "description": "The user who created the model. This field only applies to custom models."
+            },
+            "deployments": {
+              "$ref": "#/components/schemas/deployments",
+              "x-stoplight": {
+                "id": "vben7kpyjopbh"
+              },
+              "description": "This array is only returned for deployed custom models, so these fields are not included for pre-trained models."
+            }
+          }
+        }
+      },
+      "postModels": {
+        "title": "postModels",
+        "x-stoplight": {
+          "id": "yb3xosk3tbku3"
+        },
+        "description": "POST https://api.lucidworks.com/customers/{CUSTOMER_ID}/ai/models",
+        "allOf": [
+          {
+            "properties": {
+              "name": {
+                "type": "string",
+                "x-stoplight": {
+                  "id": "3c0zqhvi5chws"
+                },
+                "description": "The user-friendly name of the model."
+              },
+              "modelType": {
+                "type": "string",
+                "x-stoplight": {
+                  "id": "ygdnnm56fmnbf"
+                },
+                "description": "The name of the custom model."
+              },
+              "region": {
+                "type": "string",
+                "x-stoplight": {
+                  "id": "y56m0dt6ga2nz"
+                },
+                "description": "The geographic region specified when the custom model is being trained."
+              },
+              "trainingData": {
+                "$ref": "#/components/schemas/trainingData",
+                "x-stoplight": {
+                  "id": "3h4gqmzjf6s9u"
+                },
+                "description": "The location of the training data in Google Cloud Storage (GCS)."
+              },
+              "config": {
+                "$ref": "#/components/schemas/modelConfig",
+                "x-stoplight": {
+                  "id": "fq3hhqvol1rsj"
+                },
+                "description": "The configuration parameters passed to the model training job."
+              },
+              "trainingDataCredentials": {
+                "type": "object",
+                "x-stoplight": {
+                  "id": "pzgsoy26xtr7s"
+                },
+                "description": "The credentials used to access the training data URLs.",
+                "properties": {
+                  "serviceAccountKey": {
+                    "type": "string",
+                    "x-stoplight": {
+                      "id": "syleq5lfrhtlc"
+                    },
+                    "description": "The Base64-encoded service account JSON key."
+                  }
+                }
+              }
+            }
+          }
+        ],
+        "type": "object"
+      },
+      "responsePostModels": {
+        "title": "responsePostModels",
+        "x-stoplight": {
+          "id": "53q8cov0mocv9"
+        },
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "The identifier of the model. The value is the universally unique identified (UUID) that is the primary key for the model."
+          },
+          "name": {
+            "type": "string",
+            "x-stoplight": {
+              "id": "g5vjbx1u17moo"
+            },
+            "description": "The user-friendly name of the model."
+          },
+          "modelType": {
+            "type": "string",
+            "x-stoplight": {
+              "id": "upmdqlmlufj1u"
+            },
+            "description": "The name of the model."
+          },
+          "category": {
+            "type": "string",
+            "x-stoplight": {
+              "id": "1qf718xi7oq7k"
+            },
+            "description": "The object that specifies the model is `custom`."
+          },
+          "description": {
+            "type": "string",
+            "x-stoplight": {
+              "id": "hz4c4p4wxszlz"
+            },
+            "description": "The description of the model."
+          },
+          "region": {
+            "type": "string",
+            "x-stoplight": {
+              "id": "o9r1urwdnury4"
+            },
+            "description": "The geographic region specified when the custom model was trained."
+          },
+          "trainingData": {
+            "$ref": "#/components/schemas/trainingData",
+            "x-stoplight": {
+              "id": "vfb7rjfbqo549"
+            },
+            "description": "The location of the training data in Google Cloud Storage (GCS)."
+          },
+          "config": {
+            "$ref": "#/components/schemas/modelConfig",
+            "x-stoplight": {
+              "id": "5sdrduaf0k0pt"
+            },
+            "description": "The configuration parameters passed to the model training job."
+          },
+          "state": {
+            "type": "string",
+            "x-stoplight": {
+              "id": "3pa34rw1ckjzu"
+            },
+            "description": "This field specifies the current status of the custom model. The value is `TRAINING`."
+          },
+          "trainingStarted": {
+            "type": "string",
+            "x-stoplight": {
+              "id": "voj8d0qow8n8a"
+            },
+            "description": "The date and time the training started. This field only applies to custom models."
+          },
+          "trainingCompleted": {
+            "type": "string",
+            "x-stoplight": {
+              "id": "qrjqthgzgrv6p"
+            },
+            "description": "The date and time the training completed. This field only applies to custom models."
+          },
+          "createdBy": {
+            "type": "string",
+            "x-stoplight": {
+              "id": "wahf3rgjic1gd"
+            },
+            "description": "The user who created the model."
+          }
+        }
+      },
+      "getModelId": {
+        "title": "getModelId",
+        "x-stoplight": {
+          "id": "jk7h3doaz3s4i"
+        },
+        "type": "object",
+        "description": "GET https://api.lucidworks.dev/customers/{CUSTOMER_ID}/ai/models/{MODEL_ID}",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "The identifier of the model. For:\n\n* Pre-trained models, the value options are `multilinguallm`, `text-encoder`, or `clip-encoder`.\n\n* Custom models, the value is the universally unique identified (UUID) that is the primary key for the model.",
+            "x-stoplight": {
+              "id": "zfegbmlzs38ft"
+            }
+          }
+        },
+        "required": [
+          "id"
+        ]
+      },
+      "responseGetModelIdShared": {
+        "title": "responseGetModelIdShared",
+        "x-stoplight": {
+          "id": "achghviryyn2d"
+        },
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "The identifier of the model. The value options are `multilinguallm`, `text-encoder`, or `clip-encoder`."
+          },
+          "modelType": {
+            "type": "string",
+            "x-stoplight": {
+              "id": "2cxa5kmbd9uvz"
+            },
+            "description": "The name of the `modelType`. The value is the same as the `id` value. The value options are `multilinguallm`, `text-encoder`, or `clip-encoder`."
+          },
+          "description": {
+            "type": "string",
+            "x-stoplight": {
+              "id": "e9sy20m7r4nvm"
+            },
+            "description": "The description of the model."
+          },
+          "state": {
+            "type": "string",
+            "x-stoplight": {
+              "id": "h6oy6oawtfnf7"
+            },
+            "description": "This field specifies the current status of the model. The only value is `AVAILABLE`. The model was successfully trained and is ready to be deployed."
+          }
+        }
+      },
+      "responseGetModelIdCustom": {
+        "title": "responseGetModelIdCustom",
+        "x-stoplight": {
+          "id": "yqc8h7ru8wyy5"
+        },
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "The identifier of the model. The value is the universally unique identified (UUID) that is the primary key for the model."
+          },
+          "name": {
+            "type": "string",
+            "x-stoplight": {
+              "id": "sj1o8cs0dcx13"
+            },
+            "description": "The user-friendly name of the model."
+          },
+          "modelType": {
+            "type": "string",
+            "x-stoplight": {
+              "id": "y1oiuw7rwwtz7"
+            },
+            "description": "The name of the custom model."
+          },
+          "category": {
+            "type": "string",
+            "x-stoplight": {
+              "id": "rfhib0yf4e9hq"
+            },
+            "description": "The object that specifies the model is `custom`."
+          },
+          "description": {
+            "type": "string",
+            "x-stoplight": {
+              "id": "w2xqq7wyjk1uy"
+            },
+            "description": "The description of the model."
+          },
+          "region": {
+            "type": "string",
+            "x-stoplight": {
+              "id": "2i1nu5pe3o0qr"
+            },
+            "description": "The geographic region specified when the custom model is deployed."
+          },
+          "vectorSize": {
+            "type": "integer",
+            "x-stoplight": {
+              "id": "erdw029q8572p"
+            },
+            "description": "The number of elements and objects in the custom model. This field only applies to custom models."
+          },
+          "trainingData": {
+            "$ref": "#/components/schemas/trainingData",
+            "x-stoplight": {
+              "id": "pu8ad00kn17zn"
+            },
+            "description": "The location of the training data in Google Cloud Storage (GCS)."
+          },
+          "config": {
+            "$ref": "#/components/schemas/modelConfig",
+            "x-stoplight": {
+              "id": "fmotkiu45v9g8"
+            },
+            "description": "The configuration parameters passed to the model training job."
+          },
+          "state": {
+            "type": "string",
+            "x-stoplight": {
+              "id": "7b0udrtwlzwug"
+            },
+            "description": "This field specifies the current status of the custom model. The value can be:\n\n    * `TRAINING` - The custom model is being trained.\n\n    * `TRAINING_FAILED` - The model training failed.\n\n    * `AVAILABLE` - The model was successfully trained and is ready to be deployed."
+          },
+          "trainingStarted": {
+            "type": "string",
+            "x-stoplight": {
+              "id": "4gdvjyv9g0tle"
+            },
+            "format": "date-time",
+            "description": "The date and time the training started. This field only applies to custom models."
+          },
+          "trainingCompleted": {
+            "type": "string",
+            "x-stoplight": {
+              "id": "5l6znab2g73sf"
+            },
+            "format": "date-time",
+            "description": "The date and time the training completed. This field only applies to custom models."
+          },
+          "trainingMetrics": {
+            "type": "object",
+            "x-stoplight": {
+              "id": "8g7xkvhzyvmpq"
+            },
+            "description": "Information about the metrics returned in the response of the training model."
+          },
+          "deployments": {
+            "type": "array",
+            "x-stoplight": {
+              "id": "6nq54xq05615q"
+            },
+            "description": "This array is only returned for deployed custom models, so these fields are not included for pre-trained models.",
+            "items": {
+              "x-stoplight": {
+                "id": "au0sb8fi0ke7c"
+              },
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "string",
+                  "x-stoplight": {
+                    "id": "29us2562bqmuz"
+                  },
+                  "description": "The identifier for the deployed custom model. The value is the universally unique identified (UUID) that is the primary key for the model. "
+                },
+                "region": {
+                  "type": "string",
+                  "x-stoplight": {
+                    "id": "4qewoytq412rl"
+                  },
+                  "description": "The geographic region specified when the custom model is deployed."
+                },
+                "state": {
+                  "type": "string",
+                  "x-stoplight": {
+                    "id": "rdmrbus3brrva"
+                  },
+                  "description": "This field specifies the current status of the custom model deployment. Value options include:\n\n* `DEPLOYING` -The model is in the process of being deployed.\n\n* `DEPLOYED` - The model is deployed and available for predictions.\n\n* `DEPLOY_FAILED` - The model failed to deploy.\n\n* `DELETING` - The model deployment is being deleted. The `custom_model_deployment` record is also deleted if the deployment is successfully deleted.\n\n* `DELETE_FAILED` - The model deployment deletion failed. The model is still deployed and available for predictions.\n"
+                }
+              }
+            }
+          }
+        },
+        "examples": [
+          {
+            "id": "c604c6eb-5589-4911-8840-939021113bff",
+            "name": "example model",
+            "modelType": "ecommerce-rnn",
+            "category": "CUSTOM",
+            "description": "Custom model tuned for e-commerce training",
+            "region": "us-iowa",
+            "vectorSize": 256,
+            "trainingData": {
+              "catalog": "gs://ml-platform-model-parameters-region/customer-test/test-data/l_index.parquet",
+              "signals": "gs://ml-platform-model-parameters-region/customer-test/test-data/l_query.parquet"
+            },
+            "config": {
+              "dataset_config": "mlp_ecommerce_rnn",
+              "trainer_config": "mlp_ecommerce_rnn",
+              "trainer_config.num_epochs": 1
+            },
+            "state": "AVAILABLE",
+            "trainingStarted": "2023-06-14T15:28:40.201Z",
+            "trainingCompleted": "2023-06-14T15:36:55.320Z",
+            "trainingMetrics": {
+              "summary": {
+                "best_epoch": 1,
+                "index_size": 3885,
+                "vector_size": 256,
+                "training_time": 45.730143308639526,
+                "num_trn_queries": 17730,
+                "num_val_queries": 1969,
+                "num_unique_training_pairs": 41380
+              },
+              "epoch_metrics": {
+                "hit": {
+                  "trn": {
+                    "1": [
+                      0.22955815134586086
+                    ],
+                    "3": [
+                      0.4154393092940579
+                    ],
+                    "5": [
+                      0.5073641442356526
+                    ],
+                    "10": [
+                      0.6140172676485526
+                    ]
+                  },
+                  "val": {
+                    "1": [
+                      0.21736922295581512
+                    ],
+                    "3": [
+                      0.4245810055865922
+                    ],
+                    "5": [
+                      0.510411376333164
+                    ],
+                    "10": [
+                      0.6069070594210259
+                    ]
+                  }
+                },
+                "map": {
+                  "trn": {
+                    "1": [
+                      0.22955815134586086
+                    ],
+                    "3": [
+                      0.27385587720783217
+                    ],
+                    "5": [
+                      0.29456097285706195
+                    ],
+                    "10": [
+                      0.3109160985416306
+                    ]
+                  },
+                  "val": {
+                    "1": [
+                      0.21736922295581512
+                    ],
+                    "3": [
+                      0.2779752835618753
+                    ],
+                    "5": [
+                      0.29659288414874957
+                    ],
+                    "10": [
+                      0.31074798141986865
+                    ]
+                  }
+                },
+                "mrr": {
+                  "trn": {
+                    "1": [
+                      0.22955815134586086
+                    ],
+                    "3": [
+                      0.3121719993228371
+                    ],
+                    "5": [
+                      0.3333248687997291
+                    ],
+                    "10": [
+                      0.3479900763420316
+                    ]
+                  },
+                  "val": {
+                    "1": [
+                      0.21736922295581512
+                    ],
+                    "3": [
+                      0.3103944472659555
+                    ],
+                    "5": [
+                      0.3298713390892162
+                    ],
+                    "10": [
+                      0.34282711391649967
+                    ]
+                  }
+                },
+                "ndcg": {
+                  "trn": {
+                    "1": [
+                      0.19706682592715863
+                    ],
+                    "3": [
+                      0.29341225996373577
+                    ],
+                    "5": [
+                      0.3320502228116081
+                    ],
+                    "10": [
+                      0.36721667192191393
+                    ]
+                  },
+                  "val": {
+                    "1": [
+                      0.18814826421287148
+                    ],
+                    "3": [
+                      0.2952855597323055
+                    ],
+                    "5": [
+                      0.3329328847559609
+                    ],
+                    "10": [
+                      0.3656142086267142
+                    ]
+                  }
+                },
+                "recall": {
+                  "trn": {
+                    "1": [
+                      0.1762454094867557
+                    ],
+                    "3": [
+                      0.34738050817763444
+                    ],
+                    "5": [
+                      0.4339384181765327
+                    ],
+                    "10": [
+                      0.5392753552805389
+                    ]
+                  },
+                  "val": {
+                    "1": [
+                      0.17493309084726633
+                    ],
+                    "3": [
+                      0.36196991256560396
+                    ],
+                    "5": [
+                      0.4451409616903886
+                    ],
+                    "10": [
+                      0.5429232985058972
+                    ]
+                  }
+                }
+              },
+              "final_metrics": {
+                "hit": {
+                  "trn": {
+                    "1": 0.22955815134586086,
+                    "3": 0.4154393092940579,
+                    "5": 0.5073641442356526,
+                    "10": 0.6140172676485526
+                  },
+                  "val": {
+                    "1": 0.21736922295581512,
+                    "3": 0.4245810055865922,
+                    "5": 0.510411376333164,
+                    "10": 0.6069070594210259
+                  }
+                },
+                "map": {
+                  "trn": {
+                    "1": 0.22955815134586086,
+                    "3": 0.27385587720783217,
+                    "5": 0.29456097285706195,
+                    "10": 0.3109160985416306
+                  },
+                  "val": {
+                    "1": 0.21736922295581512,
+                    "3": 0.2779752835618753,
+                    "5": 0.29659288414874957,
+                    "10": 0.31074798141986865
+                  }
+                },
+                "mrr": {
+                  "trn": {
+                    "1": 0.22955815134586086,
+                    "3": 0.3121719993228371,
+                    "5": 0.3333248687997291,
+                    "10": 0.3479900763420316
+                  },
+                  "val": {
+                    "1": 0.21736922295581512,
+                    "3": 0.3103944472659555,
+                    "5": 0.3298713390892162,
+                    "10": 0.34282711391649967
+                  }
+                },
+                "ndcg": {
+                  "trn": {
+                    "1": 0.19706682592715863,
+                    "3": 0.29341225996373577,
+                    "5": 0.3320502228116081,
+                    "10": 0.36721667192191393
+                  },
+                  "val": {
+                    "1": 0.18814826421287148,
+                    "3": 0.2952855597323055,
+                    "5": 0.3329328847559609,
+                    "10": 0.3656142086267142
+                  }
+                },
+                "recall": {
+                  "trn": {
+                    "1": 0.1762454094867557,
+                    "3": 0.34738050817763444,
+                    "5": 0.4339384181765327,
+                    "10": 0.5392753552805389
+                  },
+                  "val": {
+                    "1": 0.17493309084726633,
+                    "3": 0.36196991256560396,
+                    "5": 0.4451409616903886,
+                    "10": 0.5429232985058972
+                  }
+                }
+              }
+            }
+          }
+        ]
+      },
+      "getDeployments": {
+        "title": "getDeployments",
+        "x-stoplight": {
+          "id": "8nsm7ksl75sf0"
+        },
+        "type": "object",
+        "description": "GET https:/api.lucidworks.com/customers/{CUSTOMER_ID}/ai/deployments"
+      },
+      "responseGetDeployments": {
+        "title": "responseGetDeployments",
+        "x-stoplight": {
+          "id": "lihqxy0oegrew"
+        },
+        "type": "array",
+        "items": {
+          "x-stoplight": {
+            "id": "1lg0za3de6htc"
+          },
+          "type": "object",
+          "properties": {
+            "id": {
+              "type": "string",
+              "x-stoplight": {
+                "id": "wb8z5qlos0tuf"
+              },
+              "description": "The identifier for the custom model. The value is the universally unique identified (UUID) that is the primary key for the model. "
+            },
+            "modelId": {
+              "type": "string",
+              "x-stoplight": {
+                "id": "771vqmojtse71"
+              },
+              "description": "The identifier for the deployed custom model. The value is the universally unique identified (UUID) reference the foreign keys for the model. "
+            },
+            "region": {
+              "type": "string",
+              "x-stoplight": {
+                "id": "p76swy4cdtskw"
+              },
+              "description": "The geographic region specified when the custom model is deployed."
+            },
+            "config": {
+              "$ref": "#/components/schemas/deploymentConfig",
+              "x-stoplight": {
+                "id": "wds9fomagvt7l"
+              },
+              "description": "The configuration parameters for model deployment passed to the workflow as a raw JSON blob. Multiple parameters can be defined and passed."
+            },
+            "minReplicas": {
+              "type": "integer",
+              "x-stoplight": {
+                "id": "28sqap7mbp6yb"
+              },
+              "description": "The minimum value of Seldon replicas for the model.",
+              "default": 1,
+              "minimum": 1
+            },
+            "maxReplicas": {
+              "type": "integer",
+              "x-stoplight": {
+                "id": "xcqrfm6uuzotv"
+              },
+              "description": "The maximum value of Seldon replicas for the model.",
+              "default": 1,
+              "minimum": 1
+            },
+            "state": {
+              "type": "string",
+              "x-stoplight": {
+                "id": "9seo4vmhb5y1r"
+              },
+              "description": "This field specifies the current status of the custom model deployment. Value options include:\n\n* `DEPLOYING` -The model is in the process of being deployed.\n\n* `DEPLOYED` - The model is deployed and available for predictions.\n\n* `DEPLOY_FAILED` - The model failed to deploy.\n\n* `DELETING` - The model deployment is being deleted. The `custom_model_deployment` record is also deleted if the deployment is successfully deleted.\n\n* `DELETE_FAILED` - The model deployment deletion failed. The model is still deployed and available for predictions.\n"
+            },
+            "deployedAt": {
+              "type": "string",
+              "x-stoplight": {
+                "id": "l29khucerngzh"
+              },
+              "format": "date-time",
+              "description": "The date and time the deployment occurred."
+            },
+            "createdBy": {
+              "type": "string",
+              "x-stoplight": {
+                "id": "pfbgbwuhfkagj"
+              },
+              "description": "The user who created the deployment."
+            }
+          }
+        }
+      },
+      "postDeployments": {
+        "title": "postDeployments",
+        "x-stoplight": {
+          "id": "3zzgxe3kkmoag"
+        },
+        "type": "object",
+        "description": "POST https://api.lucidworks.com/customers/{CUSTOMER_ID}/ai/deployments",
+        "properties": {
+          "modelId": {
+            "type": "string",
+            "x-stoplight": {
+              "id": "rv6s3upoqrtpl"
+            },
+            "description": "The identifier for the custom model being deployed. The value is the universally unique identified (UUID) reference the foreign keys for the model. "
+          },
+          "region": {
+            "type": "string",
+            "x-stoplight": {
+              "id": "tn6n4z1ppqodr"
+            },
+            "description": "The geographic region specified when the custom model is deployed."
+          },
+          "minReplicas": {
+            "type": "integer",
+            "x-stoplight": {
+              "id": "fk4359wkocbb1"
+            },
+            "description": "The minimum value of Seldon replicas for the model.",
+            "default": 1,
+            "minimum": 1
+          },
+          "maxReplicas": {
+            "type": "integer",
+            "x-stoplight": {
+              "id": "mwh1vpx5z08qc"
+            },
+            "description": "The maximum value of Seldon replicas for the model.",
+            "default": 1,
+            "minimum": 1
+          },
+          "config": {
+            "type": "object",
+            "x-stoplight": {
+              "id": "ac6w0bi99h8zu"
+            },
+            "description": "The model configuration that is passed to the Docker image in a raw JSON blob.",
+            "properties": {
+              "parameter_1": {
+                "type": "string",
+                "x-stoplight": {
+                  "id": "3z10uzmal1mdm"
+                },
+                "description": "A parameter passed in the `config` object."
+              },
+              "parameter_2": {
+                "type": "string",
+                "x-stoplight": {
+                  "id": "fpsdz5tz5vsu5"
+                },
+                "description": "A parameter passed in the `config` object."
+              }
+            }
+          }
+        }
+      },
+      "responsePostDeployments": {
+        "title": "responsePostDeployments",
+        "x-stoplight": {
+          "id": "5hwliunla3wp4"
+        },
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "The identifier for the custom model. The value is the universally unique identified (UUID) that is the primary key for the model. "
+          },
+          "modelId": {
+            "type": "string",
+            "x-stoplight": {
+              "id": "7n1t6b64ii0ho"
+            },
+            "description": "The identifier for the custom model being deployed. The value is the universally unique identified (UUID) reference the foreign keys for the model. "
+          },
+          "region": {
+            "type": "string",
+            "x-stoplight": {
+              "id": "pe1cvg1dj9cla"
+            },
+            "description": "The geographic region specified when the custom model is deployed."
+          },
+          "config": {
+            "$ref": "#/components/schemas/deploymentConfig",
+            "x-stoplight": {
+              "id": "2y5zz76pufs7o"
+            },
+            "description": "The configuration parameters for model deployment passed to the workflow as a raw JSON blob. Multiple parameters can be defined and passed."
+          },
+          "minReplicas": {
+            "type": "integer",
+            "x-stoplight": {
+              "id": "uyzybjbs5lzx5"
+            },
+            "description": "The minimum value of Seldon replicas for the model.",
+            "default": 1,
+            "minimum": 1
+          },
+          "maxReplicas": {
+            "type": "integer",
+            "x-stoplight": {
+              "id": "c05smvtlqmgk8"
+            },
+            "description": "The maximum value of Seldon replicas for the model.",
+            "default": 1,
+            "minimum": 1
+          },
+          "state": {
+            "type": "string",
+            "x-stoplight": {
+              "id": "hg1oay7h3co4p"
+            },
+            "description": "This field specifies the current status of the custom model. The value is `DEPLOYING`."
+          },
+          "deployedAt": {
+            "type": "string",
+            "x-stoplight": {
+              "id": "2lyyc0veqw83o"
+            },
+            "format": "date-time",
+            "description": "The date and time the deployment occurred."
+          },
+          "createdBy": {
+            "type": "string",
+            "x-stoplight": {
+              "id": "79ibgupk5ctji"
+            },
+            "description": "The user who created the deployment."
+          }
+        }
+      },
+      "deleteDeployments": {
+        "title": "deleteDeployments",
+        "x-stoplight": {
+          "id": "si8og8x7ajuxz"
+        },
+        "type": "object",
+        "description": "DELETE https://api.lucidworks.dev/customers/{CUSTOMER_ID}/ai/deployments/{DEPLOYMENT_ID}\n"
+      },
+      "responseDeleteDeployments": {
+        "title": "responseDeleteDeployments",
+        "x-stoplight": {
+          "id": "8n2mmrkm81yg6"
+        },
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "The identifier for the custom model. The value is the universally unique identified (UUID) that is the primary key for the model. "
+          },
+          "modelId": {
+            "type": "string",
+            "x-stoplight": {
+              "id": "c37g9alfr7i1q"
+            },
+            "description": "The identifier for the custom model being deleted. The value is the universally unique identified (UUID) reference the foreign keys for the model. "
+          },
+          "region": {
+            "type": "string",
+            "x-stoplight": {
+              "id": "1s2g6sy3j8uhc"
+            },
+            "description": "The geographic region specified when the custom model is deployed."
+          },
+          "config": {
+            "$ref": "#/components/schemas/deploymentConfig",
+            "x-stoplight": {
+              "id": "i38b5u0hl2ak9"
+            },
+            "description": "The configuration parameters for model deployment passed to the workflow as a raw JSON blob. Multiple parameters can be defined and passed."
+          },
+          "minReplicas": {
+            "type": "integer",
+            "x-stoplight": {
+              "id": "5szsl6sshpx30"
+            },
+            "description": "The minimum value of Seldon replicas for the model.",
+            "default": 1,
+            "minimum": 1
+          },
+          "maxReplicas": {
+            "type": "integer",
+            "x-stoplight": {
+              "id": "yr9tocu4w0kse"
+            },
+            "description": "The maximum value of Seldon replicas for the model.",
+            "default": 1,
+            "minimum": 1
+          },
+          "state": {
+            "type": "string",
+            "x-stoplight": {
+              "id": "u34ub9gg5gwgn"
+            },
+            "description": "This field specifies the current status of the custom model. The value is `DELETING`, `DELETED`, or `DELETE_FAILED`."
+          },
+          "deployedAt": {
+            "type": "string",
+            "x-stoplight": {
+              "id": "5sni9bz3uh4ab"
+            },
+            "format": "date-time",
+            "description": "The date and time the deployment occurred."
+          },
+          "createdBy": {
+            "type": "string",
+            "x-stoplight": {
+              "id": "it9z51z78r3io"
+            },
+            "description": "The user who created the deployment."
+          }
+        }
+      },
+      "getModelIdDeployments": {
+        "title": "getModelIdDeployments",
+        "x-stoplight": {
+          "id": "rcxktu80l4jc9"
+        },
+        "type": "object",
+        "description": "GET https://api.lucidworks.com/customers/{CUSTOMER_ID}/ai/models/{MODEL_ID}/deployments"
+      },
+      "responseGetModelIdDeployments": {
+        "title": "responseGetModelIdDeployments",
+        "x-stoplight": {
+          "id": "kgy1asumz4pti"
+        },
+        "type": "array",
+        "items": {
+          "x-stoplight": {
+            "id": "0b0j1hfil08b3"
+          },
+          "type": "object",
+          "properties": {
+            "id": {
+              "type": "string",
+              "x-stoplight": {
+                "id": "veoqs6l3cvpxj"
+              },
+              "description": "The identifier for the custom model. The value is the universally unique identified (UUID) that is the primary key for the model. "
+            },
+            "modelId": {
+              "type": "string",
+              "x-stoplight": {
+                "id": "uuq1jctrhbt6a"
+              },
+              "description": "The identifier for the deployed custom model. The value is the universally unique identified (UUID) reference the foreign keys for the model. "
+            },
+            "region": {
+              "type": "string",
+              "x-stoplight": {
+                "id": "2wom69kdyqqi5"
+              },
+              "description": "The geographic region specified when the custom model is deployed."
+            },
+            "config": {
+              "$ref": "#/components/schemas/deploymentConfig",
+              "x-stoplight": {
+                "id": "zi4jdji409rbj"
+              }
+            },
+            "minReplicas": {
+              "type": "integer",
+              "x-stoplight": {
+                "id": "ugh4ex041qge3"
+              },
+              "minimum": 1,
+              "default": 1,
+              "description": "The minimum value of Seldon replicas for the model."
+            },
+            "maxReplicas": {
+              "type": "integer",
+              "x-stoplight": {
+                "id": "dp9k1uw3onu5m"
+              },
+              "default": 1,
+              "description": "The maximum value of Seldon replicas for the model."
+            },
+            "state": {
+              "type": "string",
+              "x-stoplight": {
+                "id": "z86dhwwn8p76f"
+              },
+              "description": "This field specifies the current status of the custom model. The value is `DEPLOYING` or `DEPLOYED`."
+            },
+            "deployedAt": {
+              "type": "string",
+              "x-stoplight": {
+                "id": "07m0lyyxluv8i"
+              },
+              "format": "date-time",
+              "description": "The date and time the deployment occurred."
+            },
+            "createdBy": {
+              "type": "string",
+              "x-stoplight": {
+                "id": "eu6mjj3ien7a1"
+              },
+              "description": "The user who created the deployment."
+            }
+          }
+        }
+      },
+      "trainingData": {
+        "title": "trainingData",
+        "x-stoplight": {
+          "id": "53ap3s0l3qdup"
+        },
+        "type": "object",
+        "description": "Both the `catalog index file` and `signals query file` are required, and must contain the same `pkid` field, which links relevant queries to documents.",
+        "properties": {
+          "catalog": {
+            "type": "string",
+            "x-stoplight": {
+              "id": "clzdxujva1obb"
+            },
+            "description": "The location of the catalog of the training data in Google Cloud Storage (GCS).\n\nThe catalog file contains documents (products) that will be searched. The file must have a `pkid` (product key ID) column which contains the document ID or product ID. The `pkid` is a unique value for each document, so entries with a duplicate `pkid` are filtered out. However, since not every `pkid` entry is associated with a query, there may be entries in the `catalog index file` that are not associated with a `signals query entry`.\n\nThe index file content format is different based on the model type to be trained. For example, a general model or an eCommerce model.\n- The general index file format contains:\n    - `pkid` - The unique product key ID. Required field. This must match an entry in the `signals query file`. \n    - `text` - A freeform text field.\n- The eCommerce index file format contains:\n    - `pkid` - The unique product key ID. Required field. This must match an entry in the `signals query file`. \n    - `name` - The freeform text field that contains the product name."
+          },
+          "signals": {
+            "type": "string",
+            "x-stoplight": {
+              "id": "rnbp0ynnnr21l"
+            },
+            "description": "The location of signals in the training data in Google Cloud Storage (GCS).\n\nThe signals file must have a `pkid` (product key ID) column which refers to the relevant document or product ID. The file may contain multiple duplicates of any `pkid` because each document could be associated with several relevant queries.\n\nNOTE: For evaluation purposes, 10% of unique queries (50 minimum and 5000 maximum) are automatically sampled into a validation set from the training query file.\n\n- The general query file format contains:\n    - `pkid` - The unique product key ID. Required field. This must match an entry in the `catalog index file`. \n    - `query` - A freeform text field.\n- The eCommerce query file format contains:\n    - `pkid` - The unique product key ID. Required field. This must match an entry in the `catalog index file`. \n    - `query` - A freeform text field.\n    - `aggr_count` - The number of documents that match the query criteria. In most cases, this value is used as a weight and must be greater than zero (0). If you do not use weights or there is no value, set this value to `1`. The weight is used for training pairs sampling and to compute normalized discounted cumulative gain (NDCG) metrics. If all values are `1.0`, binary NDCG is computed."
+          }
+        },
+        "required": [
+          "catalog",
+          "signals"
+        ]
+      },
+      "modelConfig": {
+        "title": "modelConfig",
+        "x-stoplight": {
+          "id": "0y5u42dutfohw"
+        },
+        "type": "object",
+        "properties": {
+          "dataset_config": {
+            "type": "string",
+            "x-stoplight": {
+              "id": "e0yjs3qnj2gyb"
+            },
+            "description": "The options for the dataset format used for training are:\n- `mlp_general_rnn` - This is used for the general recurrent neural networks (RNN) model type.\n- `mlp_ecommerce_rnn` - This used for an eCommerce RNN model type.",
+            "example": "mlp_ecommerce_rnn"
+          },
+          "trainer_config": {
+            "type": "string",
+            "x-stoplight": {
+              "id": "2pc94pg2s9avf"
+            },
+            "description": "The options for the trainer type used for training are:\n- `mlp_general_rnn` - This is used for the general recurrent neural networks (RNN) model type.\n- `mlp_ecommerce_rnn` - This used for an eCommerce RNN model type.",
+            "example": "mlp_ecommerce_rnn"
+          },
+          "trainer_config/text_processor_config": {
+            "type": "string",
+            "x-stoplight": {
+              "id": "2ccy7rpj6lw2v"
+            },
+            "description": "This determines which type of tokenization and embedding is used as the base for the recurrent neural network (RNN) model. For example, word or bype-pair encoding (BPE). \nThe word text processor defaults to English, and uses word-based tokenization and English pre-trained word embeddings. The maximum word vocabulary result is 100000.\nThe BPE versions use the same tokenization, but different vocabulary sizes:\n  * bpe_*_small embeddings have 10000 vocabulary tokens\n  * bpe_*_large embeddings have 100000 vocabulary tokens\n  * bpe_multi multilingual embeddings have 320000 vocabulary tokens\n  \n The options for text processors are:\n- English\n    - `word_en` (default)\n    - `bpe_en_small`\n    - `bpe_en_large`\n- Multilingual\n    - `bpe_multi`\n- Bulgarian\n    - `bpe_bg_small`\n    - `bpe_bg_large`\n- German\n    - `bpe_de_small`\n    - `bpe_de_large`\n- Spanish\n    - `bpe_es_small`\n    - `bpe_es_large`\n- French\n    - `bpe_fr_small`\n    - `bpe_fr_large`\n- Italian\n    - `bpe_it_small`\n    - `bpe_it_large`\n- Japanese\n    - `bpe_ja_small`\n    - `bpe_ja_large`\n- Korean\n    - `bpe_ko_small`\n    - `bpe_ko_large`\n- Dutch\n    - `bpe_nl_small`\n    - `bpe_nl_large`\n- Romanian\n    - `bpe_ro_small`\n    - `bpe_ro_large`\n- Chinese\n    - `bpe_zh_small`\n    - `bpe_zh_large`\n- Custom\n    - `word_custom`\n    - `bpe_custom`",
+            "example": "word_en"
+          },
+          "trainer_config.encoder_config.rnn_names_list": {
+            "type": "array",
+            "x-stoplight": {
+              "id": "67xynet5jq0dh"
+            },
+            "description": "This determines which bi-directional recurrent neural network (RNN) layers are used. Options include `gru` and `lstm`.",
+            "items": {
+              "x-stoplight": {
+                "id": "wqvo41eql9hby"
+              },
+              "type": "string",
+              "example": "gru"
+            }
+          },
+          "trainer_config.encoder_config.rnn_units_list": {
+            "type": "array",
+            "x-stoplight": {
+              "id": "0yih05nyqiuyk"
+            },
+            "description": "The number of units for each recurrent neural network (RNN) layer. \n\nIMPORTANT: You must specify the same number of units for `trainer_config.encoder_config.rnn_units_list` and its similarly-named `trainer_config.encoder_config.rnn_names_list` RNN layer. For example, `rnn_units_list` needs to be the same size as `rnn_names_list`. \n\nBecause this is a bi-directional RNN, the encoder's vector size is two times larger than the number of units in the last layer. For example, if one layer is 128 units, the output vector size is 256.",
+            "items": {
+              "x-stoplight": {
+                "id": "7d9asf2gmk8oj"
+              },
+              "type": "integer",
+              "example": 128
+            }
+          },
+          "trainer_config.trn_batch_size": {
+            "type": "integer",
+            "x-stoplight": {
+              "id": "yxtgce45fh4xg"
+            },
+            "description": "The batch size to be used for a single model training update. By default, an appropriate batch size is automatically determined based on the dataset size. If the field is set to `null`, the batch size is also automatically determined based on the dataset size."
+          },
+          "trainer_config.num_epochs": {
+            "type": "integer",
+            "x-stoplight": {
+              "id": "r2vxvdsqnf3mp"
+            },
+            "description": "The number of epochs the training data must complete. An epoch is a full cycle where training data passes through the designated algorithms. During one epoch, the model processes all the training data examples (queries and index documents) at least one time.",
+            "example": 1,
+            "minimum": 1,
+            "maximum": 64
+          },
+          "trainer_config.monitor_patience": {
+            "type": "integer",
+            "x-stoplight": {
+              "id": "k495uthcuuuje"
+            },
+            "description": "The number of epochs the training passes before it stops if there is no validation metric improvement during the epochs. The best model state based on the monitor validation metric is used as the final model. \n\n* For the general RNN, the `mrr@3` metric is monitored and the `monitor_patience` default value is 8. \n\n* For the eCommerce RNN, the `ndcg@5` metric is monitored and the `monitor_patience` default value is 16.",
+            "example": 8
+          },
+          "trainer_config.encoder_config.emb_spdp": {
+            "type": "number",
+            "x-stoplight": {
+              "id": "j36o51xgr5xan"
+            },
+            "description": "This field provides a regularization effect, which is the process to simplify result answers. The regularization is applied between the token embeddings layer and the first recurrent neural network (RNN) layer.",
+            "example": 0.3,
+            "format": "float"
+          },
+          "trainer_config.encoder_config.emb_trainable": {
+            "type": "boolean",
+            "x-stoplight": {
+              "id": "9hjtpquc4hfqu"
+            },
+            "description": "This field determines if fine-tuning of the token embeddings, such as word or byte pair encoding (BPE) token vectors, is enabled. If set, it can improve the quality of the model if the query contains less natural language, and training is negatively affected. Because the embeddings layer is the largest layer in the network, the process to improve the model requires enough training data to prevent overfitting."
+          }
+        }
+      },
+      "deployments": {
+        "title": "deployments",
+        "x-stoplight": {
+          "id": "2u80wiwx1tv07"
+        },
+        "type": "array",
+        "items": {
+          "x-stoplight": {
+            "id": "6w5l95i6kcocb"
+          },
+          "type": "object",
+          "properties": {
+            "id": {
+              "type": "string",
+              "x-stoplight": {
+                "id": "2igix7xyh86gy"
+              },
+              "description": "The identifier for the deployed custom model. The value is the universally unique identified (UUID) that is the primary key for the model. ",
+              "example": "1af001c0-cabc-4430-b3b1-c1d8f632e87a"
+            },
+            "region": {
+              "type": "string",
+              "x-stoplight": {
+                "id": "s9kzvesyqt6k0"
+              },
+              "description": "The geographic region specified when the custom model was trained.",
+              "example": "us-southcarolina"
+            },
+            "state": {
+              "type": "string",
+              "x-stoplight": {
+                "id": "kq20ktbxq4y8z"
+              },
+              "description": "This field specifies the current status of the custom model. The value is `DEPLOYED`."
+            },
+            "deployedAt": {
+              "type": "string",
+              "x-stoplight": {
+                "id": "nbyno2oxvkdk6"
+              },
+              "format": "date-time",
+              "description": "The date and time the deployment occurred."
+            }
+          }
+        }
+      },
+      "deploymentConfig": {
+        "title": "deploymentConfig",
+        "x-stoplight": {
+          "id": "6lsywb04jto9h"
+        },
+        "type": "object",
+        "properties": {
+          "parameter_1": {
+            "type": "string",
+            "x-stoplight": {
+              "id": "zgp6roj4r7bxp"
+            },
+            "description": "A unique parameter for the model deployment that is passed to the workflow as a raw JSON blob."
+          },
+          "parameter_2": {
+            "type": "string",
+            "x-stoplight": {
+              "id": "oh9h785dasv8f"
+            },
+            "description": "A unique parameter for the model deployment that is passed to the workflow as a raw JSON blob."
+          }
+        }
+      }
+    },
+    "securitySchemes": {
+      "authToken": {
+        "type": "http",
+        "scheme": "bearer"
+      }
+    },
+    "responses": {}
+  }
+}

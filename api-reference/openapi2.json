@@ -1,0 +1,276 @@
+{
+  "openapi": "3.1.0",
+  "x-stoplight": {
+    "id": "7xazcuaw7zwm7"
+  },
+  "info": {
+    "title": "Authentication",
+    "version": "1.0",
+    "contact": {
+      "name": "Lucidworks",
+      "url": "https://lucidworks.com/",
+      "email": "support@lucidworks.com"
+    },
+    "termsOfService": "https://lucidworks.com/legal/developer-license-agreement/",
+    "license": {
+      "name": "Lucidworks",
+      "url": "https://lucidworks.com/legal/developer-license-agreement/"
+    },
+    "description": ""
+  },
+  "servers": [
+    {
+      "url": "https://identity.lucidworks.com",
+      "description": "Production"
+    }
+  ],
+  "paths": {
+    "/oauth2/{auth}/v1/token": {
+      "parameters": [
+        {
+          "$ref": "#/components/parameters/auth"
+        }
+      ],
+      "post": {
+        "summary": "Request Access Token",
+        "x-stoplight": {
+          "id": "j9naqizwg7ewp"
+        },
+        "operationId": "post-auth-token",
+        "security": [
+          {
+            "API Key - 1": []
+          }
+        ],
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/Cache-Control"
+          },
+          {
+            "$ref": "#/components/parameters/Accept"
+          },
+          {
+            "$ref": "#/components/parameters/scope"
+          },
+          {
+            "$ref": "#/components/parameters/grant_type"
+          },
+          {
+            "$ref": "#/components/parameters/Content-Type"
+          }
+        ],
+        "description": "Use this API to generate an access token. ",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/responseAuth"
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/response-error-401"
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "responseAuth": {
+        "description": "The token response object, which contains the `ACCESS_TOKEN` required by operation APIs. ",
+        "x-stoplight": {
+          "id": "k56xhiyckw69d"
+        },
+        "type": "object",
+        "x-examples": {
+          "example-1": {
+            "token_type": "Bearer",
+            "expires_in": 3600,
+            "access_token": "eyJraWQiOiJmQlBVTF90d2ZkMy1oRjhYejRZTmRjRFROS1hzWW1xVXNqTkJjTmpaVEg4IiwiYWxnIjoiUlMyNTYifQ.eyJ2ZXIiOjEsImp0aSI6IkFULmx1Yk9ZZjk3bHFjZnlodVd2SDFCN1NBVnpOZW83NXlHYTktOG12WmtxZ28iLCJpc3MiOiJodHRwczovL2lkZW50aXR5LWRldi5sdWNpZHdvcmtzLmNvbS9vYXV0aDIvYXVzemNrM2FiY1pCYzZkWlYxZDYiLCJhdWQiOiJodHRwczovL2FwaS5sdWNpZHdvcmtzLmRldiIsImlhdCI6MTY0MzgyMzcxMiwiZXhwIjoxNjQzODI3MzEyLCJjaWQiOiIwb2ExOHI2aHFsWUFpNFRXZTFkNyIsInNjcCI6WyJjb25uZWN0ZWRzZXJ2aWNlLnF1ZXJ5Il0sInN1YiI6IjBvYTE4cjZocWxZQWk0VFdlMWQ3IiwiY3VzdG9tZXJJZCI6IjNmOTIzMzM1LWYyZTEtNGNlZC1hZDY0LTQwMDA1NDE3MzJkYiJ9.oz2tmexkkMWco5A_XT_QnNq11ssvte0HCXts8X-N7oz4-lk36jAIM0dH9IutodGR7_7NTVjM8-lvvfM6s5I7qp0mRh-svb8LR357mFxH1x7_qF4uj6y4DTnGFJoaBiqqEiuc1vMI1oq0nGKBg04dnJ6yjAV1cdCuhY7wDDXxMETETDc1PsXQmCqgkvkVFdKkFspK2WSSZn_R3dn28aG-juDTNMxaHsDwUpXenBl-3fTN9EOcTwuD5awp7CBlPIzBk1akZDoDH0qLdfuPD-mUnQS2rPn2DsM1HQ5sHTG5T27FThyvoTv0i4dZ7hkdWqapFLrdld7sSQr_Z92d-wz5gA",
+            "scope": "connectedservice.query"
+          }
+        },
+        "examples": [
+          {
+            "token_type": "Bearer",
+            "expires_in": 3600,
+            "access_token": "eyJraW...",
+            "scope": "connectedsearch.query"
+          }
+        ],
+        "properties": {
+          "token_type": {
+            "type": "string",
+            "minLength": 1,
+            "enum": [
+              "Bearer"
+            ],
+            "description": "The token type, which is always a bearer token."
+          },
+          "expires_in": {
+            "type": "integer",
+            "enum": [
+              3600
+            ],
+            "description": "The number of seconds before the `ACCESS_TOKEN` expires. Auth tokens expire in 1 hour. A new token is required after that time. "
+          },
+          "access_token": {
+            "type": "string",
+            "minLength": 500,
+            "description": "This value is used for the **Token** parameter required by the API.",
+            "pattern": "[-a-zA-Z0-9._~+/]+=*",
+            "maxLength": 1000
+          },
+          "scope": {
+            "type": "string",
+            "minLength": 1,
+            "description": "The value defines the scope of access granted and matches the `scope` value from the request. \n\nFor the token to send Connected Search Query API requests, use `\"scope\": \"connectedsearch.query\"`.\n\nFor the token to send Connected Search Push API requests, use `\"scope\": \"datasource.push\"`.\n\nFor the token used by the Lucidworks AI API `usecase`, `prediction`, and `async-prediction` endpoints, use `\"scope\": \"machinelearning.predict\"`. \n\nFor the token used by the Lucidworks AI API `model` endpoint, use `\"scope\": \"machinelearning.model\"`.",
+            "enum": [
+              "connectedsearch.query",
+              "datasource.push",
+              "machinelearning.predict",
+              "machinelearning.model"
+            ]
+          }
+        },
+        "required": [
+          "token_type",
+          "expires_in",
+          "access_token",
+          "scope"
+        ]
+      }
+    },
+    "securitySchemes": {
+      "API Key - 1": {
+        "type": "http",
+        "scheme": "basic",
+        "description": "The Authentication API is used by multiple Lucidworks products such as Lucidworks AI and Connected Search. The scope value in the request is unique to the product accessing the API.\n\nThe **Client ID** is used for the **Username** value, and the **Client Secret** is used for the **Password** value. \n\n<!-- theme: info -->\n\n> #### How do I regenerate my client secret?\n>\n> Contact support if you need to regenerate your client secret."
+      }
+    },
+    "responses": {
+      "response-error-401": {
+        "description": "Unauthorized",
+        "content": {
+          "application/json": {
+            "schema": {
+              "description": "",
+              "x-examples": {
+                "example-1": {
+                  "error": "invalid_client",
+                  "error_description": "Browser requests to the token endpoint must use Proof Key for Code Exchange."
+                }
+              },
+              "oneOf": [
+                {
+                  "properties": {
+                    "error": {
+                      "type": "string",
+                      "minLength": 1,
+                      "enum": [
+                        "invalid_client"
+                      ]
+                    },
+                    "error_description": {
+                      "type": "string",
+                      "minLength": 1,
+                      "enum": [
+                        "The browser requests to the token endpoint must use Proof Key for Code Exchange."
+                      ]
+                    }
+                  },
+                  "required": [
+                    "error",
+                    "error_description"
+                  ]
+                }
+              ],
+              "type": "object"
+            }
+          }
+        }
+      }
+    },
+    "parameters": {
+      "auth": {
+        "name": "auth",
+        "in": "path",
+        "required": true,
+        "schema": {
+          "type": "string",
+          "enum": [
+            "ausao8uveaPmyhv0v357"
+          ]
+        },
+        "description": "The authorization code used to generate an access token."
+      },
+      "grant_type": {
+        "name": "grant_type",
+        "in": "query",
+        "required": true,
+        "schema": {
+          "type": "string",
+          "enum": [
+            "client_credentials"
+          ]
+        },
+        "description": "The `client_credentials` grant type is used by clients to obtain an access token in the context of the client itself, not the user."
+      },
+      "Cache-Control": {
+        "name": "Cache-Control",
+        "in": "header",
+        "required": true,
+        "schema": {
+          "type": "string",
+          "enum": [
+            "no-cache"
+          ]
+        },
+        "description": "The `no-cache` request directive asks caches to validate the response with the origin server before reuse."
+      },
+      "Accept": {
+        "name": "Accept",
+        "in": "header",
+        "required": true,
+        "schema": {
+          "type": "string",
+          "enum": [
+            "application/json"
+          ]
+        },
+        "description": "The Accept request HTTP header indicates which content types the client can understand."
+      },
+      "scope": {
+        "name": "scope",
+        "in": "query",
+        "required": true,
+        "schema": {
+          "type": "string",
+          "enum": [
+            "connectedsearch.query",
+            "datasource.push",
+            "machinelearning.predict",
+            "machinelearning.model"
+          ]
+        },
+        "description": "The value defines the scope of access requested. For the token to send Connected Search Query API requests, use `\"scope\": \"connectedsearch.query\"`. For the token to send Connected Search Push API requests, use `\"scope\": \"datasource.push\"`. For the token used by the Lucidworks AI API `usecase`, `prediction`, and `async-prediction` endpoints, use `\"scope\": \"machinelearning.predict\"`. For the token used by the Lucidworks AI API `model` endpoint, use `\"scope\": \"machinelearning.model\"`. "
+      },
+      "Content-Type": {
+        "name": "Content-Type",
+        "in": "header",
+        "required": true,
+        "schema": {
+          "type": "string",
+          "enum": [
+            "application/x-www-form-urlencoded"
+          ]
+        },
+        "description": "The Content-Type header indicates the original media type of the resource."
+      }
+    }
+  }
+}

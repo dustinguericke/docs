@@ -1,88 +1,102 @@
 ---
-title: 'Markdown Syntax'
-description: 'Text, title, and styling in standard markdown'
+title: 'Signals beacon'
+description: 'Signals beacon blah blah blah'
 icon: 'text-size'
 ---
 
-## Titles
+## Overview
 
-Best used for section headers.
+The signals beacon is an embeddable tracker that captures signals corresponding to user actions, like searches and purchases. With no coding and minimal configuration, you can quickly start sending signals to Lucidworks Platform, including all of the data needed to power your signals analytics.
 
-```md
-## Titles
-```
+At a high level, the tracking flow begins when a user visits the site and performs one or more searches. These searches generate query identifiers that associate user actions with specific queries. As the user interacts with search results and shows interest in a product, additional signals such as clicks and cart events are captured. If the user completes a purchase, the flow concludes with a purchase signal that links the transaction back to the original query. This process enables end-to-end tracking of user behavior from search to purchase.
 
-### Subtitles
+In this scenario, the signals beacon uses several primary tracking mechanisms:
 
-Best use to subsection headers.
+- **Visitor ID**: A randomly generated identifier stored in local browser storage. It is unique to both the visitor and the device. It persists across sessions.
+- **Session ID**: A randomly generated identifier stored in session storage. It expires after 40 minutes of inactivity or when the browser session ends. When the user returns, a new session ID is generated, but the visitor ID remains the same.
+- **Query ID**: A randomly generated identifier created when a search query is submitted. It is temporarily stored in memory and is included with signal events related to that query, such as clicks or purchases.
+- **Cart ID**: A unique identifier created when a product is added to the cart. It links cart interactions and purchases to the originating query. After a purchase, a new cart ID is generated to track subsequent transactions independently.
 
-```md
-### Subtitles
-```
+The signal event flow below outlines a simplified sequence of common events. Additional signal types and behaviors are not included in this summary:
 
-<Tip>
+1. When a user visits the site, a visitor ID and session ID are generated.
+2. When a query is submitted, a query ID is generated and a query signal is sent. This signal includes the visitor ID and session ID.
+3. For each new query, a new query ID is generated and another query signal is sent.
+4. When the user clicks on a product, a click signal is sent. This signal includes the associated query ID.
+5. When the user adds a product to their cart, a cart ID is generated and a cart-add signal is sent.
+6. When the user purchases a product, a purchase signal is sent. This signal includes the current cart ID, which allows the purchase to be traced back to the original query. After the signal is sent, the cart ID is replaced with a new one to track future transactions independently.
 
-Each **title** and **subtitle** creates an anchor and also shows up on the table of contents on the right.
+![Simplified signals beacon flow](/assets/images/lw-platform/analytics/signalsbeaconflow.png)
 
-</Tip>
+## Configure the signals beacon
 
-## Text Formatting
+To see your signals analytics in Lucidworks Platform, you must configure the signals beacon as explained in this topic.
 
-We support most markdown formatting. Simply add `**`, `_`, or `~` around text to format it.
+The beacon sends signals to the:
 
-| Style         | How to write it   | Result          |
-| ------------- | ----------------- | --------------- |
-| Bold          | `**bold**`        | **bold**        |
-| Italic        | `_italic_`        | _italic_        |
-| Strikethrough | `~strikethrough~` | ~strikethrough~ |
+- [Signals store](/lw-platform/analytics/88pjp2/signals-store) for storage and aggregation
+- [Analytics Studio service](/lw-platform/analytics/10aut8/index), which provides insights about actions taken by users on your site
 
-You can combine these. For example, write `**_bold and italic_**` to get **_bold and italic_** text.
+Import content from `/lw-platform/lw-analytics/signals/index.asciidoc` tagged with `signals-collected`.
 
-You need to use HTML to write superscript and subscript text. That is, add `<sup>` or `<sub>` around your text.
+For additional context, see [Overview of signals process](/lw-platform/analytics/0le96f/signals).
 
-| Text Size   | How to write it          | Result                 |
-| ----------- | ------------------------ | ---------------------- |
-| Superscript | `<sup>superscript</sup>` | <sup>superscript</sup> |
-| Subscript   | `<sub>subscript</sub>`   | <sub>subscript</sub>   |
+### Prerequisites
 
-## Linking to Pages
+You must be a workspace owner to configure the signals beacon. Before you begin:
 
-You can add a link by wrapping text in `[]()`. You would write `[link to google](https://google.com)` to [link to google](https://google.com).
+- Analyze your site for compatibility with the signals beacon. Your site should use URL query parameters (`?q=foo`).
+- Ensure the following fields are available in the DOM as attributes or text nodes:
+  - Product ID
+  - Product title
+  - Product image URL
+  - Product price
+  - Product URL
+- Identify additional fields to capture, noting their CSS paths.
+- Create a [signals store](/lw-platform/analytics/88pjp2/signals-store).
 
-Links to pages in your docs need to be root-relative. Basically, you should include the entire folder path. For example, `[link to text](/writing-content/text)` links to the page "Text" in our components section.
+### Install the beacon
 
-Relative links like `[link to text](../text)` will open slower because we cannot optimize them as easily.
+1. Open the app and navigate to *Integrations*.
+2. If no beacon exists, click *Generate* to create a token.
+3. In *Allowed Origins*, enter domains in the format `<scheme>://<hostname>[:<port>]`.
+4. Enable the *Signals Beacon* toggle.
+5. Click *Copy* to get the script and insert it in the `<head>` tag of your HTML.
+6. Edit the JSON configuration. See:
+   - [Example JSON configuration](#example-json-configuration)
+   - [Example signals script](#example-signals-script)
+   - [Field path configuration](#field-path-configuration)
+   - [Beacon Configuration Interface](/lw-platform/analytics/k6vyeq/beacon-configuration-interface)
+7. Click *Apply*. Configuration takes effect immediately.
 
-## Blockquotes
+To inspect captured fields, use `window.logBeaconInfo()` in the browser.
 
-### Singleline
+### Example JSON configuration
 
-To create a blockquote, add a `>` in front of a paragraph.
-
-> Dorothy followed her through many of the beautiful rooms in her castle.
-
-```md
-> Dorothy followed her through many of the beautiful rooms in her castle.
-```
-
-### Multiline
-
-> Dorothy followed her through many of the beautiful rooms in her castle.
->
-> The Witch bade her clean the pots and kettles and sweep the floor and keep the fire fed with wood.
-
-```md
-> Dorothy followed her through many of the beautiful rooms in her castle.
->
-> The Witch bade her clean the pots and kettles and sweep the floor and keep the fire fed with wood.
-```
-
-### LaTeX
-
-Mintlify supports [LaTeX](https://www.latex-project.org) through the Latex component.
-
-<Latex>8 x (vk x H1 - H2) = (0,1)</Latex>
-
-```md
-<Latex>8 x (vk x H1 - H2) = (0,1)</Latex>
-```
+```json
+{
+  "attributes": {
+    "productPath": ".lw-product-item",
+    "cartId": "lwRetailCartId",
+    "idQueryParam": "pid",
+    "numberTypeFields": ["price", "quantity", "revenue"]
+  },
+  "fields": {
+    "productId": ":scope @id",
+    "imageuri": ":scope img @src",
+    "price": ":scope .search-entity-price span @text",
+    "title": ":scope .search-entity-title @text, :scope .search-generic-title @text",
+    "uri": ".config-url @href"
+  },
+  "query": {
+    "queryParam": "q",
+    "delayForTrackQueryUpdate": 1000
+  },
+  "click": {},
+  "cartAdd": {
+    "trigger": ".lw-cart-add-trigger"
+  },
+  "purchase": {
+    "trigger": ".lw-purchase-trigger"
+  }
+}
