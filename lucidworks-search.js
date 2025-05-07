@@ -26,11 +26,13 @@ function launchLucidworksModal() {
   modal.innerHTML = `
     <div class="lw-modal-container collapsed" id="lucidworks-modal-container">
       <input id="lucidworks-search-input" class="lw-search-input" type="text" placeholder="Search or ask Lucidworks AI" />
-      <div id="lucidworks-search-results-wrapper">
-        <div id="lw-ai-toggle-btn-container"></div>
+      <div id="lw-ai-toggle-btn-container"></div>
+      <div id="lucidworks-search-results-wrapper" class="lw-results-wrapper">
         <div id="lucidworks-search-facets" class="lw-facets-container"></div>
-        <div id="lucidworks-search-results" class="lw-results-container"></div>
-        <div id="lucidworks-pagination" class="lw-pagination"></div>
+        <div class="lw-main-results-area">
+          <div id="lucidworks-search-results" class="lw-results-container"></div>
+          <div id="lucidworks-pagination" class="lw-pagination"></div>
+        </div>
       </div>
     </div>
   `;
@@ -72,9 +74,6 @@ function launchLucidworksModal() {
     aiToggleBtnContainer.innerHTML = '';
     facetsContainer.innerHTML = ''; // Clear facets when changing modes
 
-    const button = document.createElement('button');
-    button.className = 'lw-mode-toggle-button';
-
     if (mode === 'ai') {
       // Hide facets container when in AI mode
       facetsContainer.style.display = 'none';
@@ -82,14 +81,22 @@ function launchLucidworksModal() {
       modalContainer.classList.remove('collapsed');
       modalContainer.classList.add('expanded');
       input.placeholder = "Ask a question...";
-      button.textContent = 'Lucidworks Search';
-      button.addEventListener('click', () => {
-        setMode('search');
-        input.placeholder = "Search or ask Lucidworks AI";
-        if (currentQuery.trim()) {
-          fetchAndRenderSearch(currentQuery, currentStart);
-        }
-      });
+      
+      // Add button to switch back to search mode if there's a query
+      if (currentQuery.trim()) {
+        const button = document.createElement('button');
+        button.className = 'lw-mode-toggle-button';
+        button.textContent = 'Lucidworks Search';
+        button.addEventListener('click', () => {
+          setMode('search');
+          input.placeholder = "Search or ask Lucidworks AI";
+          if (currentQuery.trim()) {
+            fetchAndRenderSearch(currentQuery, currentStart);
+          }
+        });
+        aiToggleBtnContainer.appendChild(button);
+      }
+      
       input.focus();
       if (currentQuery.trim()) {
         renderSkeletons(resultsContainer, 3);
@@ -97,17 +104,16 @@ function launchLucidworksModal() {
       } else {
         resultsContainer.innerHTML = '<div class="lw-ai-placeholder">Enter your question above and press Enter to ask Lucidworks AI</div>';
       }
-    } else {
+    } else { // search mode
       // Show facets container when in search mode
       facetsContainer.style.display = 'block';
       
       modalContainer.classList.add('collapsed');
       modalContainer.classList.remove('expanded');
-      button.textContent = 'Ask Lucidworks AI';
-      button.addEventListener('click', () => setMode('ai'));
+      
+      // Don't add the AI button until a search is performed
+      // The button will be added by fetchAndRenderSearch after results are loaded
     }
-
-    aiToggleBtnContainer.appendChild(button);
   }
 
   async function fetchAndRenderSearch(query, start = 0) {
@@ -273,15 +279,24 @@ function launchLucidworksModal() {
         });
       });
 
+      // Only add AI toggle button if we have a query and results
       addAiToggleButton();
 
     } catch (err) {
       console.error('Fetch error:', err);
       resultsContainer.innerHTML = 'An error occurred.';
-      addAiToggleButton();
+      
+      // Still show AI button on error if we have a query
+      if (currentQuery.trim()) {
+        addAiToggleButton();
+      }
     }
     
     function addAiToggleButton() {
+      // Only add the AI toggle button if we have a query
+      if (!currentQuery.trim()) return;
+      
+      aiToggleBtnContainer.innerHTML = ''; // Clear any existing buttons
       const aiToggleButton = document.createElement('button');
       aiToggleButton.className = 'lw-mode-toggle-button';
       aiToggleButton.textContent = 'Ask Lucidworks AI';

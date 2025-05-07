@@ -63,10 +63,18 @@ Company colors:
 
 #lucidworks-search-results-wrapper {
   display: flex;
-  flex-direction: column;
+  flex-direction: row; /* Change to row to place facets on left */
   flex: 1;
   overflow: hidden;
   margin-top: 16px;
+  gap: 16px; /* Add spacing between facets and results */
+}
+
+.lw-main-results-area {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  overflow: hidden;
 }
 
 .lw-results-container {
@@ -225,29 +233,31 @@ Company colors:
 
 /* Facet styles */
 .lw-facets-container {
-  margin-top: 16px;
-  margin-bottom: 8px;
-  padding: 8px 0;
-  border-bottom: 1px solid #E0E0E0;
+  width: 180px; /* Set a fixed width for the facets column */
+  flex-shrink: 0; /* Prevent facets from shrinking */
+  padding: 0 8px 8px 0;
+  border-right: 1px solid #E0E0E0;
+  height: 100%;
+  overflow-y: auto;
 }
 
 .lw-facets-title {
   font-weight: 600;
-  margin-bottom: 8px;
+  margin-bottom: 12px;
   font-size: 14px;
   color: #44578D;
 }
 
 .lw-facets-list {
   display: flex;
-  flex-wrap: wrap;
-  gap: 8px;
+  flex-direction: column; /* Display facets in a vertical list */
+  gap: 6px;
 }
 
 .lw-facet-item {
   display: flex;
   align-items: center;
-  margin-bottom: 6px;
+  margin-bottom: 4px;
 }
 
 .lw-facet-checkbox {
@@ -262,4 +272,9 @@ Company colors:
 
 .lw-facet-label:hover {
   color: #1F66E5;
+}
+
+/* Update AI toggle button to span full width */
+#lw-ai-toggle-btn-container {
+  margin-bottom: 16px;
 }
