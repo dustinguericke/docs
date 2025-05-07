@@ -37,11 +37,25 @@ function launchLucidworksModal() {
     </div>
   `;
 
+  document.body.appendChild(modal);
+  document.body.classList.add('lw-modal-open'); // Add class to prevent body scrolling
+
   modal.addEventListener('click', (e) => {
-    if (e.target === modal) modal.remove();
+    if (e.target === modal) {
+      modal.remove();
+      document.body.classList.remove('lw-modal-open'); // Remove class when modal closes
+    }
   });
 
-  document.body.appendChild(modal);
+  // Prevent wheel events from propagating to the body
+  modal.addEventListener('wheel', (e) => {
+    e.stopPropagation();
+  }, { passive: true });
+
+  // Prevent touchmove events from propagating to the body on mobile
+  modal.addEventListener('touchmove', (e) => {
+    e.stopPropagation();
+  }, { passive: true });
 
   const input = document.getElementById('lucidworks-search-input');
   const modalContainer = document.getElementById('lucidworks-modal-container');
@@ -373,6 +387,17 @@ function launchLucidworksModal() {
 
   setMode('search');
 }
+
+// Update the blockMintlifyAndInjectCustomModal function to handle the ESC key
+document.addEventListener('keydown', (e) => {
+  if (e.key === 'Escape') {
+    const modal = document.getElementById('lucidworks-search-modal');
+    if (modal) {
+      modal.remove();
+      document.body.classList.remove('lw-modal-open');
+    }
+  }
+});
 
 function init() {
   blockMintlifyAndInjectCustomModal('#search-bar-entry', launchLucidworksModal);

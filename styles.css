@@ -12,6 +12,11 @@ Company colors:
 #FFC700 Accent yellow 
 */
 
+/* Add body class for when modal is open to prevent background scrolling */
+body.lw-modal-open {
+  overflow: hidden;
+}
+
 .lw-modal-overlay {
   position: fixed;
   top: 0;
@@ -23,6 +28,7 @@ Company colors:
   align-items: center;
   justify-content: center;
   z-index: 10000;
+  overflow: hidden; /* Prevent overlay scrolling */
 }
 
 .lw-modal-container {
@@ -34,9 +40,10 @@ Company colors:
   display: flex;
   flex-direction: column;
   transition: height 0.2s ease;
-  overflow: hidden;
+  overflow: hidden; /* Control overflow at the container level */
   padding: 16px;
   box-sizing: border-box;
+  max-height: 80vh; /* Ensure consistent max height */
 }
 
 .lw-modal-container.collapsed {
@@ -55,6 +62,7 @@ Company colors:
   border-radius: 6px;
   outline: none;
   box-sizing: border-box;
+  margin-bottom: 16px; /* Add bottom margin to create space after input */
 }
 
 .lw-search-input:focus {
@@ -65,9 +73,10 @@ Company colors:
   display: flex;
   flex-direction: row; /* Change to row to place facets on left */
   flex: 1;
-  overflow: hidden;
+  overflow: hidden; /* Prevent wrapper scrolling */
   margin-top: 16px;
   gap: 16px; /* Add spacing between facets and results */
+  height: calc(100% - 80px); /* Adjust for input and buttons */
 }
 
 .lw-main-results-area {
@@ -254,28 +263,47 @@ Company colors:
   gap: 6px;
 }
 
+/* Facet styles with increased specificity */
 .lw-facet-item {
   display: flex;
   align-items: center;
   margin-bottom: 4px;
+  padding: 3px 0 3px 2px; /* Add padding to the entire item for extra spacing */
+  gap: 10px; /* Use gap for spacing between checkbox and label */
 }
 
+/* Multiple techniques to override the problematic rule */
+.lw-facets-container .lw-facets-list .lw-facet-item .lw-facet-checkbox {
+  margin: 0 !important; /* Reset any default margins */
+}
+
+/* Create a visual separator instead of depending on margin */
+.lw-facet-item::before {
+  content: "";
+  display: inline-block;
+  width: 8px;
+  flex-shrink: 0;
+}
+
+/* Set checkbox size explicitly */
 .lw-facet-checkbox {
-  margin-right: 6px;
+  min-width: 14px;
+  width: 14px;
+  height: 14px;
+  flex-shrink: 0;
 }
 
+/* Force some space for the label */
 .lw-facet-label {
   font-size: 13px;
   color: #1C2140;
   cursor: pointer;
 }
 
-.lw-facet-label:hover {
-  color: #1F66E5;
-}
-
 /* Update AI toggle button to span full width */
 #lw-ai-toggle-btn-container {
-  margin-top: 16px; /* Add top margin to create space after the search input */
+  margin-top: 8px; /* Reduce from 16px since we added margin to input */
   margin-bottom: 16px;
+  display: block; /* Ensure it's a block element */
+  width: 100%; /* Full width */
 }
