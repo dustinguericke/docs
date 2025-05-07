@@ -28,6 +28,7 @@ function launchLucidworksModal() {
       <input id="lucidworks-search-input" class="lw-search-input" type="text" placeholder="Search or ask Lucidworks AI" />
       <div id="lucidworks-search-results-wrapper">
         <div id="lw-ai-toggle-btn-container"></div>
+        <div id="lucidworks-search-facets" class="lw-facets-container"></div>
         <div id="lucidworks-search-results" class="lw-results-container"></div>
         <div id="lucidworks-pagination" class="lw-pagination"></div>
       </div>
@@ -45,6 +46,7 @@ function launchLucidworksModal() {
   const resultsContainer = document.getElementById('lucidworks-search-results');
   const paginationContainer = document.getElementById('lucidworks-pagination');
   const aiToggleBtnContainer = document.getElementById('lw-ai-toggle-btn-container');
+  const facetsContainer = document.getElementById('lucidworks-search-facets');
 
   input.focus();
 
@@ -52,6 +54,7 @@ function launchLucidworksModal() {
   let currentQuery = '';
   let currentStart = 0;
   const rows = 10;
+  let selectedFacets = {};
 
   function renderSkeletons(container, count = 5) {
     container.innerHTML = '';
@@ -67,40 +70,37 @@ function launchLucidworksModal() {
     resultsContainer.innerHTML = '';
     paginationContainer.innerHTML = '';
     aiToggleBtnContainer.innerHTML = '';
+    facetsContainer.innerHTML = ''; // Clear facets when changing modes
 
     const button = document.createElement('button');
     button.className = 'lw-mode-toggle-button';
 
     if (mode === 'ai') {
-      // Clear any previous results and prepare the modal
+      // Hide facets container when in AI mode
+      facetsContainer.style.display = 'none';
+      
       modalContainer.classList.remove('collapsed');
       modalContainer.classList.add('expanded');
-      
-      // Change the input placeholder to be more AI-specific
       input.placeholder = "Ask a question...";
-      
       button.textContent = 'Lucidworks Search';
       button.addEventListener('click', () => {
         setMode('search');
-        // Reset placeholder when switching back to search
         input.placeholder = "Search or ask Lucidworks AI";
         if (currentQuery.trim()) {
           fetchAndRenderSearch(currentQuery, currentStart);
         }
       });
-      
-      // Focus on input to encourage immediate interaction
       input.focus();
-      
-      // Automatically submit the current query if one exists
       if (currentQuery.trim()) {
         renderSkeletons(resultsContainer, 3);
-        // Use setTimeout to ensure the UI updates before making the API call
         setTimeout(() => fetchAndRenderSearch(currentQuery, 0), 100);
       } else {
         resultsContainer.innerHTML = '<div class="lw-ai-placeholder">Enter your question above and press Enter to ask Lucidworks AI</div>';
       }
     } else {
+      // Show facets container when in search mode
+      facetsContainer.style.display = 'block';
+      
       modalContainer.classList.add('collapsed');
       modalContainer.classList.remove('expanded');
       button.textContent = 'Ask Lucidworks AI';
@@ -115,7 +115,9 @@ function launchLucidworksModal() {
     currentStart = start;
 
     if (currentMode === 'ai') {
-      // Handle AI mode
+      // Hide facets in AI mode
+      facetsContainer.style.display = 'none';
+      
       const url = `https://lw-docs-dev.b.lucidworks.cloud/api/apps/Docs_Site_AI/query/Docs_Site_AI_NHS_RAG?q=${encodeURIComponent(query)}`;
       const auth = btoa('docs:rkJqpLsyAf9Dbu]TVRm6DT%N');
 
@@ -152,13 +154,11 @@ function launchLucidworksModal() {
         }
 
         if (sources.length > 0) {
-          // Add a sources heading
           const sourcesHeading = document.createElement('div');
           sourcesHeading.className = 'lw-sources-heading';
           sourcesHeading.textContent = 'Sources:';
           resultsContainer.appendChild(sourcesHeading);
 
-          // Create a container for sources
           const sourcesContainer = document.createElement('div');
           sourcesContainer.className = 'lw-sources-container';
           
@@ -167,10 +167,10 @@ function launchLucidworksModal() {
             docBlock.className = 'lw-result-item';
             
             const link = document.createElement('a');
-            link.href = doc.url_s || '#'; // Use url_s for the link destination
+            link.href = doc.url_s || '#';
             link.target = '_blank';
             link.className = 'lw-result-title';
-            link.textContent = doc.title_s || doc.url_s || 'Source Document'; // Use title_s instead of title
+            link.textContent = doc.title_s || doc.url_s || 'Source Document';
             docBlock.appendChild(link);
             
             sourcesContainer.appendChild(docBlock);
@@ -185,11 +185,27 @@ function launchLucidworksModal() {
       return;
     }
 
-    const url = `https://docs.b.lucidworks.cloud/api/apps/Docs_Site_2/query/Docs_Site_2?start=${start}&rows=${rows}&q=${encodeURIComponent(query)}`;
+    // Show facets in search mode
+    facetsContainer.style.display = 'block';
+
+    let facetQuery = '';
+    const selectedFacetValues = [];
+    for (const facet in selectedFacets) {
+      if (selectedFacets[facet].length > 0) {
+        selectedFacetValues.push(...selectedFacets[facet]);
+      }
+    }
+    
+    if (selectedFacetValues.length > 0) {
+      facetQuery = `&fq=productName_pretty:("${selectedFacetValues.join('","')}")`;
+    }
+
+    const url = `https://docs.b.lucidworks.cloud/api/apps/Docs_Site_2/query/Docs_Site_2?start=${start}&rows=${rows}&q=${encodeURIComponent(query)}&facet=true&facet.field=productName_pretty${facetQuery}`;
     const auth = btoa('dustin-readonly:rkJqpLsyAf9Dbu]TVRm6DT%N');
 
     renderSkeletons(resultsContainer, rows);
     paginationContainer.innerHTML = '';
+    facetsContainer.innerHTML = '';
     aiToggleBtnContainer.innerHTML = '';
 
     modalContainer.classList.remove('collapsed');
@@ -206,7 +222,6 @@ function launchLucidworksModal() {
 
       if (!res.ok) {
         resultsContainer.innerHTML = 'Search failed.';
-        // Even if search fails, still show the AI toggle button
         addAiToggleButton();
         return;
       }
@@ -215,9 +230,13 @@ function launchLucidworksModal() {
       const docs = data.response?.docs || [];
       const numFound = data.response?.numFound || 0;
 
+      // Only render facets in search mode
+      if (currentMode === 'search' && data.facet_counts?.facet_fields?.productName_pretty) {
+        renderFacets(data.facet_counts.facet_fields.productName_pretty);
+      }
+
       if (!docs.length) {
         resultsContainer.innerHTML = '<div class="lw-no-results">No results found. Try asking Lucidworks AI instead.</div>';
-        // Still show the AI toggle button when no results are found
         addAiToggleButton();
         return;
       }
@@ -254,17 +273,14 @@ function launchLucidworksModal() {
         });
       });
 
-      // Add the AI toggle button
       addAiToggleButton();
 
     } catch (err) {
       console.error('Fetch error:', err);
       resultsContainer.innerHTML = 'An error occurred.';
-      // Still show the AI toggle button on error
       addAiToggleButton();
     }
     
-    // Helper function to add the AI toggle button
     function addAiToggleButton() {
       const aiToggleButton = document.createElement('button');
       aiToggleButton.className = 'lw-mode-toggle-button';
@@ -274,11 +290,69 @@ function launchLucidworksModal() {
     }
   }
 
+  function renderFacets(facetData) {
+    if (!facetData || facetData.length === 0) return;
+    
+    facetsContainer.innerHTML = '<div class="lw-facets-title">Filter by Product</div>';
+    const facetList = document.createElement('div');
+    facetList.className = 'lw-facets-list';
+    
+    for (let i = 0; i < facetData.length; i += 2) {
+      const facetValue = facetData[i];
+      const facetCount = facetData[i + 1];
+      
+      if (facetCount === 0) continue;
+      
+      const facetItem = document.createElement('div');
+      facetItem.className = 'lw-facet-item';
+      
+      const checkbox = document.createElement('input');
+      checkbox.type = 'checkbox';
+      checkbox.id = `facet-${facetValue}`;
+      checkbox.className = 'lw-facet-checkbox';
+      checkbox.value = facetValue;
+      
+      if (selectedFacets['productName_pretty'] && selectedFacets['productName_pretty'].includes(facetValue)) {
+        checkbox.checked = true;
+      }
+      
+      const label = document.createElement('label');
+      label.htmlFor = `facet-${facetValue}`;
+      label.className = 'lw-facet-label';
+      label.textContent = `${facetValue} (${facetCount})`;
+      
+      checkbox.addEventListener('change', (e) => {
+        if (!selectedFacets['productName_pretty']) {
+          selectedFacets['productName_pretty'] = [];
+        }
+        
+        if (e.target.checked) {
+          if (!selectedFacets['productName_pretty'].includes(facetValue)) {
+            selectedFacets['productName_pretty'].push(facetValue);
+          }
+        } else {
+          selectedFacets['productName_pretty'] = selectedFacets['productName_pretty'].filter(
+            val => val !== facetValue
+          );
+        }
+        
+        fetchAndRenderSearch(currentQuery, 0);
+      });
+      
+      facetItem.appendChild(checkbox);
+      facetItem.appendChild(label);
+      facetList.appendChild(facetItem);
+    }
+    
+    facetsContainer.appendChild(facetList);
+  }
+
   input.addEventListener('keydown', (e) => {
     if (e.key === 'Enter') {
       const query = input.value.trim();
       if (!query) return;
-      fetchAndRenderSearch(query, 0); // This handles both AI and search modes
+      selectedFacets = {};
+      fetchAndRenderSearch(query, 0);
     }
   });
 

@@ -1,3 +1,17 @@
+/* 
+Company colors:
+
+#1C2140 Primary dark blue
+#1F66E5 Primary bright blue
+#2B3C79 Primary medium blue
+#A4C6F7 Secondary light blue
+#44578D Secondary muted blue
+#ED308B Accent pink
+#16C5BB Accent teal
+#3D96D8 Accent blue
+#FFC700 Accent yellow 
+*/
+
 .lw-modal-overlay {
   position: fixed;
   top: 0;
@@ -207,4 +221,45 @@
   margin-left: 8px;
   padding-left: 8px;
   border-left: 3px solid #1F66E5;
+}
+
+/* Facet styles */
+.lw-facets-container {
+  margin-top: 16px;
+  margin-bottom: 8px;
+  padding: 8px 0;
+  border-bottom: 1px solid #E0E0E0;
+}
+
+.lw-facets-title {
+  font-weight: 600;
+  margin-bottom: 8px;
+  font-size: 14px;
+  color: #44578D;
+}
+
+.lw-facets-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.lw-facet-item {
+  display: flex;
+  align-items: center;
+  margin-bottom: 6px;
+}
+
+.lw-facet-checkbox {
+  margin-right: 6px;
+}
+
+.lw-facet-label {
+  font-size: 13px;
+  color: #1C2140;
+  cursor: pointer;
+}
+
+.lw-facet-label:hover {
+  color: #1F66E5;
 }
