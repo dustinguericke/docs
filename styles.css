@@ -136,21 +136,44 @@
   }
   
   .lw-mode-toggle-button {
-    display: inline-block;
-    padding: 10px 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    padding: 12px 16px;
     margin-bottom: 16px;
-    font-size: 14px;
+    font-size: 15px;
     font-weight: 600;
     color: white;
     background-color: #0056d2;
     border: none;
     border-radius: 6px;
     cursor: pointer;
-    transition: background-color 0.2s ease-in-out;
+    transition: all 0.2s ease-in-out;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   }
   
   .lw-mode-toggle-button:hover {
     background-color: #003c9e;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+  }
+  
+  .lw-mode-toggle-button svg {
+    margin-right: 8px;
+    height: 18px;
+    width: 18px;
+  }
+  
+  .lw-mode-toggle-button.search-button {
+    background-color: #0056d2;
+  }
+  
+  .lw-mode-toggle-button.ai-button {
+    background-color: #7526e3;
+  }
+  
+  .lw-mode-toggle-button.ai-button:hover {
+    background-color: #5f1cb8;
   }
 
   .lw-no-results {
