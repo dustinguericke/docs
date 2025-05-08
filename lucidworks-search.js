@@ -94,6 +94,25 @@ function launchLucidworksModal() {
     aiToggleBtnContainer.innerHTML = '';
     facetsContainer.innerHTML = '';
 
+    // Update the site's URL with the appropriate query parameter
+    const url = new URL(window.location.href);
+    if (mode === 'ai') {
+      url.searchParams.delete('q'); // Remove the search query parameter
+      if (currentQuery.trim()) {
+        url.searchParams.set('qa', currentQuery); // Add the AI query parameter
+      } else {
+        url.searchParams.delete('qa'); // Ensure no empty `qa` parameter
+      }
+    } else {
+      url.searchParams.delete('qa'); // Remove the AI query parameter
+      if (currentQuery.trim()) {
+        url.searchParams.set('q', currentQuery); // Add the search query parameter
+      } else {
+        url.searchParams.delete('q'); // Ensure no empty `q` parameter
+      }
+    }
+    window.history.replaceState({}, '', url.toString()); // Update the URL without reloading
+
     // Configure UI based on mode
     if (mode === 'ai') {
       facetsContainer.style.display = 'none';
@@ -147,10 +166,21 @@ function launchLucidworksModal() {
 
   async function fetchAndRenderSearch(query, start = 0) {
     if (!query.trim()) return;
-    
+
     isProcessing = true;
     currentQuery = query;
     currentStart = start;
+
+    // Update the site's URL with the appropriate query parameter based on mode
+    const url = new URL(window.location.href);
+    if (currentMode === 'ai') {
+      url.searchParams.delete('q'); // Remove the search query parameter
+      url.searchParams.set('qa', query); // Set the AI query parameter
+    } else {
+      url.searchParams.delete('qa'); // Remove the AI query parameter
+      url.searchParams.set('q', query); // Set the search query parameter
+    }
+    window.history.replaceState({}, '', url.toString()); // Update the URL without reloading
 
     try {
       if (currentMode === 'ai') {

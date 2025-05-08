@@ -77,13 +77,23 @@ async function runLucidworksAIQuery(query) {
 function openModalAndSubmitQuery() {
   if (!isExpanded(modalContainer)) toggleModal(modalContainer);
   const query = searchInput.value.trim();
-  if (query) runLucidworksAIQuery(query);
+  if (query) {
+    const url = new URL(window.location.href);
+    url.searchParams.set('qa', query);
+    window.history.replaceState({}, '', url.toString()); // Update the URL without reloading
+    runLucidworksAIQuery(query);
+  }
 }
 
 searchInput.addEventListener('keydown', (event) => {
   if (event.key === 'Enter') {
     const query = searchInput.value.trim();
-    if (query) runLucidworksAIQuery(query);
+    if (query) {
+      const url = new URL(window.location.href);
+      url.searchParams.set('qa', query);
+      window.history.replaceState({}, '', url.toString()); // Update the URL without reloading
+      runLucidworksAIQuery(query);
+    }
   }
 });
 
