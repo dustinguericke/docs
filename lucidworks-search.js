@@ -1,4 +1,4 @@
-console.log('Lucidworks Search script loaded');
+console.log('Lucidworks Search script loaded - custom implementation');
 
 function blockMintlifyAndInjectCustomModal(selector, launchHandler) {
   const button = document.querySelector(selector);
@@ -18,13 +18,15 @@ function blockMintlifyAndInjectCustomModal(selector, launchHandler) {
 
 function launchLucidworksModal() {
   if (document.getElementById('lucidworks-search-modal')) return;
+  
+  console.log('Launching Lucidworks Search modal');
 
   const modal = document.createElement('div');
   modal.id = 'lucidworks-search-modal';
   modal.className = 'lw-modal-overlay';
 
   modal.innerHTML = `
-    <div class="lw-modal-container collapsed" id="lucidworks-modal-container">
+    <div class="lw-modal-container collapsed" id="lucidworks-modal-container" data-ui-state="collapsed">
       <input id="lucidworks-search-input" class="lw-search-input" type="text" placeholder="Search or ask Lucidworks AI" />
       <div id="lw-ai-toggle-btn-container"></div>
       <div id="lucidworks-search-results-wrapper" class="lw-results-wrapper">
@@ -87,6 +89,7 @@ function launchLucidworksModal() {
     if (isProcessing) return;
 
     currentMode = mode;
+    console.log(`Lucidworks search modal switching to ${mode} mode`);
     
     // Clear previous UI elements
     resultsContainer.innerHTML = '';
@@ -97,7 +100,7 @@ function launchLucidworksModal() {
     // Update the site's URL with the appropriate query parameter
     const url = new URL(window.location.href);
     if (mode === 'ai') {
-      url.searchParams.delete('q'); // Remove the search query parameter
+      url.searchParams.delete('s'); // Remove the search query parameter (changed from 'q' to 's')
       if (currentQuery.trim()) {
         url.searchParams.set('qa', currentQuery); // Add the AI query parameter
       } else {
@@ -106,9 +109,9 @@ function launchLucidworksModal() {
     } else {
       url.searchParams.delete('qa'); // Remove the AI query parameter
       if (currentQuery.trim()) {
-        url.searchParams.set('q', currentQuery); // Add the search query parameter
+        url.searchParams.set('s', currentQuery); // Add the search query parameter (changed from 'q' to 's')
       } else {
-        url.searchParams.delete('q'); // Ensure no empty `q` parameter
+        url.searchParams.delete('s'); // Ensure no empty `s` parameter (changed from 'q' to 's')
       }
     }
     window.history.replaceState({}, '', url.toString()); // Update the URL without reloading
@@ -118,6 +121,7 @@ function launchLucidworksModal() {
       facetsContainer.style.display = 'none';
       modalContainer.classList.remove('collapsed');
       modalContainer.classList.add('expanded');
+      modalContainer.setAttribute('data-ui-state', 'expanded');
       input.placeholder = "Ask a question...";
       
       // Add button to switch back to search mode if there's a query
@@ -147,6 +151,7 @@ function launchLucidworksModal() {
       facetsContainer.style.display = 'block';
       modalContainer.classList.add('collapsed');
       modalContainer.classList.remove('expanded');
+      modalContainer.setAttribute('data-ui-state', 'collapsed');
       input.placeholder = "Search or ask Lucidworks AI";
       
       // Only add AI button if we have a query
@@ -174,11 +179,11 @@ function launchLucidworksModal() {
     // Update the site's URL with the appropriate query parameter based on mode
     const url = new URL(window.location.href);
     if (currentMode === 'ai') {
-      url.searchParams.delete('q'); // Remove the search query parameter
+      url.searchParams.delete('s'); // Remove the search query parameter (changed from 'q' to 's')
       url.searchParams.set('qa', query); // Set the AI query parameter
     } else {
       url.searchParams.delete('qa'); // Remove the AI query parameter
-      url.searchParams.set('q', query); // Set the search query parameter
+      url.searchParams.set('s', query); // Set the search query parameter (changed from 'q' to 's')
     }
     window.history.replaceState({}, '', url.toString()); // Update the URL without reloading
 
